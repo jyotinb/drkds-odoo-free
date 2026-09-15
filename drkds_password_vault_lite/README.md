@@ -12,7 +12,7 @@ rest under a key kept deliberately outside that database.
 The vault will not store anything until a key is configured. Generate one:
 
 ```
-/opt/odoo19/odoo19-venv/bin/python -c \
+python -c \
   "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 ```
 

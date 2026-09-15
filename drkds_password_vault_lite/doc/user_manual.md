@@ -8,7 +8,7 @@ that works without a key is a vault that keeps plaintext.
 1. Generate a key:
 
    ```
-   /opt/odoo19/odoo19-venv/bin/python -c \
+   python -c \
      "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
    ```
 

@@ -66,7 +66,7 @@ and structural.
 ## Tests
 
 ```
-cd /opt/odoo19/odoo19 && python odoo-bin -d <db> -i drkds_in_msme_vendor \
+odoo-bin -d <db> -i drkds_in_msme_vendor \
   --test-enable --stop-after-init
 ```
 
