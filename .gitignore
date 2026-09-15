@@ -11,3 +11,6 @@ drkds_in_lakh_crore/
 
 # Dropped: core ships base.grant_menu_access (Settings > Technical > Menu Items).
 drkds_menu_visibility_lite/
+
+# Superseded by drkds_in_inr_words (rescoped; core + num2words en_IN already spell Indian).
+drkds_in_amount_words/
