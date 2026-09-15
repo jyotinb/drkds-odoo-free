@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- A working starting point on the commonest roll size. -->
+        <record id="label_template_product_50x25" model="drkds.label.template">
+            <field name="name">Product 50 x 25 mm</field>
+            <field name="applies_to">product</field>
+            <field name="width_mm">50</field>
+            <field name="height_mm">25</field>
+            <field name="margin_top">1.5</field>
+            <field name="margin_bottom">1.5</field>
+            <field name="margin_left">2</field>
+            <field name="margin_right">2</field>
+        </record>
+        <record id="label_line_product_name" model="drkds.label.template.line">
+            <field name="template_id" ref="label_template_product_50x25"/>
+            <field name="sequence">10</field>
+            <field name="content_type">field</field>
+            <field name="field_path">display_name</field>
+            <field name="font_size_pt">8</field>
+            <field name="bold" eval="True"/>
+            <field name="align">center</field>
+        </record>
+        <record id="label_line_product_code" model="drkds.label.template.line">
+            <field name="template_id" ref="label_template_product_50x25"/>
+            <field name="sequence">20</field>
+            <field name="content_type">field</field>
+            <field name="field_path">default_code</field>
+            <field name="font_size_pt">6</field>
+            <field name="align">center</field>
+        </record>
+        <record id="label_line_product_barcode" model="drkds.label.template.line">
+            <field name="template_id" ref="label_template_product_50x25"/>
+            <field name="sequence">30</field>
+            <field name="content_type">barcode</field>
+            <field name="field_path">barcode</field>
+            <field name="barcode_symbology">auto</field>
+            <field name="barcode_height_mm">8</field>
+            <field name="font_size_pt">6</field>
+            <field name="align">center</field>
+        </record>
+
+        <record id="label_template_lot_50x25" model="drkds.label.template">
+            <field name="name">Lot 50 x 25 mm</field>
+            <field name="applies_to">lot</field>
+            <field name="width_mm">50</field>
+            <field name="height_mm">25</field>
+        </record>
+        <record id="label_line_lot_product" model="drkds.label.template.line">
+            <field name="template_id" ref="label_template_lot_50x25"/>
+            <field name="sequence">10</field>
+            <field name="content_type">field</field>
+            <field name="field_path">product_id</field>
+            <field name="font_size_pt">7</field>
+            <field name="bold" eval="True"/>
+        </record>
+        <record id="label_line_lot_name" model="drkds.label.template.line">
+            <field name="template_id" ref="label_template_lot_50x25"/>
+            <field name="sequence">20</field>
+            <field name="content_type">field</field>
+            <field name="field_path">name</field>
+            <field name="prefix">Lot: </field>
+            <field name="font_size_pt">6</field>
+        </record>
+        <record id="label_line_lot_barcode" model="drkds.label.template.line">
+            <field name="template_id" ref="label_template_lot_50x25"/>
+            <field name="sequence">30</field>
+            <field name="content_type">barcode</field>
+            <field name="field_path">name</field>
+            <field name="barcode_symbology">Code128</field>
+            <field name="barcode_height_mm">7</field>
+            <field name="show_barcode_value" eval="False"/>
+            <field name="align">center</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_drkds_label_template"
+              name="Label Templates"
+              parent="stock.menu_stock_config_settings"
+              action="action_drkds_label_template"
+              groups="stock.group_stock_manager"
+              sequence="90"/>
+</odoo>

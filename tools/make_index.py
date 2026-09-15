@@ -5,6 +5,7 @@ Keeps every module's listing visually identical, which is the point.
 """
 import html
 import json
+import re
 import sys
 
 TEMPLATE = """<section class="oe_container">
@@ -95,6 +96,15 @@ PAID_LINK = """
 """
 
 
+#: Separator that turns a blank line in ``intro`` into a second paragraph.
+#: A single-paragraph intro renders exactly as it did before.
+INTRO_BREAK = (
+    '</p>\n'
+    '      <p style="font-size:16px; line-height:1.6; color:#2c3e50;">\n'
+    '        '
+)
+
+
 def render(title, summary, intro, features, notes,
            disclaimer=False, paid_sentence=None):
     e = html.escape
@@ -104,7 +114,10 @@ def render(title, summary, intro, features, notes,
     note_items = "\n".join(f"        <li>{e(n)}</li>" for n in notes)
     extra = PAID_LINK.format(paid_sentence=e(paid_sentence)) if paid_sentence else ""
     return TEMPLATE.format(
-        title=e(title), summary=e(summary), intro=e(intro),
+        title=e(title), summary=e(summary),
+        intro=INTRO_BREAK.join(
+            e(para.strip()) for para in re.split(r"\n\s*\n", intro.strip())
+        ),
         features=feats, notes=note_items,
         disclaimer=DISCLAIMER if disclaimer else "", extra=extra,
     )

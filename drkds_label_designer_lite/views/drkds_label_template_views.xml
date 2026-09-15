@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_drkds_label_template_list" model="ir.ui.view">
+        <field name="name">drkds.label.template.list</field>
+        <field name="model">drkds.label.template</field>
+        <field name="arch" type="xml">
+            <list string="Label Templates">
+                <field name="name"/>
+                <field name="applies_to"/>
+                <field name="width_mm"/>
+                <field name="height_mm"/>
+                <field name="paperformat_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_label_template_form" model="ir.ui.view">
+        <field name="name">drkds.label.template.form</field>
+        <field name="model">drkds.label.template</field>
+        <field name="arch" type="xml">
+            <form string="Label Template">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Shelf label 50 x 25"/></h1>
+                    </div>
+                    <group>
+                        <group string="Record">
+                            <field name="applies_to"/>
+                            <field name="model_name" groups="base.group_no_one"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Physical Size">
+                            <label for="width_mm" string="Size (mm)"/>
+                            <div class="o_row">
+                                <field name="width_mm"/> x <field name="height_mm"/>
+                            </div>
+                            <field name="paperformat_id" readonly="1"/>
+                            <field name="show_border"/>
+                        </group>
+                        <group string="Margins (mm)">
+                            <field name="margin_top"/>
+                            <field name="margin_bottom"/>
+                            <field name="margin_left"/>
+                            <field name="margin_right"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Layout" name="layout">
+                            <field name="line_ids">
+                                <list string="Lines" editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="content_type"/>
+                                    <field name="field_path"
+                                           required="content_type in ('field', 'barcode')"/>
+                                    <field name="text" required="content_type == 'text'"/>
+                                    <field name="prefix" optional="hide"/>
+                                    <field name="suffix" optional="hide"/>
+                                    <field name="font_size_pt"/>
+                                    <field name="bold"/>
+                                    <field name="align"/>
+                                    <field name="barcode_symbology"
+                                           invisible="content_type != 'barcode'" optional="show"/>
+                                    <field name="barcode_height_mm"
+                                           invisible="content_type != 'barcode'" optional="show"/>
+                                    <field name="show_barcode_value"
+                                           invisible="content_type != 'barcode'" optional="hide"/>
+                                    <field name="image_height_mm"
+                                           invisible="content_type != 'logo'" optional="hide"/>
+                                    <field name="hide_if_empty" optional="hide"/>
+                                </list>
+                            </field>
+                            <p class="text-muted">
+                                Lines print top to bottom in this order. A field path is read
+                                from the record being printed, for example
+                                <code>name</code>, <code>barcode</code>,
+                                <code>product_id.default_code</code> or
+                                <code>expiration_date</code>.
+                            </p>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_label_template_search" model="ir.ui.view">
+        <field name="name">drkds.label.template.search</field>
+        <field name="model">drkds.label.template</field>
+        <field name="arch" type="xml">
+            <search string="Label Templates">
+                <field name="name"/>
+                <filter name="filter_product" string="Product" domain="[('applies_to', '=', 'product')]"/>
+                <filter name="filter_lot" string="Lot / Serial" domain="[('applies_to', '=', 'lot')]"/>
+                <filter name="filter_inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter name="group_by_applies_to" string="Record Type"
+                        context="{'group_by': 'applies_to'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_label_template" model="ir.actions.act_window">
+        <field name="name">Label Templates</field>
+        <field name="res_model">drkds.label.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Define a label</p>
+            <p>
+                State the physical size of your label stock in millimetres and list
+                what should print on it. The label is produced at exactly that size,
+                so roll stock comes out of a thermal printer correctly.
+            </p>
+        </field>
+    </record>
+</odoo>

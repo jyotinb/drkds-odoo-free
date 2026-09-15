@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        A single report action. Its paper format is decided per label template
+        at render time by ir.actions.report.get_paperformat, so one action can
+        serve every physical size the user defines.
+    -->
+    <record id="action_report_drkds_label" model="ir.actions.report">
+        <field name="name">Label (drkds)</field>
+        <field name="model">drkds.label.template</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">drkds_label_designer_lite.report_drkds_label</field>
+        <field name="report_file">drkds_label_designer_lite.report_drkds_label</field>
+        <field name="print_report_name">'Labels - %s' % (object.name)</field>
+        <field name="binding_model_id" eval="False"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

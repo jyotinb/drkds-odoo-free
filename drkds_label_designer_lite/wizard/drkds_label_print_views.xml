@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_drkds_label_print_form" model="ir.ui.view">
+        <field name="name">drkds.label.print.form</field>
+        <field name="model">drkds.label.print</field>
+        <field name="arch" type="xml">
+            <form string="Print Labels">
+                <group>
+                    <field name="applies_to" invisible="1"/>
+                    <field name="res_model" invisible="1"/>
+                    <field name="res_ids_text" invisible="1"/>
+                    <field name="template_id" options="{'no_create_edit': True}"/>
+                    <field name="quantity"/>
+                    <field name="record_count" string="Records Selected"/>
+                </group>
+                <footer>
+                    <button name="action_print" type="object" string="Print"
+                            class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"
+                            data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_drkds_label_print_product" model="ir.actions.act_window">
+        <field name="name">Print Labels (drkds)</field>
+        <field name="res_model">drkds.label.print</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="product.model_product_product"/>
+        <field name="binding_view_types">list,form</field>
+    </record>
+
+    <record id="action_drkds_label_print_product_template" model="ir.actions.act_window">
+        <field name="name">Print Labels (drkds)</field>
+        <field name="res_model">drkds.label.print</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="product.model_product_template"/>
+        <field name="binding_view_types">list,form</field>
+    </record>
+
+    <record id="action_drkds_label_print_lot" model="ir.actions.act_window">
+        <field name="name">Print Labels (drkds)</field>
+        <field name="res_model">drkds.label.print</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="stock.model_stock_lot"/>
+        <field name="binding_view_types">list,form</field>
+    </record>
+
+    <record id="action_drkds_label_print_package" model="ir.actions.act_window">
+        <field name="name">Print Labels (drkds)</field>
+        <field name="res_model">drkds.label.print</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="stock.model_stock_package"/>
+        <field name="binding_view_types">list,form</field>
+    </record>
+
+    <record id="action_drkds_label_print_picking" model="ir.actions.act_window">
+        <field name="name">Print Labels (drkds)</field>
+        <field name="res_model">drkds.label.print</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list,form</field>
+    </record>
+</odoo>

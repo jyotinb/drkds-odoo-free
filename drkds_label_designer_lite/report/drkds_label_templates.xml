@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_drkds_label_cell">
+        <!-- One line of a label. `cell` comes from drkds.label.template.line._render_cell. -->
+        <div t-att-style="cell['style']">
+            <t t-if="cell['kind'] == 'text'">
+                <span t-out="cell['value']"/>
+            </t>
+            <t t-elif="cell['kind'] == 'image'">
+                <img t-att-src="cell['src']" t-att-style="cell['img_style']" alt=""/>
+            </t>
+            <t t-elif="cell['kind'] == 'barcode'">
+                <div t-out="cell['value']" t-options="cell['options']"/>
+                <div t-if="cell['show_value']" t-out="cell['value']"/>
+            </t>
+        </div>
+    </template>
+
+    <template id="report_drkds_label">
+        <t t-call="web.basic_layout">
+            <div class="o_drkds_labels">
+                <t t-foreach="labels" t-as="label">
+                    <div class="o_drkds_label" t-att-style="page_style + ('page-break-after:always;' if not label_last else '')">
+                        <t t-foreach="label['cells']" t-as="cell">
+                            <t t-call="drkds_label_designer_lite.report_drkds_label_cell"/>
+                        </t>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+</odoo>
