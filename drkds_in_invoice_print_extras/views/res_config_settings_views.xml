@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.form.drkds.in.print.extras</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='invoicing_settings']" position="inside">
+                <setting string="Invoice Declaration"
+                         help="Declaration printed in the footer of the Indian invoice PDF. Clear it to print no declaration.">
+                    <field name="drkds_in_invoice_declaration"
+                           placeholder="We declare that this invoice shows..."/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

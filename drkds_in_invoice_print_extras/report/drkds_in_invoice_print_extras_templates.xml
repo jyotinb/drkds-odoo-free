@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        A state name with its two digit GST state code. The code lives on
+        res.country.state.l10n_in_tin, which the localisation maintains but
+        never prints. Missing code degrades to just the name.
+    -->
+    <template id="state_with_code">
+        <div t-if="state">
+            <t t-out="label"/>:
+            <span t-out="state.name"/><t t-if="state.l10n_in_tin"> (Code <t t-out="state.l10n_in_tin"/>)</t>
+        </div>
+    </template>
+
+    <!-- Place of supply gains its state code. -->
+    <template id="place_of_supply_code" inherit_id="l10n_in.place_of_supply">
+        <xpath expr="//span[@t-out='o.l10n_in_state_id.name']" position="after">
+            <t t-if="o.l10n_in_state_id.l10n_in_tin"> (Code <t t-out="o.l10n_in_state_id.l10n_in_tin"/>)</t>
+        </xpath>
+    </template>
+
+    <!--
+        The extras themselves. Everything is added to the localisation's own
+        invoice document; no second report action and nothing replaced.
+    -->
+    <template id="report_invoice_document_print_extras"
+              inherit_id="l10n_in.l10n_in_report_invoice_document_inherit">
+
+        <!-- Buyer state code, in each of the three address layouts. -->
+        <xpath expr="//div[@name='address_not_same_as_shipping']//t[@t-set='address']" position="inside">
+            <t t-if="o.drkds_in_show_print_extras"
+               t-call="drkds_in_invoice_print_extras.state_with_code">
+                <t t-set="label" t-value="'State'"/>
+                <t t-set="state" t-value="o.partner_id.state_id"/>
+            </t>
+        </xpath>
+        <xpath expr="//div[@name='address_same_as_shipping']//t[@t-set='address']" position="inside">
+            <t t-if="o.drkds_in_show_print_extras"
+               t-call="drkds_in_invoice_print_extras.state_with_code">
+                <t t-set="label" t-value="'State'"/>
+                <t t-set="state" t-value="o.partner_id.state_id"/>
+            </t>
+        </xpath>
+        <xpath expr="//div[@name='no_shipping']//t[@t-set='address']" position="inside">
+            <t t-if="o.drkds_in_show_print_extras"
+               t-call="drkds_in_invoice_print_extras.state_with_code">
+                <t t-set="label" t-value="'State'"/>
+                <t t-set="state" t-value="o.partner_id.state_id"/>
+            </t>
+        </xpath>
+
+        <!-- Shipping state code, next to the shipping GSTIN l10n_in adds. -->
+        <xpath expr="//div[@name='shipping_address_block']" position="inside">
+            <t t-if="o.drkds_in_show_print_extras"
+               t-call="drkds_in_invoice_print_extras.state_with_code">
+                <t t-set="label" t-value="'State'"/>
+                <t t-set="state" t-value="o.partner_shipping_id.state_id"/>
+            </t>
+        </xpath>
+
+        <!-- Supplier state code and the reverse charge marker. -->
+        <xpath expr="//div[@id='informations']" position="after">
+            <div t-if="o.drkds_in_show_print_extras" class="row mb-3" name="drkds_in_supply_info">
+                <div class="col" t-if="o.company_id.state_id" name="drkds_in_supplier_state">
+                    <strong>Supplier State:</strong>
+                    <span t-out="o.company_id.state_id.name"/><t
+                        t-if="o.company_id.state_id.l10n_in_tin"> (Code <t
+                        t-out="o.company_id.state_id.l10n_in_tin"/>)</t>
+                </div>
+                <div class="col" t-if="o.drkds_in_has_reverse_charge" name="drkds_in_reverse_charge">
+                    <strong>Reverse Charge:</strong>
+                    <span>Yes - tax payable by recipient</span>
+                </div>
+            </div>
+        </xpath>
+
+        <!-- Bank details, declaration and signature, below the line table. -->
+        <xpath expr="//div[@name='comment']" position="after">
+            <t t-if="o.drkds_in_show_print_extras">
+                <t t-set="drkds_bank" t-value="o.drkds_in_bank_account()"/>
+                <div class="row mt-3" name="drkds_in_invoice_footer" style="page-break-inside: avoid;">
+                    <div class="col-7">
+                        <div t-if="drkds_bank" name="drkds_in_bank_details" class="mb-3">
+                            <strong>Bank Details</strong>
+                            <div t-if="drkds_bank.partner_id.name">
+                                Account Holder: <span t-out="drkds_bank.partner_id.name"/>
+                            </div>
+                            <div t-if="drkds_bank.acc_number">
+                                Account Number: <span t-out="drkds_bank.acc_number"/>
+                            </div>
+                            <div t-if="drkds_bank.bank_id.bic">
+                                IFSC: <span t-out="drkds_bank.bank_id.bic"/>
+                            </div>
+                            <div t-if="drkds_bank.bank_id.name">
+                                Branch: <span t-out="drkds_bank.bank_id.name"/>
+                            </div>
+                        </div>
+                        <div t-if="o.company_id.drkds_in_invoice_declaration" name="drkds_in_declaration">
+                            <strong>Declaration</strong>
+                            <div t-out="o.company_id.drkds_in_invoice_declaration"/>
+                        </div>
+                    </div>
+                    <div class="col-5 text-center" name="drkds_in_signature">
+                        <div>For <strong t-out="o.company_id.name"/></div>
+                        <div style="height:55px;"/>
+                        <div>Authorised Signatory</div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+
+    </template>
+
+</odoo>

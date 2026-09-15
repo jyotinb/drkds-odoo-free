@@ -1,0 +1,113 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">Indian Invoice Print Extras</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Adds GST state codes, full bank and IFSC details, a declaration, a signature block and a reverse charge marker to the standard Indian invoice PDF</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        Odoo&#x27;s own Indian localisation already produces the GST invoice: the standard invoice PDF is titled Tax Invoice or Bill of Supply as the case requires, carries the HSN/SAC column and the full HSN summary with the CGST/SGST, IGST and Cess split, and shows the place of supply and the GSTINs. This module does not repeat any of that. It fills the small gaps that are left, adding five blocks to that same PDF and changing nothing else.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">GST state codes</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The two digit code sits on the state record and the localisation maintains it, but never prints it. It now appears beside the supplier state, the buyer state, the shipping state and the place of supply.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A proper bank block</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The standard PDF mentions the recipient bank only as a phrase inside the payment terms sentence. You get a labelled block with account holder, account number, IFSC and branch.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A bank fallback</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">If the invoice carries no recipient bank, the company&#x27;s own first bank account is printed rather than leaving the block empty.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A declaration</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The customary declaration sentence, as a company setting with a sensible default. Not present in the standard PDF at all.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A signature block</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">For &lt;company&gt; and Authorised Signatory, with room to sign. Not present in the standard PDF at all.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A reverse charge marker</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The localisation already flags reverse charge on the tax and shows it on the tax form, but never prints it. When any tax on the lines is flagged, the invoice now says so.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center; padding:18px;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Need the full version? The drkds GST suite adds GSTR-1 and GSTR-3B preparation, GSTR-2A reconciliation and TDS with Form 26Q.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>No second report and no extra print menu entry. There is one invoice PDF and this module extends it.</li>
+        <li>No amount, tax computation or total is touched, and the way amounts are spelled in words is left alone.</li>
+        <li>The extras appear only for an Indian, GST registered company, the same condition the localisation uses for its own GST blocks.</li>
+        <li>A state with no GST code, a partner with no state and a bank account with no bank record all degrade gracefully instead of breaking the PDF.</li>
+        <li>This is a print layout module. It makes the standard Indian invoice PDF more complete for everyday use; it is not a GST compliance engine and does not claim to be one.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p style="font-size:14px; color:#7f8c8d; font-style:italic; border-top:1px solid #e0e0e0; padding-top:14px;">
+        This module is a tool to assist with compliance workflows. Responsibility
+        for statutory compliance rests with the user and their tax professional.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>
