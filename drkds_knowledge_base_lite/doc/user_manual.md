@@ -87,7 +87,7 @@ anyone else's. You can bookmark an article you have no permission to edit.
 
 LGPL-3.
 
-The drkds Knowledge Base app adds article versioning with rollback, portal
+The drkds Wiki Articles app adds article versioning with rollback, portal
 sharing and approval workflows.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

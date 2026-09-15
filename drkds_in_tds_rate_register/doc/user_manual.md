@@ -165,5 +165,5 @@ fiscal year setting, and the register's quarters follow it: Q1 is April to June.
 * Nothing here files a return, produces a challan or contacts a government
   portal.
 
-The drkds India accounting app adds Form 26Q preparation, challan tracking and
+The drkds Accounting India app adds Form 26Q preparation, challan tracking and
 GSTR reconciliation.

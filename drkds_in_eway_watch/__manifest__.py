@@ -55,7 +55,7 @@ What it deliberately does not do
 This module is a tool to assist with compliance workflows. Responsibility for
 statutory compliance rests with the user and their tax professional.
 
-The drkds India accounting app adds e-way bill generation through the official
+The drkds Accounting India app adds e-way bill generation through the official
 NIC channel, plus GSTR filing and reconciliation.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

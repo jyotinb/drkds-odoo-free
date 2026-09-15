@@ -57,7 +57,6 @@ Settings > Quotations & Orders**.
 
 LGPL-3.
 
-The drkds suite for Odoo 19 adds deeper sales and compliance workflows,
-including GSTR preparation and an e-invoice flow.
+The drkds Accounting Pro app adds payment approvals, ageing analysis and cash-flow reporting.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

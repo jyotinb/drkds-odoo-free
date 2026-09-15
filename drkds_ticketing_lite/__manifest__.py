@@ -32,7 +32,7 @@ Two groups. A support user works with the tickets of the teams they belong to
 and the tickets assigned to them. A support manager sees and edits everything
 and maintains teams and stages.
 
-The drkds Ticketing app adds service level policies, a customer portal,
+The drkds Support Desk app adds service level policies, a customer portal,
 satisfaction ratings, canned replies and ticket merging.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

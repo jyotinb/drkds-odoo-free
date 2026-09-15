@@ -50,6 +50,8 @@ How it behaves
 This module is a tool to assist with compliance workflows. Responsibility for
 statutory compliance rests with the user and their tax professional.
 
+The drkds Accounting India app adds GSTR-1 and GSTR-3B preparation, GSTR-2A reconciliation, TDS and TCS with Form 26Q and an E-Way Bill register.
+
 Part of the drkds Indian SME suite for Odoo 19 Community.
 """,
     "version": "19.0.1.0.0",

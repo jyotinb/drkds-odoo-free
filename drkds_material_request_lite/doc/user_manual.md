@@ -76,7 +76,7 @@ warehouse and request date. The Kanban view is grouped by status.
 Fulfilling a shortfall by raising a purchase order, multi-step approval chains
 and budget checking are not part of the lite module.
 
-The drkds Material Request app adds purchase fulfilment for shortfalls,
+The drkds Material Requests app adds purchase fulfilment for shortfalls,
 multi-step approvals and budget checks.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

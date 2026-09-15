@@ -46,7 +46,7 @@ The workflow is one step and stays one step. There is no configurable approval
 engine, no purchase fallback for shortfalls and no budget check. Keeping it
 legible is the point of the lite module.
 
-The drkds Material Request app adds purchase fulfilment for shortfalls,
+The drkds Material Requests app adds purchase fulfilment for shortfalls,
 multi-step approvals and budget checks.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

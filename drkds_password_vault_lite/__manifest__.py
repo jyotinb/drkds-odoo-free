@@ -50,7 +50,7 @@ Not in this module
 Sharing entries with colleagues, team vaults, rotation reminders and strength
 auditing are deliberately absent. What is here is a personal vault, complete.
 
-The drkds Password Vault app adds team vaults, controlled sharing, rotation
+The drkds Credential Vault app adds team vaults, controlled sharing, rotation
 reminders and password strength auditing.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

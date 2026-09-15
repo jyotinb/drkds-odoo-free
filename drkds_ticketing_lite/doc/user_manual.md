@@ -79,7 +79,7 @@ Two groups, set on the user form under Support Tickets:
 There is no incoming mail gateway in this edition, so tickets are created in
 the interface or through the API rather than by emailing an alias.
 
-The drkds Ticketing app adds service level policies, a customer portal,
+The drkds Support Desk app adds service level policies, a customer portal,
 satisfaction ratings, canned replies and ticket merging.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

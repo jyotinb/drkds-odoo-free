@@ -69,7 +69,7 @@ Requirements
 This module is a tool to assist with compliance workflows. Responsibility for
 statutory compliance rests with the user and their tax professional.
 
-The drkds India accounting app adds Form 26Q preparation, challan tracking and
+The drkds Accounting India app adds Form 26Q preparation, challan tracking and
 GSTR reconciliation.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

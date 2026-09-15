@@ -69,7 +69,4 @@ Employees > Statutory Payroll > Rates and Slabs.
 This module is a tool to assist with compliance workflows. Responsibility for
 statutory compliance rests with the user and their tax professional.
 
-The drkds payroll suite adds salary structures, payslip generation and
-statutory return working papers built on top of these components.
-
 Part of the drkds Indian SME suite for Odoo 19 Community.

@@ -49,7 +49,7 @@ One approval step, and it stays one step. No configurable approval engine, no
 purchase fallback for shortfalls, no budget check. Keeping it legible is the
 point of the lite module.
 
-The drkds Material Request app adds purchase fulfilment for shortfalls,
+The drkds Material Requests app adds purchase fulfilment for shortfalls,
 multi-step approvals and budget checks.
 
 ## Install

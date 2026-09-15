@@ -54,7 +54,11 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
 
     drkds_in_pan = fields.Char(
-        string="PAN", size=10, index=True, copy=False,
+        # Labelled "PAN Number" rather than "PAN": l10n_in ships its own
+        # l10n_in_pan_entity_id labelled "PAN", and two identically labelled
+        # fields on one form is a genuine usability problem for the many
+        # Indian users who run both modules.
+        string="PAN Number", size=10, index=True, copy=False,
         help="Ten character Permanent Account Number.",
     )
     drkds_in_ifsc = fields.Char(

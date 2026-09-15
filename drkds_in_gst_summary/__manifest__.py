@@ -59,7 +59,7 @@ invented ITC figure is worse than none.
 This module is a tool to assist with compliance workflows. Responsibility for
 statutory compliance rests with the user and their tax professional.
 
-The drkds India accounting app adds GSTR-1 and GSTR-3B preparation and GSTR-2A
+The drkds Accounting India app adds GSTR-1 and GSTR-3B preparation and GSTR-2A
 reconciliation.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

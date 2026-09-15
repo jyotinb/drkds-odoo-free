@@ -40,7 +40,7 @@ Copy the module into your addons path, update the apps list and install
 There is no incoming mail gateway, so tickets are created in the interface or
 through the API.
 
-The drkds Ticketing app adds service level policies, a customer portal,
+The drkds Support Desk app adds service level policies, a customer portal,
 satisfaction ratings, canned replies and ticket merging.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

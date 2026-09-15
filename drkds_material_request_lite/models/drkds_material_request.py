@@ -106,7 +106,9 @@ class DrkdsMaterialRequest(models.Model):
     picking_ids = fields.One2many(
         "stock.picking", string="Transfers", compute="_compute_picking_ids",
     )
-    picking_count = fields.Integer(string="Transfers", compute="_compute_picking_ids")
+    picking_count = fields.Integer(
+        string="Transfer Count", compute="_compute_picking_ids"
+    )
     outstanding_qty = fields.Float(
         string="Outstanding", compute="_compute_outstanding_qty", store=True,
         digits="Product Unit",

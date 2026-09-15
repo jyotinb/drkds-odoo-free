@@ -108,7 +108,7 @@ password or the ciphertext.
 Sharing entries with colleagues, shared team vaults, rotation reminders and
 password strength auditing are deliberately absent.
 
-The drkds Password Vault app adds team vaults, controlled sharing, rotation
+The drkds Credential Vault app adds team vaults, controlled sharing, rotation
 reminders and password strength auditing.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
