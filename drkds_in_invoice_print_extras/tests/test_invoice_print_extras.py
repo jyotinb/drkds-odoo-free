@@ -19,22 +19,6 @@ from odoo.tests import tagged
 REPORT = "account.account_invoices"
 
 
-def _has_renderpm():
-    """Return True when reportlab can actually rasterise a drawing to PNG.
-
-    Building the drawing succeeds even with no backend installed; only
-    ``asString("png")`` reveals the missing rasteriser, so the probe has to go
-    all the way through to the image.
-    """
-    try:
-        from reportlab.graphics.barcode import createBarcodeDrawing
-
-        createBarcodeDrawing("QR", value="probe", width=64, height=64).asString("png")
-    except Exception:
-        return False
-    return True
-
-
 @tagged("post_install", "-at_install")
 class TestInvoicePrintExtras(AccountTestInvoicingCommon):
     @classmethod
@@ -322,19 +306,24 @@ class TestInvoicePrintExtras(AccountTestInvoicingCommon):
         self.assertTrue(move.drkds_in_show_print_extras)
 
     # -- the whole pipeline --------------------------------------------
-    def test_render_to_pdf(self):
-        """The full PDF pipeline produces a PDF document.
+    def test_full_report_pipeline_renders(self):
+        """The whole report renders end to end with a bank account attached.
 
-        Skipped where reportlab has no renderPM backend. The invoice
-        rasterises a QR code, and without ``rlPyCairo`` or ``_rl_renderPM``
-        nothing in Odoo can turn a drawing into an image. That is a missing
-        system package, not a defect in this module, so the test skips rather
-        than reporting a failure it cannot fix.
+        This deliberately does NOT assert a PDF. Odoo short-circuits
+        ``_render_qweb_pdf`` to HTML whenever tests are running, because
+        wkhtmltopdf fetches the report assets over HTTP and a test run has no
+        worker to serve them (see ``ir_actions_report._render_qweb_pdf``).
+        Forcing it with ``force_report_rendering`` makes wkhtmltopdf hang until
+        it times out, so the honest thing to exercise here is the rendering
+        pipeline Odoo actually uses under test.
         """
-        if not _has_renderpm():
-            self.skipTest("reportlab has no renderPM backend on this host")
         account = self._make_bank_account(self.company.partner_id)
         move = self._invoice()
         move.partner_bank_id = account
-        pdf, _rtype = self.env["ir.actions.report"]._render_qweb_pdf(REPORT, move.ids)
-        self.assertTrue(pdf.startswith(b"%PDF"))
+        rendered, rtype = self.env["ir.actions.report"]._render_qweb_pdf(
+            REPORT, move.ids
+        )
+        self.assertEqual(rtype, "html", "Odoo renders HTML while tests run")
+        html = rendered.decode() if isinstance(rendered, bytes) else rendered
+        self.assertIn("IFSC", html, "the bank block should reach the page")
+        self.assertIn("(Code ", html, "a state code should reach the page")
