@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_groups_privilege_material_request" model="res.groups.privilege">
+        <field name="name">Material Request</field>
+        <field name="description">Who may raise a material request and who may approve one.</field>
+        <field name="sequence">20</field>
+        <field name="category_id" ref="base.module_category_supply_chain"/>
+    </record>
+
+    <record id="group_material_request_user" model="res.groups">
+        <field name="name">Requester</field>
+        <field name="sequence">10</field>
+        <field name="privilege_id" ref="res_groups_privilege_material_request"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">May raise material requests and follow their own.</field>
+    </record>
+
+    <record id="group_material_request_approver" model="res.groups">
+        <field name="name">Approver</field>
+        <field name="sequence">20</field>
+        <field name="privilege_id" ref="res_groups_privilege_material_request"/>
+        <field name="implied_ids" eval="[(4, ref('group_material_request_user'))]"/>
+        <field name="comment">May approve or refuse any material request and sees them all.</field>
+    </record>
+
+    <record id="rule_material_request_own" model="ir.rule">
+        <field name="name">Material request: requester sees own</field>
+        <field name="model_id" ref="model_drkds_material_request"/>
+        <field name="domain_force">[('requester_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_material_request_user'))]"/>
+    </record>
+
+    <record id="rule_material_request_all" model="ir.rule">
+        <field name="name">Material request: approver sees all</field>
+        <field name="model_id" ref="model_drkds_material_request"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_material_request_approver'))]"/>
+    </record>
+
+    <record id="rule_material_request_company" model="ir.rule">
+        <field name="name">Material request: multi-company</field>
+        <field name="model_id" ref="model_drkds_material_request"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_material_request_line_own" model="ir.rule">
+        <field name="name">Material request line: requester sees own</field>
+        <field name="model_id" ref="model_drkds_material_request_line"/>
+        <field name="domain_force">[('request_id.requester_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_material_request_user'))]"/>
+    </record>
+
+    <record id="rule_material_request_line_all" model="ir.rule">
+        <field name="name">Material request line: approver sees all</field>
+        <field name="model_id" ref="model_drkds_material_request_line"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_material_request_approver'))]"/>
+    </record>
+
+</odoo>

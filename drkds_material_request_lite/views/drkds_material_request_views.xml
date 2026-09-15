@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_material_request_list" model="ir.ui.view">
+        <field name="name">drkds.material.request.list</field>
+        <field name="model">drkds.material.request</field>
+        <field name="arch" type="xml">
+            <list string="Material Requests" decoration-muted="state in ('cancel', 'refused')"
+                  decoration-info="state == 'submitted'" decoration-success="state == 'done'">
+                <field name="name"/>
+                <field name="requester_id"/>
+                <field name="department_id" optional="show"/>
+                <field name="date_request"/>
+                <field name="date_required" optional="show"/>
+                <field name="warehouse_id" optional="hide"/>
+                <field name="location_dest_id" optional="hide"/>
+                <field name="outstanding_qty" sum="Outstanding" optional="show"/>
+                <field name="approver_id" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'submitted'"
+                       decoration-success="state in ('approved', 'done')"
+                       decoration-danger="state == 'refused'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_material_request_kanban" model="ir.ui.view">
+        <field name="name">drkds.material.request.kanban</field>
+        <field name="model">drkds.material.request</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" group_create="false" quick_create="false">
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_record_top mb-2">
+                            <strong class="o_kanban_record_title"><field name="name"/></strong>
+                        </div>
+                        <div><i class="fa fa-user me-1" title="Requester"/><field name="requester_id"/></div>
+                        <div t-if="record.department_id.raw_value"><i class="fa fa-building-o me-1" title="Department"/><field name="department_id"/></div>
+                        <div><i class="fa fa-calendar me-1" title="Required by"/><field name="date_required"/></div>
+                        <div class="text-muted"><field name="location_dest_id"/></div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_drkds_material_request_form" model="ir.ui.view">
+        <field name="name">drkds.material.request.form</field>
+        <field name="model">drkds.material.request</field>
+        <field name="arch" type="xml">
+            <form string="Material Request">
+                <header>
+                    <button name="action_submit" string="Submit" type="object"
+                            class="oe_highlight" invisible="state not in ('draft', 'refused')"/>
+                    <button name="action_approve" string="Approve" type="object"
+                            class="oe_highlight" invisible="state != 'submitted'"
+                            groups="drkds_material_request_lite.group_material_request_approver"/>
+                    <button name="action_refuse" string="Refuse" type="object"
+                            invisible="state != 'submitted'"
+                            groups="drkds_material_request_lite.group_material_request_approver"/>
+                    <button name="action_create_transfer" string="New Transfer" type="object"
+                            invisible="state != 'approved' or outstanding_qty &lt;= 0"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft" type="object"
+                            invisible="state not in ('submitted', 'refused', 'cancel')"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('done', 'cancel')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_pickings" type="object" class="oe_stat_button"
+                                icon="fa-truck" invisible="picking_count == 0">
+                            <field name="picking_count" widget="statinfo" string="Transfers"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="requester_id" readonly="state != 'draft'"/>
+                            <field name="employee_id" invisible="1"/>
+                            <field name="department_id" readonly="state != 'draft'"/>
+                            <field name="date_request" readonly="state != 'draft'"/>
+                            <field name="date_required" readonly="state in ('done', 'cancel')"/>
+                        </group>
+                        <group>
+                            <field name="warehouse_id" readonly="state != 'draft'"/>
+                            <field name="location_id" readonly="state != 'draft'"
+                                   options="{'no_create': True}"/>
+                            <field name="location_dest_id" readonly="state != 'draft'"
+                                   options="{'no_create': True}"/>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-danger" role="alert" invisible="state != 'refused'">
+                        <strong>Refused.</strong> <field name="refusal_reason" readonly="1" nolabel="1"/>
+                    </div>
+                    <notebook>
+                        <page string="Requested Material" name="lines">
+                            <field name="line_ids" readonly="state in ('approved', 'refused', 'done', 'cancel')">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id"/>
+                                    <field name="name"/>
+                                    <field name="product_qty"/>
+                                    <field name="product_uom_id" options="{'no_create': True}"/>
+                                    <field name="qty_available" readonly="1"
+                                           decoration-danger="qty_available &lt; product_qty"/>
+                                    <field name="qty_fulfilled" readonly="1"/>
+                                    <field name="qty_outstanding" readonly="1"/>
+                                    <field name="company_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Reason" name="reason">
+                            <field name="reason" placeholder="Why is this material needed?"
+                                   readonly="state in ('done', 'cancel')"/>
+                        </page>
+                        <page string="Approval" name="approval">
+                            <group>
+                                <field name="approver_id"/>
+                                <field name="date_approved"/>
+                                <field name="outstanding_qty"/>
+                                <field name="is_fully_fulfilled"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_material_request_search" model="ir.ui.view">
+        <field name="name">drkds.material.request.search</field>
+        <field name="model">drkds.material.request</field>
+        <field name="arch" type="xml">
+            <search string="Material Requests">
+                <field name="name" string="Reference"/>
+                <field name="requester_id"/>
+                <field name="department_id"/>
+                <field name="warehouse_id"/>
+                <field name="line_ids" string="Product" filter_domain="[('line_ids.product_id', 'ilike', self)]"/>
+                <filter name="my_requests" string="My Requests"
+                        domain="[('requester_id', '=', uid)]"/>
+                <filter name="awaiting_approval" string="Awaiting My Approval"
+                        domain="[('state', '=', 'submitted'), ('requester_id', '!=', uid)]"/>
+                <filter name="outstanding" string="Outstanding"
+                        domain="[('state', '=', 'approved'), ('outstanding_qty', '&gt;', 0)]"/>
+                <separator/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <filter name="late" string="Overdue"
+                        domain="[('date_required', '&lt;', context_today().strftime('%Y-%m-%d')), ('state', 'in', ('submitted', 'approved'))]"/>
+                <group name="group_by">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_requester" string="Requester" context="{'group_by': 'requester_id'}"/>
+                    <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
+                    <filter name="group_warehouse" string="Warehouse" context="{'group_by': 'warehouse_id'}"/>
+                    <filter name="group_date" string="Request Date" context="{'group_by': 'date_request'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_material_request" model="ir.actions.act_window">
+        <field name="name">Material Requests</field>
+        <field name="res_model">drkds.material.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_drkds_material_request_search"/>
+        <field name="context">{'search_default_my_requests': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Raise a material request</p>
+            <p>Ask for material from stock, have it approved, and let the
+               approval raise the internal transfer that delivers it.</p>
+        </field>
+    </record>
+
+    <record id="action_drkds_material_request_to_approve" model="ir.actions.act_window">
+        <field name="name">To Approve</field>
+        <field name="res_model">drkds.material.request</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_drkds_material_request_search"/>
+        <field name="context">{'search_default_awaiting_approval': 1}</field>
+    </record>
+
+    <menuitem id="menu_drkds_material_request_root" name="Material Requests"
+              web_icon="drkds_material_request_lite,static/description/icon.png"
+              sequence="85"
+              groups="drkds_material_request_lite.group_material_request_user"/>
+    <menuitem id="menu_drkds_material_request" name="Requests"
+              parent="menu_drkds_material_request_root"
+              action="action_drkds_material_request" sequence="10"/>
+    <menuitem id="menu_drkds_material_request_to_approve" name="To Approve"
+              parent="menu_drkds_material_request_root"
+              action="action_drkds_material_request_to_approve" sequence="20"
+              groups="drkds_material_request_lite.group_material_request_approver"/>
+
+</odoo>

@@ -1,0 +1,102 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">Material Request (Lite)</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Let employees request materials from stock and approve them, on Odoo 19 Community</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        Odoo 19 Community moves goods between locations perfectly well. What it has no document for is the step before that: an employee asking for the material, and somebody deciding whether they get it. Purchase Agreements covers vendor tenders and blanket orders, which is a different question entirely. This module adds the missing internal document, and nothing else.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A numbered request</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Sequence reference, requester, department, request date, required-by date, warehouse, source and destination location, reason and status — on one legible document.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Three quantities, kept apart</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Every line tracks what was asked for, what has actually been delivered and what is still outstanding. The delivered figure is read back from the stock moves, never typed in.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">On hand where it matters</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Each line shows the real quantity available at the request&#x27;s own source location, converted into the line&#x27;s unit of measure, so the approver decides on facts rather than a guess.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Submit, approve, refuse</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">One approver group and one decision. A refusal must carry a reason. The state machine refuses every transition it does not define, and nobody can approve a request they raised themselves.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Fulfilment is a normal transfer</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Approving creates an internal transfer for the outstanding lines and links each move back to its line. Validate it and the request updates itself — the stock side stays entirely standard.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Closes itself</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A partial delivery leaves the request open, and a further transfer can be raised for the remainder. Once every line is delivered in full the request moves to Done on its own.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center; padding:18px;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Need the full version? The drkds Material Request app adds purchase fulfilment for shortfalls, multi-step approvals and budget checks.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>Depends on Inventory and Employees only, both Odoo 19 Community. Nothing from Enterprise.</li>
+        <li>Two groups: a Requester sees only their own requests, an Approver sees them all.</li>
+        <li>List, Kanban by status, form and search views, with My Requests, Awaiting My Approval and Outstanding filters.</li>
+        <li>The approval step is one step and stays one step. There is no configurable approval engine here.</li>
+        <li>No outbound calls of any kind. Everything stays in your database.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>
