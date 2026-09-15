@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sequence_form_drkds_fy" model="ir.ui.view">
+        <field name="name">ir.sequence.form.drkds.fy</field>
+        <field name="model">ir.sequence</field>
+        <field name="inherit_id" ref="base.sequence_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_drkds_open_fy_range_builder"
+                            type="object"
+                            string="Build Financial Year Ranges"
+                            class="btn-secondary"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

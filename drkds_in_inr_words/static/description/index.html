@@ -1,0 +1,92 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">Rupee Amounts in Words (Lakh and Crore)</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Make Odoo&#x27;s amount in words read rupees in lakh and crore, whatever language the user runs</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        Odoo already prints an amount in words. This module does not add that feature — it corrects the scale. Odoo asks num2words for the wording using the interface language of the user, so only someone running the English (IN) language gets lakh and crore. Almost every Indian business runs English (US), and their rupee invoices therefore print &#x27;One Hundred Thousand&#x27; and &#x27;Ten Million&#x27; on a document that goes to a customer and sometimes to a bank. The language a user picked for their menus has nothing to do with the currency being printed. This module keys the scale off the currency instead.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Follows the currency, not the language</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">When the amount is in INR it is read on the Indian scale whatever language the user runs and whatever country the company is in.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Every other currency untouched</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A dollar or euro amount is handed straight back to Odoo&#x27;s own converter, unchanged, switch on or off.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Fixes every place at once</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The correction sits on res.currency.amount_to_text itself, so the invoice total in letters and the amount in words on a printed cheque are both right.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Paise and a closing suffix</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Core&#x27;s sentence is bare. Here the fractional part is read as paise and the sentence closes with &#x27;Only&#x27; — the word that stops a printed figure being extended by hand.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Wording you control</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Connector word, closing suffix, and whether a round figure still says &#x27;and Zero Paise&#x27;. Per company, because banks and departments each insist on their own phrasing.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Tax amount in words</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Indian invoices customarily carry the tax figure in words as well as digits. Odoo has no field for it; this module adds one.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>The invoice PDF layout is not touched. Odoo&#x27;s existing &#x27;Total amount of invoice in letters&#x27; switch still decides whether the sentence prints, and where.</li>
+        <li>No second total-in-words field is added. Odoo&#x27;s amount_total_words is the field, and it now reads correctly.</li>
+        <li>No number-to-words code is written here. num2words is already a hard dependency of Odoo and its en_IN locale is correct; this module points Odoo at it.</li>
+        <li>Depends on Accounting only. Settings are per company, under Accounting &gt; Configuration &gt; Settings.</li>
+        <li>Turn the switch off and Odoo&#x27;s stock behaviour returns exactly, with nothing left behind.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>

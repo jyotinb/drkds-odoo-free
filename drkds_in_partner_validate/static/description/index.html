@@ -2,7 +2,7 @@
   <div class="oe_row oe_spaced">
     <div class="oe_span12">
       <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">India Partner Identifier Validation</h2>
-      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Validate GSTIN, PAN, IFSC and PIN code on contacts, with checksum and state cross-check</h3>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Odoo checks the shape of a GSTIN. This checks the check digit, the state and the PAN.</h3>
     </div>
   </div>
 </section>
@@ -11,7 +11,7 @@
   <div class="oe_row oe_spaced">
     <div class="oe_span12">
       <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
-        Wrong Indian identifiers are caught the moment a contact is saved, so bad data never reaches an invoice, a return working paper or a payment file. Every check runs offline inside your own database.
+        Odoo already refuses a GSTIN of the wrong shape: that structure check is Odoo&#x27;s own, from the standard base_vat module, and it accepts all five real GSTIN forms. What it never does is verify the fifteenth character. This module adds the missing checks - the GSTIN check digit, the state inside the number against the state on the address, and the PAN inside the number against the PAN field - and reads the GSTIN from the standard Tax ID field, exactly where Odoo&#x27;s Indian localisation reads it from. No second GSTIN field, no split data.
       </p>
     </div>
   </div>
@@ -26,38 +26,38 @@
   <div class="oe_row oe_spaced">
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
-        <h4 style="color:#183a5c; margin:0 0 6px 0;">GSTIN with check digit</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Fifteen character structure plus the official check-digit algorithm, so a transposed or invented number is rejected, not merely a malformed one.</p>
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">GSTIN check digit</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The published GSTN algorithm, applied to the ordinary GSTIN form. A transposed or invented number is rejected, not merely a malformed one, and the message names the character that was expected.</p>
       </div>
     </div>
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
-        <h4 style="color:#183a5c; margin:0 0 6px 0;">PAN with holder type</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Five letters, four digits, one letter, including a check on the fourth character that identifies the type of holder.</p>
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Structure stays Odoo&#x27;s</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Pattern validation comes from Odoo&#x27;s own base_vat. All five forms it accepts - normal, composite and casual; UN and ON body; NRI; TDS; TCS - keep working.</p>
       </div>
     </div>
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
-        <h4 style="color:#183a5c; margin:0 0 6px 0;">IFSC and PIN code</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Eleven character IFSC with its reserved zero, and six digit Indian PIN codes that never start with zero.</p>
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">State against the address</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The first two digits of a GSTIN are the state code. If they disagree with the state on the contact&#x27;s address, the save is refused.</p>
       </div>
     </div>
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
-        <h4 style="color:#183a5c; margin:0 0 6px 0;">State cross-check</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The first two digits of a GSTIN are the state code. If they disagree with the state on the address, the save is refused.</p>
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">PAN inside the GSTIN</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Characters three to twelve of a GSTIN are the PAN. If the PAN field disagrees, the save is refused.</p>
       </div>
     </div>
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
-        <h4 style="color:#183a5c; margin:0 0 6px 0;">PAN inside GSTIN</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Characters three to twelve of a GSTIN are the PAN. If both fields are filled and disagree, the save is refused.</p>
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">PAN, IFSC and PIN code</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">PAN structure including the holder-type letter, IFSC with its reserved zero, and six digit Indian PIN codes that never start with zero.</p>
       </div>
     </div>
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">Duplicate notice</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Another contact carrying the same GSTIN raises a visible notice, never a block, because branches of one business legitimately share a PAN.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Another contact carrying the same GSTIN raises a notice, never a block.</p>
       </div>
     </div>
   </div>
@@ -68,11 +68,12 @@
     <div class="oe_span12">
       <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
       <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
-        <li>Input is normalised on save: spaces, dashes, dots and lower case are cleaned up for you.</li>
-        <li>Every identifier is optional. Nothing here forces a contact to carry one.</li>
-        <li>GST state codes are ordinary records, so a new state or union territory is a data change, not a code change.</li>
-        <li>Depends on the base module only. Nothing else is pulled into your database.</li>
-        <li>No outbound network calls of any kind. Every check is computed locally.</li>
+        <li>The GSTIN is the standard Tax ID field. This module adds no competing GSTIN field, so it interoperates with Odoo&#x27;s Indian localisation.</li>
+        <li>The check digit is applied only to the ordinary GSTIN form, a two digit state code followed by a PAN and the letter Z. UN/ON body, NRI, TDS and TCS numbers are accepted on Odoo&#x27;s pattern check alone, because the same convention is not confirmed for them and a wrong refusal is worse than a missed typo.</li>
+        <li>Depends on base_vat only, the same LGPL-3 Community module Odoo&#x27;s Indian localisation builds on.</li>
+        <li>Input is normalised on save, and only when the value looks like a GSTIN, so a foreign tax id is left exactly as typed.</li>
+        <li>Every identifier is optional. Blank always saves.</li>
+        <li>GST state codes are ordinary data records, so a new state or union territory is a one line change.</li>
       </ul>
     </div>
   </div>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_fy_range_builder_form" model="ir.ui.view">
+        <field name="name">drkds.fy.range.builder.form</field>
+        <field name="model">drkds.fy.range.builder</field>
+        <field name="arch" type="xml">
+            <form string="Build Financial Year Ranges">
+                <p class="text-muted">
+                    A financial year token in the prefix only changes how the number
+                    is printed. Creating one date range per financial year is what
+                    makes the counter restart at 1 on the first day of the year.
+                </p>
+                <group>
+                    <group>
+                        <field name="sequence_id" options="{'no_create': True}"/>
+                        <field name="company_id"/>
+                    </group>
+                    <group>
+                        <field name="start_date"/>
+                        <field name="year_count"/>
+                        <field name="preview"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_build" type="object" string="Build Ranges" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_drkds_fy_range_builder" model="ir.actions.act_window">
+        <field name="name">Financial Year Sequence Ranges</field>
+        <field name="res_model">drkds.fy.range.builder</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_drkds_fy_range_builder"
+              name="Financial Year Sequence Ranges"
+              parent="base.menu_custom"
+              action="action_drkds_fy_range_builder"
+              sequence="95"/>
+
+</odoo>

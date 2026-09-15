@@ -1,28 +1,42 @@
 # India Partner Identifier Validation
 
-Validate GSTIN, PAN, IFSC and PIN code on contacts, with GSTIN checksum and
-state cross-check.
+**Odoo already checks the shape of a GSTIN. This module checks the check
+digit, the state against the address, and the PAN against the GSTIN.**
 
-Wrong Indian identifiers are caught at save time, so bad data never reaches an
-invoice, a return working paper or a payment file.
+The GSTIN lives in the standard **Tax ID** (`vat`) field, exactly where Odoo's
+own Indian localisation reads it from. No second GSTIN field is added.
 
-## What it checks
+## Where the structure check comes from
 
-| Identifier | Check |
+Structure validation is Odoo's own, from `base_vat`. Its `check_vat_in` accepts
+the five real GSTIN forms — normal/composite/casual, UN and ON body, NRI, TDS
+and TCS — but it is a pattern test only and never verifies the fifteenth
+character. This module keeps all five forms working and adds the missing check.
+
+## What this module adds
+
+| Check | What it catches |
 |---|---|
-| GSTIN | 15 character structure and the official check-digit algorithm |
-| PAN | Five letters, four digits, one letter, plus the holder-type character |
+| GSTIN check digit | A transposed or invented number that is shaped correctly |
+| GSTIN vs state | First two GSTIN digits disagreeing with the address state |
+| GSTIN vs PAN | Characters three to twelve of the GSTIN disagreeing with the PAN field |
+| PAN | Structure plus the holder-type character in position four |
 | IFSC | Eleven characters with the reserved zero in position five |
 | PIN code | Six digits, never starting with zero, on Indian addresses only |
-| GSTIN vs state | First two GSTIN digits must match the state on the address |
-| GSTIN vs PAN | Characters three to twelve of the GSTIN must equal the PAN |
 
 ## Behaviour
 
-- Input is normalised on save: spaces, dashes, dots and lower case are cleaned.
+- The check digit is applied **only to the ordinary GSTIN form**, a two digit
+  state code followed by a PAN and the letter Z. UN/ON body, NRI, TDS and TCS
+  numbers are accepted on Odoo's own pattern check, because the same
+  check-digit convention is not confirmed for them and wrongly refusing a real
+  registration is worse than missing a typo.
+- Input is normalised on save: spaces, dashes, dots and lower case are cleaned,
+  and only when the value actually looks like a GSTIN, so a foreign tax id is
+  left exactly as typed.
 - Blank is always allowed. No identifier is ever made mandatory.
-- A duplicate GSTIN shows a notice rather than blocking, because branches of one
-  business legitimately share a PAN.
+- A duplicate GSTIN shows a notice rather than blocking, because a number is
+  sometimes re-keyed onto a second record on purpose.
 - GST state codes are ordinary records, so a new state or union territory is a
   data change rather than a code change.
 
@@ -36,7 +50,9 @@ No configuration is needed. The GST state code table is loaded on install.
 
 ## Compatibility
 
-Odoo 19 Community. Depends on `base` only.
+Odoo 19 Community. Depends on `base_vat` only, which is the same LGPL-3
+Community module Odoo's Indian localisation builds on. It coexists with
+`l10n_in`: that module's EDI test GSTIN is never check-digit tested.
 
 ## Disclaimer
 

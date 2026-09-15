@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        The options sit directly under Odoo's own "Total amount of invoice in
+        letters" switch, because that switch is what decides whether the
+        sentence reaches the invoice PDF at all. No report template is
+        inherited by this module: the wording is corrected at its source, in
+        res.currency.amount_to_text, so the printed layout is left alone.
+    -->
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.form.drkds.inr.words</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//setting[@id='total_amount_words']" position="after">
+                <setting id="drkds_inr_words" company_dependent="1"
+                         help="Read rupee amounts in lakh and crore whatever language the user runs">
+                    <field name="drkds_inr_words_enabled"/>
+                    <div class="content-group" invisible="not drkds_inr_words_enabled">
+                        <div class="row mt16">
+                            <label for="drkds_inr_words_connector" class="col-lg-4 o_light_label"/>
+                            <field name="drkds_inr_words_connector" placeholder="and"/>
+                        </div>
+                        <div class="row">
+                            <label for="drkds_inr_words_suffix" class="col-lg-4 o_light_label"/>
+                            <field name="drkds_inr_words_suffix" placeholder="Only"/>
+                        </div>
+                        <div class="row">
+                            <field name="drkds_inr_words_show_zero_paise"/>
+                            <label for="drkds_inr_words_show_zero_paise" class="o_light_label"/>
+                        </div>
+                    </div>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
