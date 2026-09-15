@@ -23,6 +23,7 @@ as a trial of something else.
 | [`drkds_in_fy_sequence`](drkds_in_fy_sequence/)<br>**Indian Financial Year Numbering** | Number invoices as INV/2026-27/0001 and reset the counter every 1 April | `base` |
 | [`drkds_in_gst_summary`](drkds_in_gst_summary/)<br>**GST Outward and Inward Summary (India)** | A period GST summary by rate, by state and by HSN, for checking before you file | `l10n_in` |
 | [`drkds_in_inr_words`](drkds_in_inr_words/)<br>**Rupee Amounts in Words (Lakh and Crore)** | Make Odoo's amount in words read rupees in lakh and crore, whatever language the user runs | `account` |
+| [`drkds_in_invoice_print_extras`](drkds_in_invoice_print_extras/)<br>**Indian Invoice Print Extras** | Adds GST state codes, full bank and IFSC details, a declaration, a signature block and a reverse charge marker to the standard Indian invoice PDF | `l10n_in` |
 | [`drkds_in_msme_vendor`](drkds_in_msme_vendor/)<br>**MSME Vendor Payment Tracking (India)** | Flag micro and small vendors, watch the 45 day payment clock and list what is overdue | `account` |
 | [`drkds_in_partner_validate`](drkds_in_partner_validate/)<br>**India Partner Identifier Validation** | GSTIN check digit, state and PAN cross-checks on contacts, beyond the structure check Odoo already does | `base_vat` |
 | [`drkds_in_payroll_components`](drkds_in_payroll_components/)<br>**Indian Payroll Components (PF, ESI, Professional Tax)** | Statutory Indian payroll contributions on employee contracts, with a monthly computation sheet | `hr` |
@@ -37,6 +38,7 @@ as a trial of something else.
 | [`drkds_branch_lite`](drkds_branch_lite/)<br>**Branches (Lite)** | Tag sales, invoices and contacts with a branch and report by it, inside one company | `sale, account` |
 | [`drkds_budget_lite`](drkds_budget_lite/)<br>**Account Budgets (Lite)** | Set a budget per account and period, then track committed and actual spend against it | `account` |
 | [`drkds_knowledge_base_lite`](drkds_knowledge_base_lite/)<br>**Knowledge Base (Lite)** | Internal articles in a section tree, with rich text, tags and search, on Odoo 19 Community | `mail` |
+| [`drkds_label_designer_lite`](drkds_label_designer_lite/)<br>**Label Designer Lite** | Print product, lot, package and transfer labels at a custom physical size,  | `stock` |
 | [`drkds_material_request_lite`](drkds_material_request_lite/)<br>**Material Request (Lite)** | Let employees request materials from stock and approve them, on Odoo 19 Community | `stock, hr` |
 | [`drkds_password_vault_lite`](drkds_password_vault_lite/)<br>**Password Vault (Lite)** | A personal encrypted vault for credentials, inside your own Odoo database | `base` |
 | [`drkds_proforma_invoice`](drkds_proforma_invoice/)<br>**Proforma Invoice** | Issue a numbered proforma invoice from a quotation or a draft invoice, without touching your accounts | `sale` |
