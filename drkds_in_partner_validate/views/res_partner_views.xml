@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_drkds_in" model="ir.ui.view">
+        <field name="name">res.partner.form.drkds.in.identifiers</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="drkds_in_gstin" placeholder="27ABCDE1234F1Z5"/>
+                <field name="drkds_in_pan" placeholder="ABCDE1234F"/>
+                <field name="drkds_in_ifsc" placeholder="HDFC0001234"/>
+                <field name="drkds_in_state_code_id" invisible="not drkds_in_gstin"/>
+                <field name="drkds_in_gstin_warning" readonly="1"
+                       invisible="not drkds_in_gstin_warning"
+                       decoration-warning="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_filter_drkds_in" model="ir.ui.view">
+        <field name="name">res.partner.search.drkds.in.identifiers</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <field name="phone" position="after">
+                <field name="drkds_in_gstin" string="GSTIN"/>
+                <field name="drkds_in_pan" string="PAN"/>
+            </field>
+            <filter name="type_company" position="after">
+                <separator/>
+                <filter name="drkds_in_no_gstin" string="Without GSTIN"
+                        domain="[('drkds_in_gstin', '=', False)]"/>
+            </filter>
+            <group name="group_by" position="inside">
+                <filter name="drkds_in_group_state_code" string="GST State"
+                        context="{'group_by': 'drkds_in_state_code_id'}"/>
+            </group>
+        </field>
+    </record>
+
+</odoo>

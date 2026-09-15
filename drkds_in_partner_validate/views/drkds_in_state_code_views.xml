@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_in_state_code_list" model="ir.ui.view">
+        <field name="name">drkds.in.state.code.list</field>
+        <field name="model">drkds.in.state.code</field>
+        <field name="arch" type="xml">
+            <list string="GST State Codes" editable="bottom">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="state_id"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_in_state_code_search" model="ir.ui.view">
+        <field name="name">drkds.in.state.code.search</field>
+        <field name="model">drkds.in.state.code</field>
+        <field name="arch" type="xml">
+            <search string="GST State Codes">
+                <field name="code"/>
+                <field name="name"/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_in_state_code" model="ir.actions.act_window">
+        <field name="name">GST State Codes</field>
+        <field name="res_model">drkds.in.state.code</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add a GST state code</p>
+            <p>
+                The first two digits of a GSTIN identify the state of registration.
+                Linking a code to an Odoo state lets a contact's GSTIN be checked
+                against the state on its address.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_drkds_in_state_code"
+              name="GST State Codes"
+              parent="base.menu_custom"
+              action="action_drkds_in_state_code"
+              sequence="90"/>
+
+</odoo>

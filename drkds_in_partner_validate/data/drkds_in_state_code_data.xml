@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!--
+        GST state codes: the first two digits of every GSTIN.
+        Codes 25 (Daman and Diu) and 28 (undivided Andhra Pradesh) are not
+        listed because they were withdrawn when those territories merged.
+        Ladakh and Other Territory have no matching res.country.state in
+        Odoo base, so they carry no link and are simply not cross-checked.
+    -->
+
+    <record id="state_code_01" model="drkds.in.state.code">
+        <field name="code">01</field>
+        <field name="name">Jammu and Kashmir</field>
+        <field name="state_id" ref="base.state_in_jk"/>
+    </record>
+    <record id="state_code_02" model="drkds.in.state.code">
+        <field name="code">02</field>
+        <field name="name">Himachal Pradesh</field>
+        <field name="state_id" ref="base.state_in_hp"/>
+    </record>
+    <record id="state_code_03" model="drkds.in.state.code">
+        <field name="code">03</field>
+        <field name="name">Punjab</field>
+        <field name="state_id" ref="base.state_in_pb"/>
+    </record>
+    <record id="state_code_04" model="drkds.in.state.code">
+        <field name="code">04</field>
+        <field name="name">Chandigarh</field>
+        <field name="state_id" ref="base.state_in_ch"/>
+    </record>
+    <record id="state_code_05" model="drkds.in.state.code">
+        <field name="code">05</field>
+        <field name="name">Uttarakhand</field>
+        <field name="state_id" ref="base.state_in_uk"/>
+    </record>
+    <record id="state_code_06" model="drkds.in.state.code">
+        <field name="code">06</field>
+        <field name="name">Haryana</field>
+        <field name="state_id" ref="base.state_in_hr"/>
+    </record>
+    <record id="state_code_07" model="drkds.in.state.code">
+        <field name="code">07</field>
+        <field name="name">Delhi</field>
+        <field name="state_id" ref="base.state_in_dl"/>
+    </record>
+    <record id="state_code_08" model="drkds.in.state.code">
+        <field name="code">08</field>
+        <field name="name">Rajasthan</field>
+        <field name="state_id" ref="base.state_in_rj"/>
+    </record>
+    <record id="state_code_09" model="drkds.in.state.code">
+        <field name="code">09</field>
+        <field name="name">Uttar Pradesh</field>
+        <field name="state_id" ref="base.state_in_up"/>
+    </record>
+    <record id="state_code_10" model="drkds.in.state.code">
+        <field name="code">10</field>
+        <field name="name">Bihar</field>
+        <field name="state_id" ref="base.state_in_br"/>
+    </record>
+    <record id="state_code_11" model="drkds.in.state.code">
+        <field name="code">11</field>
+        <field name="name">Sikkim</field>
+        <field name="state_id" ref="base.state_in_sk"/>
+    </record>
+    <record id="state_code_12" model="drkds.in.state.code">
+        <field name="code">12</field>
+        <field name="name">Arunachal Pradesh</field>
+        <field name="state_id" ref="base.state_in_ar"/>
+    </record>
+    <record id="state_code_13" model="drkds.in.state.code">
+        <field name="code">13</field>
+        <field name="name">Nagaland</field>
+        <field name="state_id" ref="base.state_in_nl"/>
+    </record>
+    <record id="state_code_14" model="drkds.in.state.code">
+        <field name="code">14</field>
+        <field name="name">Manipur</field>
+        <field name="state_id" ref="base.state_in_mn"/>
+    </record>
+    <record id="state_code_15" model="drkds.in.state.code">
+        <field name="code">15</field>
+        <field name="name">Mizoram</field>
+        <field name="state_id" ref="base.state_in_mz"/>
+    </record>
+    <record id="state_code_16" model="drkds.in.state.code">
+        <field name="code">16</field>
+        <field name="name">Tripura</field>
+        <field name="state_id" ref="base.state_in_tr"/>
+    </record>
+    <record id="state_code_17" model="drkds.in.state.code">
+        <field name="code">17</field>
+        <field name="name">Meghalaya</field>
+        <field name="state_id" ref="base.state_in_ml"/>
+    </record>
+    <record id="state_code_18" model="drkds.in.state.code">
+        <field name="code">18</field>
+        <field name="name">Assam</field>
+        <field name="state_id" ref="base.state_in_as"/>
+    </record>
+    <record id="state_code_19" model="drkds.in.state.code">
+        <field name="code">19</field>
+        <field name="name">West Bengal</field>
+        <field name="state_id" ref="base.state_in_wb"/>
+    </record>
+    <record id="state_code_20" model="drkds.in.state.code">
+        <field name="code">20</field>
+        <field name="name">Jharkhand</field>
+        <field name="state_id" ref="base.state_in_jh"/>
+    </record>
+    <record id="state_code_21" model="drkds.in.state.code">
+        <field name="code">21</field>
+        <field name="name">Odisha</field>
+        <field name="state_id" ref="base.state_in_or"/>
+    </record>
+    <record id="state_code_22" model="drkds.in.state.code">
+        <field name="code">22</field>
+        <field name="name">Chhattisgarh</field>
+        <field name="state_id" ref="base.state_in_cg"/>
+    </record>
+    <record id="state_code_23" model="drkds.in.state.code">
+        <field name="code">23</field>
+        <field name="name">Madhya Pradesh</field>
+        <field name="state_id" ref="base.state_in_mp"/>
+    </record>
+    <record id="state_code_24" model="drkds.in.state.code">
+        <field name="code">24</field>
+        <field name="name">Gujarat</field>
+        <field name="state_id" ref="base.state_in_gj"/>
+    </record>
+    <record id="state_code_26" model="drkds.in.state.code">
+        <field name="code">26</field>
+        <field name="name">Dadra and Nagar Haveli and Daman and Diu</field>
+        <field name="state_id" ref="base.state_in_dn"/>
+    </record>
+    <record id="state_code_27" model="drkds.in.state.code">
+        <field name="code">27</field>
+        <field name="name">Maharashtra</field>
+        <field name="state_id" ref="base.state_in_mh"/>
+    </record>
+    <record id="state_code_29" model="drkds.in.state.code">
+        <field name="code">29</field>
+        <field name="name">Karnataka</field>
+        <field name="state_id" ref="base.state_in_ka"/>
+    </record>
+    <record id="state_code_30" model="drkds.in.state.code">
+        <field name="code">30</field>
+        <field name="name">Goa</field>
+        <field name="state_id" ref="base.state_in_ga"/>
+    </record>
+    <record id="state_code_31" model="drkds.in.state.code">
+        <field name="code">31</field>
+        <field name="name">Lakshadweep</field>
+        <field name="state_id" ref="base.state_in_ld"/>
+    </record>
+    <record id="state_code_32" model="drkds.in.state.code">
+        <field name="code">32</field>
+        <field name="name">Kerala</field>
+        <field name="state_id" ref="base.state_in_kl"/>
+    </record>
+    <record id="state_code_33" model="drkds.in.state.code">
+        <field name="code">33</field>
+        <field name="name">Tamil Nadu</field>
+        <field name="state_id" ref="base.state_in_tn"/>
+    </record>
+    <record id="state_code_34" model="drkds.in.state.code">
+        <field name="code">34</field>
+        <field name="name">Puducherry</field>
+        <field name="state_id" ref="base.state_in_py"/>
+    </record>
+    <record id="state_code_35" model="drkds.in.state.code">
+        <field name="code">35</field>
+        <field name="name">Andaman and Nicobar Islands</field>
+        <field name="state_id" ref="base.state_in_an"/>
+    </record>
+    <record id="state_code_36" model="drkds.in.state.code">
+        <field name="code">36</field>
+        <field name="name">Telangana</field>
+        <field name="state_id" ref="base.state_in_ts"/>
+    </record>
+    <record id="state_code_37" model="drkds.in.state.code">
+        <field name="code">37</field>
+        <field name="name">Andhra Pradesh</field>
+        <field name="state_id" ref="base.state_in_ap"/>
+    </record>
+    <record id="state_code_38" model="drkds.in.state.code">
+        <field name="code">38</field>
+        <field name="name">Ladakh</field>
+    </record>
+    <record id="state_code_97" model="drkds.in.state.code">
+        <field name="code">97</field>
+        <field name="name">Other Territory</field>
+    </record>
+
+</odoo>

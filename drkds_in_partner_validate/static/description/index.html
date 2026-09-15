@@ -1,0 +1,103 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">India Partner Identifier Validation</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Validate GSTIN, PAN, IFSC and PIN code on contacts, with checksum and state cross-check</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        Wrong Indian identifiers are caught the moment a contact is saved, so bad data never reaches an invoice, a return working paper or a payment file. Every check runs offline inside your own database.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">GSTIN with check digit</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Fifteen character structure plus the official check-digit algorithm, so a transposed or invented number is rejected, not merely a malformed one.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">PAN with holder type</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Five letters, four digits, one letter, including a check on the fourth character that identifies the type of holder.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">IFSC and PIN code</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Eleven character IFSC with its reserved zero, and six digit Indian PIN codes that never start with zero.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">State cross-check</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The first two digits of a GSTIN are the state code. If they disagree with the state on the address, the save is refused.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">PAN inside GSTIN</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Characters three to twelve of a GSTIN are the PAN. If both fields are filled and disagree, the save is refused.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Duplicate notice</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Another contact carrying the same GSTIN raises a visible notice, never a block, because branches of one business legitimately share a PAN.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>Input is normalised on save: spaces, dashes, dots and lower case are cleaned up for you.</li>
+        <li>Every identifier is optional. Nothing here forces a contact to carry one.</li>
+        <li>GST state codes are ordinary records, so a new state or union territory is a data change, not a code change.</li>
+        <li>Depends on the base module only. Nothing else is pulled into your database.</li>
+        <li>No outbound network calls of any kind. Every check is computed locally.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p style="font-size:14px; color:#7f8c8d; font-style:italic; border-top:1px solid #e0e0e0; padding-top:14px;">
+        This module is a tool to assist with compliance workflows. Responsibility
+        for statutory compliance rests with the user and their tax professional.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>
