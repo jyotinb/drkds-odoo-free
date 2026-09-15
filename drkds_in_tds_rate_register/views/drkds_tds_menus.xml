@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_drkds_tds_register"
+              name="TDS Deduction Register"
+              parent="account.menu_finance_reports"
+              action="action_drkds_tds_register"
+              groups="account.group_account_invoice"
+              sequence="95"/>
+
+    <menuitem id="menu_drkds_tds_ytd"
+              name="TDS Year to Date"
+              parent="account.menu_finance_reports"
+              action="action_drkds_tds_ytd"
+              groups="account.group_account_invoice"
+              sequence="96"/>
+
+    <menuitem id="menu_drkds_tds_rate_map"
+              name="TDS Section Rates"
+              parent="account.account_account_menu"
+              action="action_drkds_tds_rate_map"
+              groups="account.group_account_manager"
+              sequence="95"/>
+
+</odoo>

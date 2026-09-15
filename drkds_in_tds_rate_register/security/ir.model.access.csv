@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_drkds_tds_rate_map_user,drkds.tds.rate.map user,model_drkds_tds_rate_map,account.group_account_invoice,1,0,0,0
+access_drkds_tds_rate_map_manager,drkds.tds.rate.map manager,model_drkds_tds_rate_map,account.group_account_manager,1,1,1,1
+access_drkds_tds_register_user,drkds.tds.register user,model_drkds_tds_register,account.group_account_invoice,1,0,0,0
+access_drkds_tds_ytd_user,drkds.tds.ytd user,model_drkds_tds_ytd,account.group_account_invoice,1,0,0,0

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_tds_register_list" model="ir.ui.view">
+        <field name="name">drkds.tds.register.list</field>
+        <field name="model">drkds.tds.register</field>
+        <field name="arch" type="xml">
+            <list string="TDS Deduction Register" create="false" edit="false">
+                <field name="date"/>
+                <field name="partner_id"/>
+                <field name="pan" optional="show"/>
+                <field name="section_id"/>
+                <field name="base_amount" sum="Base"/>
+                <field name="rate"/>
+                <field name="tds_amount" sum="TDS"/>
+                <field name="move_id" optional="show"/>
+                <field name="withhold_move_id" optional="hide"/>
+                <field name="payment_id" optional="hide"/>
+                <field name="tax_id" optional="hide"/>
+                <field name="no_pan" optional="hide"/>
+                <field name="quarter" optional="hide"/>
+                <field name="financial_year" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'posted'"
+                       decoration-info="state == 'draft'"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_tds_register_search" model="ir.ui.view">
+        <field name="name">drkds.tds.register.search</field>
+        <field name="model">drkds.tds.register</field>
+        <field name="arch" type="xml">
+            <search string="TDS Deduction Register">
+                <field name="partner_id"/>
+                <field name="section_id"/>
+                <field name="pan"/>
+                <field name="move_id"/>
+                <field name="financial_year"/>
+                <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
+                <filter name="no_pan" string="Vendor without PAN" domain="[('no_pan', '=', True)]"/>
+                <separator/>
+                <filter name="q1" string="Q1 (Apr-Jun)" domain="[('quarter', '=', 'Q1')]"/>
+                <filter name="q2" string="Q2 (Jul-Sep)" domain="[('quarter', '=', 'Q2')]"/>
+                <filter name="q3" string="Q3 (Oct-Dec)" domain="[('quarter', '=', 'Q3')]"/>
+                <filter name="q4" string="Q4 (Jan-Mar)" domain="[('quarter', '=', 'Q4')]"/>
+                <group name="group_by">
+                    <filter name="group_section" string="Section" context="{'group_by': 'section_id'}"/>
+                    <filter name="group_partner" string="Vendor" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_quarter" string="Quarter" context="{'group_by': 'quarter'}"/>
+                    <filter name="group_year" string="Financial Year" context="{'group_by': 'financial_year'}"/>
+                    <filter name="group_date" string="Deduction Month" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_tds_register" model="ir.actions.act_window">
+        <field name="name">TDS Deduction Register</field>
+        <field name="res_model">drkds.tds.register</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_posted': 1, 'search_default_group_section': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No deduction recorded yet</p>
+            <p>
+                Every TDS entry the Indian localisation posts appears here as one
+                row: vendor, PAN, section, base, rate, amount and the bill it came
+                off. Group by section or quarter, then use the list export for the
+                Form 26Q working paper.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,113 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">India TDS: Automatic Rate and Deduction Register</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Picks the right TDS rate from the vendor&#x27;s PAN status and gives you a line level deduction register</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        This is an add-on to the TDS support already built into Odoo, not a replacement for it. The Indian localisation shipped with Odoo Community provides the TDS sections and their thresholds, the rate taxes for each section, the threshold alert on a vendor bill and the withholding entry itself. This module fills the gap it leaves: it chooses the rate for you from the vendor&#x27;s PAN situation, and it gives you the line level register and running yearly total that the tax report does not.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">The rate is chosen for you</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Odoo&#x27;s TDS wizard guesses the rate from the last withhold posted for the same PAN, account and section, and where the vendor has no PAN it prints a sentence asking you to remember the higher rate. Map a section once to its normal rate and its rate without PAN, and the wizard selects the right one by itself, section 206AA included.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Your explicit choices are respected</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A PAN entity marked for lower deduction gets the lower rate you set up, or nothing at all if you set none, rather than being quietly charged the normal rate over a section 197 certificate. A PAN entity marked for no deduction is left alone entirely.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Odoo&#x27;s own guess is left alone</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">For an unremarkable vendor whose section the localisation already recognises from an earlier withhold, its answer stands. The rate stays editable in the wizard, so you always have the last word, and a line of text says why the rate was proposed.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A deduction register</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">One row per deduction: vendor, PAN, section, base, rate, amount, bill and date. Filter and group by section, vendor, quarter and financial year, then use the standard list export to XLSX or CSV. This is the working paper Form 26Q preparation is built from.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A year to date view</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">What each vendor has been billed under each section since 1 April, against the section&#x27;s annual threshold, beside what has actually been deducted. Odoo works this figure out privately, one bill at a time, to decide whether to warn you; here you can open it and act on it before the quarter closes.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Nothing of its own to reconcile</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Both reports are database views over the localisation&#x27;s own records. Correct a withhold and the register follows. No section, no threshold and no rate is duplicated anywhere in this module.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center; padding:18px;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Need the full version? The drkds India accounting app adds Form 26Q preparation, challan tracking and GSTR reconciliation.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>Requires the Indian localisation, l10n_in, which ships with Odoo Community, and the TDS feature switched on for the company in Accounting settings.</li>
+        <li>Requires the Indian chart of accounts. The TDS rate taxes are part of that chart template, so on any other chart of accounts those taxes do not exist, there is nothing for the rate map to point at, and this module has nothing to do. Check this before installing.</li>
+        <li>A section has to be set on the expense accounts you want tracked. That is how the localisation decides a bill is in scope, and this module does not change it.</li>
+        <li>The register and the year to date view use the statutory April to March year, and the quarters follow it: Q1 is April to June.</li>
+        <li>No government portal is contacted, nothing is filed and no data leaves the database.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p style="font-size:14px; color:#7f8c8d; font-style:italic; border-top:1px solid #e0e0e0; padding-top:14px;">
+        This module is a tool to assist with compliance workflows. Responsibility
+        for statutory compliance rests with the user and their tax professional.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>

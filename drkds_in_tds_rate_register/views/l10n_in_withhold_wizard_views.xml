@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_withhold_wizard_drkds_rate" model="ir.ui.view">
+        <field name="name">l10n_in.withhold.wizard.form.drkds.rate</field>
+        <field name="model">l10n_in.withhold.wizard</field>
+        <field name="inherit_id" ref="l10n_in.tds_entry_view_form"/>
+        <field name="arch" type="xml">
+            <field name="tax_id" position="after">
+                <field name="drkds_rate_reason" invisible="not drkds_rate_reason" readonly="1"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
