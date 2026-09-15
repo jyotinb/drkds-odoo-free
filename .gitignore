@@ -8,3 +8,6 @@ __pycache__/
 
 # Dropped: duplicates core res.lang Indian Grouping. See CLAUDE.md F10.
 drkds_in_lakh_crore/
+
+# Dropped: core ships base.grant_menu_access (Settings > Technical > Menu Items).
+drkds_menu_visibility_lite/
