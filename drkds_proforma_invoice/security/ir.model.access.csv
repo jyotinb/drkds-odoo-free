@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_drkds_proforma_invoice_user,drkds.proforma.invoice sales user,model_drkds_proforma_invoice,sales_team.group_sale_salesman,1,1,1,1
+access_drkds_proforma_invoice_manager,drkds.proforma.invoice sales manager,model_drkds_proforma_invoice,sales_team.group_sale_manager,1,1,1,1
+access_drkds_proforma_invoice_account,drkds.proforma.invoice accountant,model_drkds_proforma_invoice,account.group_account_invoice,1,1,1,1
+access_drkds_proforma_invoice_portal,drkds.proforma.invoice portal,model_drkds_proforma_invoice,base.group_portal,1,0,0,0
+access_drkds_proforma_invoice_line_user,drkds.proforma.invoice.line sales user,model_drkds_proforma_invoice_line,sales_team.group_sale_salesman,1,1,1,1
+access_drkds_proforma_invoice_line_manager,drkds.proforma.invoice.line sales manager,model_drkds_proforma_invoice_line,sales_team.group_sale_manager,1,1,1,1
+access_drkds_proforma_invoice_line_account,drkds.proforma.invoice.line accountant,model_drkds_proforma_invoice_line,account.group_account_invoice,1,1,1,1
+access_drkds_proforma_invoice_line_portal,drkds.proforma.invoice.line portal,model_drkds_proforma_invoice_line,base.group_portal,1,0,0,0

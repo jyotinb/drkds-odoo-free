@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_asset_list" model="ir.ui.view">
+        <field name="name">drkds.asset.list</field>
+        <field name="model">drkds.asset</field>
+        <field name="arch" type="xml">
+            <list string="Fixed Assets">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="purchase_date"/>
+                <field name="custodian_id" optional="show"/>
+                <field name="location" optional="hide"/>
+                <field name="purchase_value" sum="Purchase Value"/>
+                <field name="salvage_value" optional="hide"/>
+                <field name="value_residual" sum="Written Down Value"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'running'"
+                       decoration-muted="state in ('disposed', 'scrapped')"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_asset_form" model="ir.ui.view">
+        <field name="name">drkds.asset.form</field>
+        <field name="model">drkds.asset</field>
+        <field name="arch" type="xml">
+            <form string="Fixed Asset">
+                <header>
+                    <button name="action_confirm" type="object" string="Put Into Service"
+                            class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_open_disposal_wizard" type="object" string="Dispose"
+                            invisible="state != 'running'"/>
+                    <button name="action_recompute_schedule" type="object" string="Recompute Schedule"
+                            invisible="state == 'draft'"/>
+                    <button name="action_set_draft" type="object" string="Reset to Draft"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,running"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <span class="o_form_label">Asset</span>
+                        <h1><field name="name" placeholder="e.g. Delivery Van"/></h1>
+                        <h3><field name="code" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group string="Acquisition">
+                            <field name="category_id"/>
+                            <field name="purchase_date"/>
+                            <field name="purchase_value"/>
+                            <field name="salvage_value"/>
+                            <field name="supplier_id"/>
+                            <field name="invoice_reference"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Depreciation">
+                            <label for="useful_life_value"/>
+                            <div class="o_row">
+                                <field name="useful_life_value"/>
+                                <field name="useful_life_unit"/>
+                            </div>
+                            <field name="period_type"/>
+                            <field name="depreciation_start_date"/>
+                            <field name="depreciation_end_date"/>
+                            <field name="depreciation_total"/>
+                            <field name="value_residual"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Custody">
+                            <field name="custodian_id"/>
+                            <field name="location"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Disposal" invisible="state not in ('disposed', 'scrapped')">
+                            <field name="disposal_date"/>
+                            <field name="disposal_proceeds"/>
+                            <field name="disposal_gain"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Depreciation Schedule" name="schedule">
+                            <field name="depreciation_line_ids" readonly="1">
+                                <list string="Depreciation Schedule" create="false" delete="false" edit="false">
+                                    <field name="sequence" string="#"/>
+                                    <field name="name" string="Period"/>
+                                    <field name="date_from" optional="hide"/>
+                                    <field name="date_to" optional="hide"/>
+                                    <field name="opening_value"/>
+                                    <field name="depreciation" sum="Total"/>
+                                    <field name="accumulated_depreciation"/>
+                                    <field name="closing_value"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <p class="text-muted mt-2">
+                                This schedule is informational. Nothing here is posted to your
+                                accounts; the depreciation entry remains a manual journal entry.
+                            </p>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_asset_search" model="ir.ui.view">
+        <field name="name">drkds.asset.search</field>
+        <field name="model">drkds.asset</field>
+        <field name="arch" type="xml">
+            <search string="Fixed Assets">
+                <field name="name" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"
+                       string="Asset"/>
+                <field name="category_id"/>
+                <field name="custodian_id"/>
+                <field name="supplier_id"/>
+                <field name="location"/>
+                <filter name="state_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="state_running" string="In Service" domain="[('state', '=', 'running')]"/>
+                <filter name="state_disposed" string="Disposed" domain="[('state', '=', 'disposed')]"/>
+                <filter name="state_scrapped" string="Scrapped" domain="[('state', '=', 'scrapped')]"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_category" string="Category" context="{'group_by': 'category_id'}"/>
+                    <filter name="group_custodian" string="Custodian" context="{'group_by': 'custodian_id'}"/>
+                    <filter name="group_purchase_date" string="Purchase Date" context="{'group_by': 'purchase_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_asset" model="ir.actions.act_window">
+        <field name="name">Fixed Assets</field>
+        <field name="res_model">drkds.asset</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_drkds_asset_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Record your first fixed asset</p>
+            <p>
+                Enter what you paid, what you expect it to be worth at the end, and how
+                long you expect to use it. The straight line schedule is built for you.
+            </p>
+        </field>
+    </record>
+
+</odoo>

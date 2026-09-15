@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_asset_category_list" model="ir.ui.view">
+        <field name="name">drkds.asset.category.list</field>
+        <field name="model">drkds.asset.category</field>
+        <field name="arch" type="xml">
+            <list string="Asset Categories">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="method"/>
+                <field name="period_type"/>
+                <field name="useful_life_value"/>
+                <field name="useful_life_unit"/>
+                <field name="salvage_percent"/>
+                <field name="asset_count" string="Assets"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_asset_category_form" model="ir.ui.view">
+        <field name="name">drkds.asset.category.form</field>
+        <field name="model">drkds.asset.category</field>
+        <field name="arch" type="xml">
+            <form string="Asset Category">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_assets" type="object" class="oe_stat_button" icon="fa-cubes">
+                            <field name="asset_count" widget="statinfo" string="Assets"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Office Equipment"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identification">
+                            <field name="code"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Depreciation Defaults">
+                            <field name="method"/>
+                            <field name="period_type"/>
+                            <label for="useful_life_value"/>
+                            <div class="o_row">
+                                <field name="useful_life_value"/>
+                                <field name="useful_life_unit"/>
+                            </div>
+                            <field name="salvage_percent"/>
+                        </group>
+                    </group>
+                    <p class="text-muted">
+                        These figures only propose values on a new asset. Editing a category
+                        never rewrites a schedule that has already been entered.
+                    </p>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_asset_category_search" model="ir.ui.view">
+        <field name="name">drkds.asset.category.search</field>
+        <field name="model">drkds.asset.category</field>
+        <field name="arch" type="xml">
+            <search string="Asset Categories">
+                <field name="name"/>
+                <field name="code"/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_period" string="Period" context="{'group_by': 'period_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_asset_category" model="ir.actions.act_window">
+        <field name="name">Asset Categories</field>
+        <field name="res_model">drkds.asset.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Define an asset category</p>
+            <p>
+                A category groups assets of the same kind and carries the useful life
+                and period the register proposes for a new asset.
+            </p>
+        </field>
+    </record>
+
+</odoo>

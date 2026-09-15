@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_ticket_stage_list" model="ir.ui.view">
+        <field name="name">drkds.ticket.stage.list</field>
+        <field name="model">drkds.ticket.stage</field>
+        <field name="arch" type="xml">
+            <list string="Stages" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="team_id"/>
+                <field name="folded" widget="boolean_toggle"/>
+                <field name="is_closed" widget="boolean_toggle"/>
+                <field name="description" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_ticket_stage_form" model="ir.ui.view">
+        <field name="name">drkds.ticket.stage.form</field>
+        <field name="model">drkds.ticket.stage</field>
+        <field name="arch" type="xml">
+            <form string="Stage">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="team_id"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="folded"/>
+                            <field name="is_closed"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_drkds_ticket_stage" model="ir.actions.act_window">
+        <field name="name">Stages</field>
+        <field name="res_model">drkds.ticket.stage</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add a stage</p>
+            <p>
+                Stages are the columns of the ticket Kanban. Leave the team empty for a
+                stage every team shares, and tick the closing flag on end states so
+                closing dates are recorded.
+            </p>
+        </field>
+    </record>
+
+</odoo>

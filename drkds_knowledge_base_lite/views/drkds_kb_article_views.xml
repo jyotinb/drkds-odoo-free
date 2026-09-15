@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Reading form: a page, not a data-entry screen. Metadata is small and
+         out of the way; the title and the body own the width. -->
+    <record id="view_drkds_kb_article_form" model="ir.ui.view">
+        <field name="name">drkds.kb.article.form</field>
+        <field name="model">drkds.kb.article</field>
+        <field name="arch" type="xml">
+            <form string="Article" class="o_drkds_kb_article_form">
+                <header>
+                    <button name="action_publish" type="object" string="Publish"
+                            class="btn-primary" invisible="state == 'published'"
+                            groups="drkds_knowledge_base_lite.group_kb_editor"/>
+                    <button name="action_reset_to_draft" type="object" string="Back to Draft"
+                            invisible="state != 'published'"
+                            groups="drkds_knowledge_base_lite.group_kb_editor"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,published"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_toggle_favourite" type="object"
+                                class="oe_stat_button" icon="fa-bookmark-o">
+                            <field name="is_favourite" widget="boolean_favorite"
+                                   nolabel="1" options="{'terminology': 'bookmark'}"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Draft" bg_color="text-bg-warning"
+                            invisible="state != 'draft'"/>
+                    <div class="oe_title w-100">
+                        <h1 class="mb-2">
+                            <field name="name" placeholder="Article title"
+                                   options="{'line_breaks': False}"/>
+                        </h1>
+                        <div class="text-muted small d-flex flex-wrap gap-3 mb-2">
+                            <span><i class="fa fa-folder-open-o me-1" title="Section"/><field name="section_id"
+                                   placeholder="Unfiled" options="{'no_create_edit': True}"
+                                   class="d-inline-block"/></span>
+                            <span><i class="fa fa-user-o me-1" title="Author"/><field name="author_id"
+                                   class="d-inline-block"/></span>
+                            <span invisible="not editor_id"><i class="fa fa-pencil me-1" title="Last edited by"/><field
+                                   name="editor_id" class="d-inline-block"/></span>
+                            <span><i class="fa fa-clock-o me-1" title="Last updated"/><field
+                                   name="write_date" class="d-inline-block"/></span>
+                        </div>
+                        <field name="tag_ids" widget="many2many_tags"
+                               options="{'color_field': 'color', 'no_create_edit': True}"
+                               placeholder="Tags"/>
+                    </div>
+                    <field name="body" widget="html" class="mt-4 o_drkds_kb_body"
+                           placeholder="Write the article here. Headings and lists help a reader skim."
+                           options="{'collaborative': false}"/>
+                    <field name="active" invisible="1"/>
+                    <field name="published_date" invisible="1"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_kb_article_list" model="ir.ui.view">
+        <field name="name">drkds.kb.article.list</field>
+        <field name="model">drkds.kb.article</field>
+        <field name="arch" type="xml">
+            <list string="Articles" multi_edit="1">
+                <field name="is_favourite" widget="boolean_favorite" nolabel="1" optional="show"/>
+                <field name="name" string="Title"/>
+                <field name="section_id" optional="show"/>
+                <field name="tag_ids" widget="many2many_tags"
+                       options="{'color_field': 'color'}" optional="show"/>
+                <field name="author_id" optional="show"/>
+                <field name="editor_id" optional="hide"/>
+                <field name="write_date" string="Updated" optional="show"/>
+                <field name="published_date" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'published'"
+                       decoration-warning="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Card view: the browsing surface. A snippet of the body is shown so a
+         reader can judge an article without opening it. -->
+    <record id="view_drkds_kb_article_kanban" model="ir.ui.view">
+        <field name="name">drkds.kb.article.kanban</field>
+        <field name="model">drkds.kb.article</field>
+        <field name="arch" type="xml">
+            <kanban class="o_drkds_kb_kanban" default_order="write_date desc"
+                    quick_create="false">
+                <field name="body_text"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <field name="name" class="fw-bold fs-5 text-truncate"/>
+                            <field name="is_favourite" widget="boolean_favorite" nolabel="1"/>
+                        </div>
+                        <div class="text-muted small mb-1">
+                            <field name="section_path" invisible="not section_path"/>
+                            <span invisible="section_path">Unfiled</span>
+                        </div>
+                        <div class="text-muted small" style="max-height:4.5em; overflow:hidden;">
+                            <field name="body_text"/>
+                        </div>
+                        <footer class="pt-2">
+                            <field name="tag_ids" widget="many2many_tags"
+                                   options="{'color_field': 'color'}"/>
+                            <div class="ms-auto d-flex align-items-center gap-2">
+                                <field name="state" widget="label_selection"
+                                       options="{'classes': {'draft': 'warning', 'published': 'success'}}"/>
+                                <field name="author_id" widget="many2one_avatar_user"/>
+                            </div>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_drkds_kb_article_search" model="ir.ui.view">
+        <field name="name">drkds.kb.article.search</field>
+        <field name="model">drkds.kb.article</field>
+        <field name="arch" type="xml">
+            <search string="Articles">
+                <!-- The default search box searches the body too, not just the title. -->
+                <field name="full_text" string="Search Articles"
+                       filter_domain="[('full_text', 'ilike', self)]"/>
+                <field name="name" string="Title Only"/>
+                <field name="body_text" string="Body Only"/>
+                <field name="section_id" operator="child_of"/>
+                <field name="tag_ids"/>
+                <field name="author_id"/>
+                <filter name="my_bookmarks" string="My Bookmarks"
+                        domain="[('is_favourite', '=', True)]"/>
+                <filter name="my_articles" string="My Articles"
+                        domain="[('author_id', '=', uid)]"/>
+                <separator/>
+                <filter name="published" string="Published"
+                        domain="[('state', '=', 'published')]"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"
+                        groups="drkds_knowledge_base_lite.group_kb_editor"/>
+                <separator/>
+                <filter name="recent" string="Updated This Month"
+                        domain="[('write_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="unfiled" string="Unfiled" domain="[('section_id', '=', False)]"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_section" string="Section"
+                            context="{'group_by': 'section_id'}"/>
+                    <filter name="group_author" string="Author"
+                            context="{'group_by': 'author_id'}"/>
+                    <filter name="group_editor" string="Last Editor"
+                            context="{'group_by': 'editor_id'}"/>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_updated" string="Last Updated"
+                            context="{'group_by': 'write_date:month'}"/>
+                </group>
+                <searchpanel>
+                    <field name="section_id" icon="fa-folder-open-o" enable_counters="1"
+                           hierarchize="1" select="one" string="Sections"/>
+                    <field name="tag_ids" icon="fa-tags" select="multi"
+                           enable_counters="1" string="Tags"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_kb_article" model="ir.actions.act_window">
+        <field name="name">Articles</field>
+        <field name="res_model">drkds.kb.article</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_drkds_kb_article_search"/>
+        <field name="context">{'search_default_published': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Write the first article</p>
+            <p>
+                File it in a section, add a tag or two, and publish it when it is
+                ready. The search box looks inside the article text, not only at
+                the title.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_drkds_kb_article_recent" model="ir.actions.act_window">
+        <field name="name">Recently Updated</field>
+        <field name="res_model">drkds.kb.article</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_drkds_kb_article_search"/>
+        <field name="domain">[('state', '=', 'published')]</field>
+        <field name="context">{'search_default_recent': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nothing has changed yet</p>
+            <p>Articles appear here newest change first.</p>
+        </field>
+    </record>
+
+    <record id="action_drkds_kb_article_favourite" model="ir.actions.act_window">
+        <field name="name">My Bookmarks</field>
+        <field name="res_model">drkds.kb.article</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_drkds_kb_article_search"/>
+        <field name="context">{'search_default_my_bookmarks': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No bookmarks yet</p>
+            <p>
+                Click the bookmark star on an article to keep it here. Bookmarks
+                are private to you.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_employee_form_drkds_in_payroll" model="ir.ui.view">
+        <field name="name">hr.employee.form.drkds.in.payroll</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='payroll_information']/group[@name='payroll_group']" position="inside">
+                <group name="drkds_in_statutory" string="Indian Statutory Components">
+                    <field name="drkds_in_pf_applicable"/>
+                    <field name="drkds_in_pf_on_actual_wage" invisible="not drkds_in_pf_applicable"/>
+                    <field name="drkds_in_pf_number" invisible="not drkds_in_pf_applicable"/>
+                    <field name="drkds_in_uan" invisible="not drkds_in_pf_applicable"/>
+                    <field name="drkds_in_esi_applicable"/>
+                    <field name="drkds_in_esi_number" invisible="not drkds_in_esi_applicable"/>
+                    <field name="drkds_in_esi_covered_since" invisible="not drkds_in_esi_applicable"/>
+                    <field name="drkds_in_pt_applicable"/>
+                    <field name="drkds_in_pt_state_id" invisible="not drkds_in_pt_applicable"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

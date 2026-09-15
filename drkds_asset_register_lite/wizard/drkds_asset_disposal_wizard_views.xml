@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_asset_disposal_wizard_form" model="ir.ui.view">
+        <field name="name">drkds.asset.disposal.wizard.form</field>
+        <field name="model">drkds.asset.disposal.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Dispose Asset">
+                <group>
+                    <field name="asset_id" readonly="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="disposal_date"/>
+                    <field name="scrapped"/>
+                    <field name="proceeds" invisible="scrapped"/>
+                    <field name="wdv_preview"/>
+                    <field name="gain_preview"/>
+                </group>
+                <p class="text-muted">
+                    The schedule stops on the disposal date. The gain or loss shown is
+                    informational; no journal entry is created.
+                </p>
+                <footer>
+                    <button name="action_confirm" type="object" string="Confirm Disposal"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

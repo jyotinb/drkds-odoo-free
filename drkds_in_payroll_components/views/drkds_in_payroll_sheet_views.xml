@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_in_payroll_sheet_list" model="ir.ui.view">
+        <field name="name">drkds.in.payroll.sheet.list</field>
+        <field name="model">drkds.in.payroll.sheet</field>
+        <field name="arch" type="xml">
+            <list string="Statutory Components">
+                <field name="name"/>
+                <field name="company_id" optional="hide"/>
+                <field name="amount_employee_total" sum="Total Deducted"/>
+                <field name="amount_employer_total" sum="Employer Cost"/>
+                <field name="amount_total" sum="Grand Total"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge" decoration-success="state == 'confirmed'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_in_payroll_sheet_form" model="ir.ui.view">
+        <field name="name">drkds.in.payroll.sheet.form</field>
+        <field name="model">drkds.in.payroll.sheet</field>
+        <field name="arch" type="xml">
+            <form string="Statutory Components">
+                <header>
+                    <button name="action_compute" type="object" string="Compute"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            invisible="state != 'draft'"/>
+                    <button name="action_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'confirmed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <div class="alert alert-warning" role="alert">
+                        A working paper only. It does not produce payslips and it posts
+                        no accounting entries. Rates and slabs must be verified with your
+                        payroll adviser before the figures are used.
+                    </div>
+                    <group>
+                        <group string="Period">
+                            <field name="month" readonly="state != 'draft'"/>
+                            <field name="year" readonly="state != 'draft'"/>
+                            <field name="company_id" readonly="state != 'draft'"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Scope">
+                            <field name="employee_ids" widget="many2many_tags"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="lines" string="Employees">
+                            <field name="line_ids" readonly="state != 'draft'">
+                                <list editable="bottom" create="0">
+                                    <field name="employee_id" readonly="1"/>
+                                    <field name="wage"/>
+                                    <field name="pf_employee" sum="PF Employee"/>
+                                    <field name="pf_employer_pf" sum="PF Employer (Fund)"/>
+                                    <field name="pf_employer_pension" sum="PF Employer (Pension)"/>
+                                    <field name="esi_applied" widget="boolean_toggle"/>
+                                    <field name="esi_employee" sum="ESI Employee"/>
+                                    <field name="esi_employer" sum="ESI Employer"/>
+                                    <field name="professional_tax" sum="Professional Tax"/>
+                                    <field name="total_employee" sum="Total Deducted"/>
+                                    <field name="total_employer" sum="Employer Cost"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="amount_pf_employee"/>
+                                <field name="amount_pf_employer"/>
+                                <field name="amount_esi_employee"/>
+                                <field name="amount_esi_employer"/>
+                                <field name="amount_professional_tax"/>
+                                <field name="amount_employee_total"/>
+                                <field name="amount_employer_total"/>
+                                <field name="amount_total" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
+                        <page name="review" string="Review Notes">
+                            <field name="note" placeholder="Who reviewed this sheet, against what, and when."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_in_payroll_sheet_search" model="ir.ui.view">
+        <field name="name">drkds.in.payroll.sheet.search</field>
+        <field name="model">drkds.in.payroll.sheet</field>
+        <field name="arch" type="xml">
+            <search string="Statutory Components">
+                <field name="name"/>
+                <field name="year"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <group name="group_by">
+                    <filter name="group_year" string="Year" context="{'group_by': 'year'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_in_payroll_sheet" model="ir.actions.act_window">
+        <field name="name">Statutory Components</field>
+        <field name="res_model">drkds.in.payroll.sheet</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a monthly sheet</p>
+            <p>
+                Pick a month, pick employees, press Compute. PF, ESI and professional
+                tax are worked out per employee from the contract settings and the
+                rates in force for that month.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_drkds_in_payroll_root" name="Statutory Payroll"
+              parent="hr.menu_hr_root" sequence="50"
+              groups="hr.group_hr_manager"/>
+    <menuitem id="menu_drkds_in_payroll_sheet" name="Statutory Components"
+              parent="menu_drkds_in_payroll_root"
+              action="action_drkds_in_payroll_sheet" sequence="10"/>
+    <menuitem id="menu_drkds_in_payroll_config" name="Rates and Slabs"
+              parent="menu_drkds_in_payroll_root" sequence="90"/>
+    <menuitem id="menu_drkds_in_pf_config" name="Provident Fund Rates"
+              parent="menu_drkds_in_payroll_config"
+              action="action_drkds_in_pf_config" sequence="10"/>
+    <menuitem id="menu_drkds_in_esi_config" name="ESI Rates"
+              parent="menu_drkds_in_payroll_config"
+              action="action_drkds_in_esi_config" sequence="20"/>
+    <menuitem id="menu_drkds_in_pt_slab" name="Professional Tax Slabs"
+              parent="menu_drkds_in_payroll_config"
+              action="action_drkds_in_pt_slab" sequence="30"/>
+
+</odoo>

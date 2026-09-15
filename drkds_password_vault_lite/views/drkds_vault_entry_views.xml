@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="drkds_vault_entry_view_list" model="ir.ui.view">
+        <field name="name">drkds.vault.entry.list</field>
+        <field name="model">drkds.vault.entry</field>
+        <field name="arch" type="xml">
+            <list string="Vault Entries">
+                <field name="name"/>
+                <field name="username"/>
+                <field name="url" widget="url" optional="show"/>
+                <field name="folder_id" optional="show"/>
+                <field name="tag_ids" widget="many2many_tags" optional="show"/>
+                <field name="has_secret" string="Password" optional="show"/>
+                <button name="action_reveal_secret" type="object" icon="fa-eye"
+                        string="Reveal" invisible="not has_secret"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="drkds_vault_entry_view_form" model="ir.ui.view">
+        <field name="name">drkds.vault.entry.form</field>
+        <field name="model">drkds.vault.entry</field>
+        <field name="arch" type="xml">
+            <form string="Vault Entry">
+                <header>
+                    <button name="action_reveal_secret" type="object" string="Reveal Password"
+                            class="btn-primary" icon="fa-eye"
+                            invisible="not has_secret or not id"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_access_log" type="object"
+                                class="oe_stat_button" icon="fa-history"
+                                invisible="not id">
+                            <span class="o_stat_text">Access Log</span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Bank portal"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="username"/>
+                            <field name="secret" password="True"
+                                   placeholder="Type to set or replace"/>
+                            <field name="has_secret"/>
+                        </group>
+                        <group>
+                            <field name="url" widget="url"/>
+                            <field name="folder_id"/>
+                            <field name="tag_ids" widget="many2many_tags"
+                                   options="{'color_field': 'color'}"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="last_access_date"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Not encrypted. No passwords here."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="drkds_vault_entry_view_search" model="ir.ui.view">
+        <field name="name">drkds.vault.entry.search</field>
+        <field name="model">drkds.vault.entry</field>
+        <field name="arch" type="xml">
+            <search string="Vault Entries">
+                <field name="name" string="Title or username"
+                       filter_domain="['|', ('name', 'ilike', self), ('username', 'ilike', self)]"/>
+                <field name="url"/>
+                <field name="folder_id"/>
+                <field name="tag_ids"/>
+                <filter name="filter_has_secret" string="With a password"
+                        domain="[('has_secret', '=', True)]"/>
+                <filter name="filter_no_secret" string="Without a password"
+                        domain="[('has_secret', '=', False)]"/>
+                <separator/>
+                <filter name="filter_archived" string="Archived"
+                        domain="[('active', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_folder" string="Folder" context="{'group_by': 'folder_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="drkds_vault_entry_action" model="ir.actions.act_window">
+        <field name="name">My Vault</field>
+        <field name="res_model">drkds.vault.entry</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Store your first credential</p>
+            <p>Entries here are yours alone. Passwords are encrypted with the key
+               configured on this server and are shown only when you ask.</p>
+        </field>
+    </record>
+
+</odoo>

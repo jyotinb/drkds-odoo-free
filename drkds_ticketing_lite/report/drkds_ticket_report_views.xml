@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_ticket_pivot" model="ir.ui.view">
+        <field name="name">drkds.ticket.pivot</field>
+        <field name="model">drkds.ticket</field>
+        <field name="arch" type="xml">
+            <pivot string="Ticket Analysis" sample="1">
+                <field name="team_id" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="stage_id" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_drkds_ticket_graph" model="ir.ui.view">
+        <field name="name">drkds.ticket.graph</field>
+        <field name="model">drkds.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Ticket Analysis" type="bar" sample="1">
+                <field name="stage_id"/>
+                <field name="team_id"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_drkds_ticket_analysis" model="ir.actions.act_window">
+        <field name="name">Ticket Analysis</field>
+        <field name="res_model">drkds.ticket</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="drkds_ticketing_lite.view_drkds_ticket_search"/>
+        <field name="context">{'search_default_group_team': 1, 'search_default_group_stage': 1}</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_drkds_vault_entry_user,drkds.vault.entry user,model_drkds_vault_entry,base.group_user,1,1,1,1
+access_drkds_vault_folder_user,drkds.vault.folder user,model_drkds_vault_folder,base.group_user,1,1,1,1
+access_drkds_vault_tag_user,drkds.vault.tag user,model_drkds_vault_tag,base.group_user,1,1,1,1
+access_drkds_vault_access_log_user,drkds.vault.access.log user,model_drkds_vault_access_log,base.group_user,1,0,1,0
+access_drkds_vault_reveal_user,drkds.vault.reveal user,model_drkds_vault_reveal,base.group_user,1,1,1,1

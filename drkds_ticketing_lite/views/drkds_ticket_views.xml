@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_ticket_kanban" model="ir.ui.view">
+        <field name="name">drkds.ticket.kanban</field>
+        <field name="model">drkds.ticket</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="stage_id" quick_create="false"
+                    highlight_color="color">
+                <field name="stage_id" options="{'group_by_tooltip': {'description': 'Stage'}}"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex">
+                            <field name="number" class="fw-bold"/>
+                            <field name="priority" widget="priority" class="ms-auto"/>
+                        </div>
+                        <field name="name" class="fw-bold fs-5"/>
+                        <field name="partner_id" class="text-muted"/>
+                        <field name="tag_ids" widget="many2many_tags"
+                               options="{'color_field': 'color'}"/>
+                        <div class="d-flex mt-2 align-items-center">
+                            <field name="activity_ids" widget="kanban_activity"/>
+                            <field name="kanban_state" widget="state_selection"/>
+                            <field name="user_id" widget="many2one_avatar_user" class="ms-auto"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_drkds_ticket_list" model="ir.ui.view">
+        <field name="name">drkds.ticket.list</field>
+        <field name="model">drkds.ticket</field>
+        <field name="arch" type="xml">
+            <list string="Tickets" multi_edit="1">
+                <field name="number"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="team_id"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="tag_ids" widget="many2many_tags" optional="hide"/>
+                <field name="priority" widget="priority"/>
+                <field name="stage_id"/>
+                <field name="create_date" string="Opened" optional="show"/>
+                <field name="date_closed" optional="hide"/>
+                <field name="is_closed" column_invisible="1"/>
+                <field name="activity_ids" widget="list_activity" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_ticket_form" model="ir.ui.view">
+        <field name="name">drkds.ticket.form</field>
+        <field name="model">drkds.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Ticket">
+                <header>
+                    <button name="action_assign_to_me" type="object" string="Assign to Me"
+                            class="btn-secondary" invisible="user_id"/>
+                    <button name="action_close" type="object" string="Close"
+                            class="btn-primary" invisible="is_closed"/>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1'}"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="number"/>
+                        <h2><field name="number"/></h2>
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Printer does not respond"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="partner_email" widget="email"/>
+                            <field name="tag_ids" widget="many2many_tags"
+                                   options="{'color_field': 'color'}"/>
+                        </group>
+                        <group>
+                            <field name="team_id"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="priority" widget="priority"/>
+                            <field name="kanban_state" widget="state_selection"/>
+                            <field name="date_closed" invisible="not date_closed"/>
+                            <field name="is_closed" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description"
+                                   placeholder="What happened, and what has been tried so far."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_ticket_search" model="ir.ui.view">
+        <field name="name">drkds.ticket.search</field>
+        <field name="model">drkds.ticket</field>
+        <field name="arch" type="xml">
+            <search string="Tickets">
+                <field name="number"/>
+                <field name="name" string="Ticket"
+                       filter_domain="['|', ('name', 'ilike', self), ('number', 'ilike', self)]"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="team_id"/>
+                <field name="tag_ids"/>
+                <filter name="my_tickets" string="My Tickets" domain="[('user_id', '=', uid)]"/>
+                <filter name="unassigned" string="Unassigned" domain="[('user_id', '=', False)]"/>
+                <filter name="my_teams" string="My Teams"
+                        domain="[('team_id.member_ids', 'in', uid)]"/>
+                <separator/>
+                <filter name="open" string="Open" domain="[('is_closed', '=', False)]"/>
+                <filter name="closed" string="Closed" domain="[('is_closed', '=', True)]"/>
+                <separator/>
+                <filter name="urgent" string="Urgent" domain="[('priority', '=', '3')]"/>
+                <filter name="high" string="High and Urgent" domain="[('priority', '&gt;=', '2')]"/>
+                <filter name="low" string="Low" domain="[('priority', '=', '0')]"/>
+                <separator/>
+                <filter name="blocked" string="Blocked" domain="[('kanban_state', '=', 'blocked')]"/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter name="opened_this_month" string="Opened This Month"
+                        domain="[('create_date', '&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <group>
+                    <filter name="group_stage" string="Stage" context="{'group_by': 'stage_id'}"/>
+                    <filter name="group_team" string="Team" context="{'group_by': 'team_id'}"/>
+                    <filter name="group_user" string="Assigned To" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_priority" string="Priority" context="{'group_by': 'priority'}"/>
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_create_date" string="Opened"
+                            context="{'group_by': 'create_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_ticket" model="ir.actions.act_window">
+        <field name="name">Tickets</field>
+        <field name="res_model">drkds.ticket</field>
+        <field name="view_mode">kanban,list,form,pivot</field>
+        <field name="search_view_id" ref="view_drkds_ticket_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Log a ticket</p>
+            <p>
+                Every customer request gets a reference, an owner and a stage. Drag a
+                card across the Kanban as the work moves on; the closing date is
+                recorded for you when it lands in a closing stage.
+            </p>
+        </field>
+    </record>
+
+    <record id="view_drkds_ticket_tag_list" model="ir.ui.view">
+        <field name="name">drkds.ticket.tag.list</field>
+        <field name="model">drkds.ticket.tag</field>
+        <field name="arch" type="xml">
+            <list string="Tags" editable="bottom">
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_drkds_ticket_tag" model="ir.actions.act_window">
+        <field name="name">Tags</field>
+        <field name="res_model">drkds.ticket.tag</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

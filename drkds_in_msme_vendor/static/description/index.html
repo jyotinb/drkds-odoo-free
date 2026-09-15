@@ -1,0 +1,113 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">MSME Vendor Payment Tracking (India)</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Flag micro and small vendors, watch the 45 day payment clock and list what is overdue</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        Section 43B(h) of the Income Tax Act disallows the deduction for an expense owed to a micro or small enterprise until it is actually paid, if it was not paid inside the limitation period of section 15 of the MSMED Act. That period is the period agreed in writing, capped at 45 days from the day of acceptance, or 15 days where there is no written agreement. The hard part is not the arithmetic, it is knowing which bills are on the clock at all. This module answers that every day, without a spreadsheet.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Vendor MSME record</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Registered flag, Udyam registration number validated against the published UDYAM-XX-00-0000000 format, enterprise category and registration date, all on the contact.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Micro and small only</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A medium enterprise is registered under the MSMED Act and appears on Udyam, but section 15 does not cover it. Medium vendors are shown as out of scope and their bills are never tracked. Getting this wrong is the most common mistake in MSME tracking.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Both statutory periods</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">45 days where the payment agreement is in writing, 15 days where it is not. The basis defaults per vendor, and the day counts are company settings rather than hardcoded constants, so a stricter internal policy is possible. Neither can be set longer than the statute allows.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">The clock on the bill</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">An MSME due date computed from the acceptance date, or the bill date where acceptance is the same day, plus days outstanding, days overdue and a status of Within Limit, Due Soon or Overdue.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A warning you cannot miss</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">An overdue bill from a micro or small vendor carries a red banner on the form, naming the due date and the days lost, so it is seen before the payment run, not after the year end.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">The report the auditor asks for</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Outstanding MSME payments grouped by vendor with ageing buckets, as a list, a pivot and a graph, with a one click filter for bills that breach the limit inside the current Indian financial year.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center; padding:18px;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Need the full version? The drkds GST suite adds GSTR-1 and GSTR-3B preparation, GSTR-2A reconciliation and an e-invoice workflow.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>No disallowance figure and no section 16 interest calculation are produced. Those depend on the year of actual payment, the accounting method and positions your adviser takes. This module tracks the clock and gives you the evidence; the tax treatment is a matter for your tax professional.</li>
+        <li>Udyam numbers are validated for structure and state code only, entirely offline. There are no government portal calls of any kind.</li>
+        <li>The ageing figures and the financial year filter are computed live against today&#x27;s date, so the report is right every morning with no scheduled job to run.</li>
+        <li>Depends on Accounting only. Works on Odoo 19 Community with no Enterprise module.</li>
+        <li>Changing a company day count immediately reprices the MSME due date on existing vendor bills, so a policy change does not leave stale figures behind.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p style="font-size:14px; color:#7f8c8d; font-style:italic; border-top:1px solid #e0e0e0; padding-top:14px;">
+        This module is a tool to assist with compliance workflows. Responsibility
+        for statutory compliance rests with the user and their tax professional.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_drkds_ticketing_root" name="Support"
+              web_icon="drkds_ticketing_lite,static/description/icon.png"
+              groups="drkds_ticketing_lite.group_ticket_user" sequence="95"/>
+
+    <menuitem id="menu_drkds_ticket" name="Tickets"
+              parent="menu_drkds_ticketing_root"
+              action="action_drkds_ticket" sequence="10"/>
+
+    <menuitem id="menu_drkds_ticket_reporting_root" name="Reporting"
+              parent="menu_drkds_ticketing_root" sequence="50"/>
+    <menuitem id="menu_drkds_ticket_analysis" name="Ticket Analysis"
+              parent="menu_drkds_ticket_reporting_root"
+              action="action_drkds_ticket_analysis" sequence="10"/>
+
+    <menuitem id="menu_drkds_ticket_config_root" name="Configuration"
+              parent="menu_drkds_ticketing_root" sequence="90"
+              groups="drkds_ticketing_lite.group_ticket_manager"/>
+    <menuitem id="menu_drkds_ticket_team" name="Teams"
+              parent="menu_drkds_ticket_config_root"
+              action="action_drkds_ticket_team" sequence="10"/>
+    <menuitem id="menu_drkds_ticket_stage" name="Stages"
+              parent="menu_drkds_ticket_config_root"
+              action="action_drkds_ticket_stage" sequence="20"/>
+    <menuitem id="menu_drkds_ticket_tag" name="Tags"
+              parent="menu_drkds_ticket_config_root"
+              action="action_drkds_ticket_tag" sequence="30"/>
+
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_drkds_budget"
+              name="Budgets"
+              parent="account.menu_finance_entries"
+              action="action_drkds_budget"
+              groups="account.group_account_user"
+              sequence="55"/>
+
+    <menuitem id="menu_drkds_budget_report"
+              name="Budget vs Actual"
+              parent="account.menu_finance_reports"
+              action="action_drkds_budget_line_report"
+              groups="account.group_account_readonly"
+              sequence="55"/>
+
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_drkds_msme" model="ir.ui.view">
+        <field name="name">res.config.settings.form.drkds.msme</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='analytic']" position="before">
+                <block title="MSME Payment Clock (India)" id="drkds_msme_block">
+                    <setting string="With a written agreement"
+                             help="Credit period for a micro or small vendor when a written payment agreement exists. Capped at 45 days by section 15 of the MSMED Act.">
+                        <field name="drkds_msme_agreement_days"/> days
+                    </setting>
+                    <setting string="Without a written agreement"
+                             help="Credit period when there is no written agreement. The statute sets this at 15 days from the day of acceptance.">
+                        <field name="drkds_msme_no_agreement_days"/> days
+                    </setting>
+                    <setting string="Due soon window"
+                             help="How many days before the MSME due date a bill starts reporting as Due Soon.">
+                        <field name="drkds_msme_due_soon_days"/> days
+                    </setting>
+                    <div class="text-muted mt-2">
+                        This module is a tool to assist with compliance workflows.
+                        Responsibility for statutory compliance rests with the user
+                        and their tax professional.
+                    </div>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

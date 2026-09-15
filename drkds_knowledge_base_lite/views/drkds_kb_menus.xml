@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_drkds_kb_root" name="Knowledge Base"
+              web_icon="drkds_knowledge_base_lite,static/description/icon.png"
+              groups="drkds_knowledge_base_lite.group_kb_reader"
+              sequence="55"/>
+
+    <menuitem id="menu_drkds_kb_articles" name="Articles"
+              parent="menu_drkds_kb_root" action="action_drkds_kb_article"
+              sequence="10"/>
+
+    <menuitem id="menu_drkds_kb_recent" name="Recently Updated"
+              parent="menu_drkds_kb_root" action="action_drkds_kb_article_recent"
+              sequence="20"/>
+
+    <menuitem id="menu_drkds_kb_favourites" name="My Bookmarks"
+              parent="menu_drkds_kb_root" action="action_drkds_kb_article_favourite"
+              sequence="30"/>
+
+    <menuitem id="menu_drkds_kb_configuration" name="Configuration"
+              parent="menu_drkds_kb_root" sequence="90"
+              groups="drkds_knowledge_base_lite.group_kb_editor"/>
+
+    <menuitem id="menu_drkds_kb_sections" name="Sections"
+              parent="menu_drkds_kb_configuration" action="action_drkds_kb_section"
+              sequence="10"/>
+
+    <menuitem id="menu_drkds_kb_tags" name="Tags"
+              parent="menu_drkds_kb_configuration" action="action_drkds_kb_tag"
+              sequence="20"/>
+
+</odoo>

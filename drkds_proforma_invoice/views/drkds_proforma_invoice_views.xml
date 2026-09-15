@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_proforma_invoice_list" model="ir.ui.view">
+        <field name="name">drkds.proforma.invoice.list</field>
+        <field name="model">drkds.proforma.invoice</field>
+        <field name="arch" type="xml">
+            <list string="Proforma Invoices"
+                  decoration-muted="state == 'cancelled'"
+                  decoration-success="state == 'converted'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="partner_id"/>
+                <field name="sale_order_id" optional="show"/>
+                <field name="source_move_id" optional="hide"/>
+                <field name="validity_date" optional="hide"/>
+                <field name="user_id" optional="hide"/>
+                <field name="amount_untaxed" optional="hide" sum="Untaxed"/>
+                <field name="amount_total" sum="Total"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="invoice_id" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'issued'"
+                       decoration-success="state == 'converted'"
+                       decoration-danger="state == 'cancelled'"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_proforma_invoice_form" model="ir.ui.view">
+        <field name="name">drkds.proforma.invoice.form</field>
+        <field name="model">drkds.proforma.invoice</field>
+        <field name="arch" type="xml">
+            <form string="Proforma Invoice">
+                <header>
+                    <button name="action_issue" string="Issue" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_send_by_email" string="Send by Email" type="object"
+                            invisible="state not in ('draft', 'issued')"/>
+                    <button name="action_print" string="Print" type="object"
+                            invisible="state == 'cancelled'"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('cancelled', 'converted')"/>
+                    <button name="action_draft" string="Reset to Draft" type="object"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,issued,converted"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_invoice" type="object"
+                                class="oe_stat_button" icon="fa-file-text-o"
+                                invisible="not invoice_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Final Invoice</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"
+                                   readonly="state not in ('draft',)"/>
+                            <field name="date" readonly="state not in ('draft',)"/>
+                            <field name="validity_date"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" readonly="state not in ('draft',)"
+                                   groups="base.group_multi_currency"/>
+                            <field name="sale_order_id" readonly="1"
+                                   invisible="not sale_order_id"/>
+                            <field name="source_move_id" readonly="1"
+                                   invisible="not source_move_id"/>
+                            <field name="invoice_id" readonly="1"
+                                   invisible="not invoice_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lines" name="lines">
+                            <field name="line_ids" readonly="state not in ('draft',)">
+                                <list editable="bottom">
+                                    <control>
+                                        <create name="add_line" string="Add a line"/>
+                                        <create name="add_section" string="Add a section"
+                                                context="{'default_display_type': 'line_section'}"/>
+                                        <create name="add_note" string="Add a note"
+                                                context="{'default_display_type': 'line_note'}"/>
+                                    </control>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="display_type" column_invisible="True"/>
+                                    <field name="product_id"/>
+                                    <field name="name" widget="text"/>
+                                    <field name="quantity"/>
+                                    <field name="product_uom_id" groups="uom.group_uom"/>
+                                    <field name="price_unit"/>
+                                    <field name="discount" optional="show"/>
+                                    <field name="tax_ids" widget="many2many_tags"
+                                           options="{'no_create': True}"/>
+                                    <field name="price_subtotal"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="amount_untaxed"/>
+                                <field name="amount_tax"/>
+                                <div class="oe_subtotal_footer_separator">
+                                    <label for="amount_total"/>
+                                </div>
+                                <field name="amount_total" nolabel="1"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+                            <div class="clearfix"/>
+                        </page>
+                        <page string="Terms and Note" name="terms">
+                            <group>
+                                <field name="terms" placeholder="Payment and delivery terms..."/>
+                                <field name="note" placeholder="Anything else the customer should read..."/>
+                            </group>
+                        </page>
+                        <page string="Disclaimer" name="disclaimer">
+                            <field name="disclaimer"/>
+                            <p class="text-muted mt-2">
+                                Printed prominently on the PDF. The default comes from
+                                the company setting in Sales settings.
+                            </p>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_proforma_invoice_search" model="ir.ui.view">
+        <field name="name">drkds.proforma.invoice.search</field>
+        <field name="model">drkds.proforma.invoice</field>
+        <field name="arch" type="xml">
+            <search string="Proforma Invoices">
+                <field name="name" string="Proforma"
+                       filter_domain="['|', ('name', 'ilike', self), ('partner_id', 'ilike', self)]"/>
+                <field name="partner_id"/>
+                <field name="sale_order_id"/>
+                <field name="invoice_id"/>
+                <filter name="state_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="state_issued" string="Issued" domain="[('state', '=', 'issued')]"/>
+                <filter name="state_converted" string="Converted" domain="[('state', '=', 'converted')]"/>
+                <filter name="state_cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <separator/>
+                <filter name="expired" string="Past Validity"
+                        domain="[('validity_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="my" string="My Proformas" domain="[('user_id', '=', uid)]"/>
+                <group>
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Proforma Date" context="{'group_by': 'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_proforma_invoice" model="ir.actions.act_window">
+        <field name="name">Proforma Invoices</field>
+        <field name="res_model">drkds.proforma.invoice</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_drkds_proforma_invoice_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a proforma invoice</p>
+            <p>
+                A proforma invoice states what a sale will cost without creating
+                an accounting entry or a tax liability. Issue one straight from a
+                quotation or a draft customer invoice.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_drkds_proforma_invoice"
+              name="Proforma Invoices"
+              parent="sale.menu_sale_invoicing"
+              action="action_drkds_proforma_invoice"
+              sequence="25"/>
+
+</odoo>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_msme_outstanding_report_list" model="ir.ui.view">
+        <field name="name">drkds.msme.outstanding.report.list</field>
+        <field name="model">drkds.msme.outstanding.report</field>
+        <field name="arch" type="xml">
+            <list string="MSME Outstanding Payments" create="false" edit="false"
+                  default_order="days_overdue desc"
+                  decoration-danger="is_overdue"
+                  decoration-warning="not is_overdue and days_outstanding &gt; 30">
+                <field name="partner_id"/>
+                <field name="msme_category"/>
+                <field name="udyam_number" optional="show"/>
+                <field name="move_id"/>
+                <field name="invoice_date"/>
+                <field name="acceptance_date" optional="hide"/>
+                <field name="limit_days" optional="hide"/>
+                <field name="msme_due_date"/>
+                <field name="days_outstanding"/>
+                <field name="days_overdue" sum="Total Days Overdue" optional="hide"/>
+                <field name="ageing_bucket"/>
+                <field name="financial_year" optional="hide"/>
+                <field name="is_overdue" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="amount_residual" sum="Amount Due"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_msme_outstanding_report_pivot" model="ir.ui.view">
+        <field name="name">drkds.msme.outstanding.report.pivot</field>
+        <field name="model">drkds.msme.outstanding.report</field>
+        <field name="arch" type="xml">
+            <pivot string="MSME Outstanding Payments" sample="0">
+                <field name="partner_id" type="row"/>
+                <field name="ageing_bucket" type="col"/>
+                <field name="amount_residual" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_drkds_msme_outstanding_report_graph" model="ir.ui.view">
+        <field name="name">drkds.msme.outstanding.report.graph</field>
+        <field name="model">drkds.msme.outstanding.report</field>
+        <field name="arch" type="xml">
+            <graph string="MSME Outstanding Payments" type="bar" sample="0">
+                <field name="ageing_bucket"/>
+                <field name="amount_residual" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_drkds_msme_outstanding_report_search" model="ir.ui.view">
+        <field name="name">drkds.msme.outstanding.report.search</field>
+        <field name="model">drkds.msme.outstanding.report</field>
+        <field name="arch" type="xml">
+            <search string="MSME Outstanding Payments">
+                <field name="partner_id"/>
+                <field name="move_id"/>
+                <field name="udyam_number"/>
+                <filter name="overdue" string="Breaches the Limit"
+                        domain="[('is_overdue', '=', True)]"/>
+                <filter name="current_fy" string="Current Financial Year"
+                        domain="[('in_current_fy', '=', True)]"/>
+                <separator/>
+                <filter name="breach_current_fy"
+                        string="Breaching, Current Financial Year"
+                        domain="[('is_overdue', '=', True), ('in_current_fy', '=', True)]"/>
+                <separator/>
+                <filter name="micro" string="Micro"
+                        domain="[('msme_category', '=', 'micro')]"/>
+                <filter name="small" string="Small"
+                        domain="[('msme_category', '=', 'small')]"/>
+                <group name="group_by">
+                    <filter name="group_partner" string="Vendor"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_bucket" string="Ageing Bucket"
+                            context="{'group_by': 'ageing_bucket'}"/>
+                    <filter name="group_category" string="Enterprise Category"
+                            context="{'group_by': 'msme_category'}"/>
+                    <filter name="group_fy" string="Financial Year"
+                            context="{'group_by': 'financial_year'}"/>
+                    <filter name="group_due" string="MSME Due Date"
+                            context="{'group_by': 'msme_due_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_msme_outstanding_report" model="ir.actions.act_window">
+        <field name="name">MSME Outstanding Payments</field>
+        <field name="res_model">drkds.msme.outstanding.report</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="context">{'search_default_group_partner': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Nothing outstanding to a micro or small vendor
+            </p>
+            <p>
+                Bills appear here while they are posted, unpaid and owed to a
+                contact flagged as a registered micro or small enterprise.
+                Medium enterprises are outside the statutory payment clock and
+                are never listed. This module is a tool to assist with
+                compliance workflows. Responsibility for statutory compliance
+                rests with the user and their tax professional.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_drkds_msme_outstanding_report"
+              name="MSME Outstanding Payments"
+              parent="account.menu_finance_reports"
+              action="action_drkds_msme_outstanding_report"
+              sequence="95"/>
+
+</odoo>

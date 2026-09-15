@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_drkds_in_pf_config_user,drkds.in.pf.config user,model_drkds_in_pf_config,hr.group_hr_user,1,0,0,0
+access_drkds_in_pf_config_manager,drkds.in.pf.config manager,model_drkds_in_pf_config,hr.group_hr_manager,1,1,1,1
+access_drkds_in_esi_config_user,drkds.in.esi.config user,model_drkds_in_esi_config,hr.group_hr_user,1,0,0,0
+access_drkds_in_esi_config_manager,drkds.in.esi.config manager,model_drkds_in_esi_config,hr.group_hr_manager,1,1,1,1
+access_drkds_in_pt_slab_user,drkds.in.pt.slab user,model_drkds_in_pt_slab,hr.group_hr_user,1,0,0,0
+access_drkds_in_pt_slab_manager,drkds.in.pt.slab manager,model_drkds_in_pt_slab,hr.group_hr_manager,1,1,1,1
+access_drkds_in_payroll_sheet_manager,drkds.in.payroll.sheet manager,model_drkds_in_payroll_sheet,hr.group_hr_manager,1,1,1,1
+access_drkds_in_payroll_sheet_line_manager,drkds.in.payroll.sheet.line manager,model_drkds_in_payroll_sheet_line,hr.group_hr_manager,1,1,1,1

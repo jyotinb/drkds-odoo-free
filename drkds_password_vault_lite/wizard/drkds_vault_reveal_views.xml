@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="drkds_vault_reveal_view_form" model="ir.ui.view">
+        <field name="name">drkds.vault.reveal.form</field>
+        <field name="model">drkds.vault.reveal</field>
+        <field name="arch" type="xml">
+            <form string="Reveal Password">
+                <group>
+                    <field name="entry_id" invisible="1"/>
+                    <field name="entry_name"/>
+                    <field name="username"/>
+                    <field name="secret" widget="CopyClipboardChar"/>
+                </group>
+                <div class="text-muted">
+                    This access has been written to the entry's access log.
+                </div>
+                <footer>
+                    <button name="action_close" type="object" string="Done"
+                            class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

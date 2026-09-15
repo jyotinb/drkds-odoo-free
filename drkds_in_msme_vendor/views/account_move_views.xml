@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_move_form_drkds_msme" model="ir.ui.view">
+        <field name="name">account.move.form.drkds.msme</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="after">
+                <div class="alert alert-danger" role="alert"
+                     invisible="drkds_msme_status != 'overdue'">
+                    <strong>MSME payment limit breached.</strong>
+                    This bill is from a registered
+                    <field name="drkds_msme_category" readonly="1" nolabel="1"
+                           class="oe_inline"/>
+                    enterprise and is
+                    <field name="drkds_msme_days_overdue" readonly="1" nolabel="1"
+                           class="oe_inline"/>
+                    day(s) past the MSME due date of
+                    <field name="drkds_msme_due_date" readonly="1" nolabel="1"
+                           class="oe_inline"/>.
+                    Tax treatment of a late payment to a micro or small enterprise
+                    is a matter for your tax professional.
+                </div>
+                <div class="alert alert-warning" role="alert"
+                     invisible="drkds_msme_status != 'due_soon'">
+                    <strong>MSME payment due soon.</strong>
+                    The statutory limit for this vendor expires on
+                    <field name="drkds_msme_due_date" readonly="1" nolabel="1"
+                           class="oe_inline"/>.
+                </div>
+            </div>
+            <field name="invoice_date_due" position="after">
+                <field name="drkds_msme_covered" invisible="1"/>
+                <field name="drkds_msme_acceptance_date"
+                       invisible="not drkds_msme_covered"/>
+                <field name="drkds_msme_due_date"
+                       invisible="not drkds_msme_covered"/>
+                <field name="drkds_msme_limit_days"
+                       invisible="not drkds_msme_covered"/>
+                <field name="drkds_msme_days_outstanding"
+                       invisible="not drkds_msme_covered"/>
+                <field name="drkds_msme_status"
+                       invisible="not drkds_msme_covered"
+                       decoration-danger="drkds_msme_status == 'overdue'"
+                       decoration-warning="drkds_msme_status == 'due_soon'"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_invoice_tree_drkds_msme" model="ir.ui.view">
+        <field name="name">account.move.list.drkds.msme</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_invoice_tree"/>
+        <field name="arch" type="xml">
+            <field name="invoice_date_due" position="after">
+                <field name="drkds_msme_due_date" optional="hide"
+                       string="MSME Due Date"/>
+                <field name="drkds_msme_status" optional="hide"
+                       decoration-danger="drkds_msme_status == 'overdue'"
+                       decoration-warning="drkds_msme_status == 'due_soon'"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_account_invoice_filter_drkds_msme" model="ir.ui.view">
+        <field name="name">account.move.search.drkds.msme</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <filter name="late" position="after">
+                <separator/>
+                <filter name="drkds_msme_vendor" string="MSME Vendor"
+                        domain="[('drkds_msme_covered', '=', True)]"/>
+                <filter name="drkds_msme_overdue" string="MSME Overdue"
+                        domain="[('drkds_msme_status', '=', 'overdue')]"/>
+            </filter>
+            <filter name="duedate" position="after">
+                <filter name="drkds_msme_group_fy" string="Financial Year"
+                        context="{'group_by': 'drkds_msme_fy'}"/>
+            </filter>
+        </field>
+    </record>
+
+</odoo>

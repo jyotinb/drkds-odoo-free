@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_drkds_msme" model="ir.ui.view">
+        <field name="name">res.partner.form.drkds.msme</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page name="drkds_msme" string="MSME">
+                    <group>
+                        <group name="drkds_msme_registration" string="Udyam Registration">
+                            <field name="drkds_msme_registered"/>
+                            <field name="drkds_udyam_number"
+                                   placeholder="UDYAM-DL-02-0012345"
+                                   invisible="not drkds_msme_registered"/>
+                            <field name="drkds_msme_category"
+                                   required="drkds_msme_registered"
+                                   invisible="not drkds_msme_registered"/>
+                            <field name="drkds_msme_registration_date"
+                                   invisible="not drkds_msme_registered"/>
+                            <field name="drkds_msme_covered"/>
+                        </group>
+                        <group name="drkds_msme_terms" string="Payment Clock"
+                               invisible="not drkds_msme_covered">
+                            <field name="drkds_msme_has_agreement"/>
+                            <field name="drkds_msme_payment_days_override"
+                                   invisible="not drkds_msme_has_agreement"/>
+                            <field name="drkds_msme_payment_days"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert"
+                         invisible="drkds_msme_category != 'medium'">
+                        A medium enterprise is outside the statutory payment clock.
+                        Section 15 of the MSMED Act, and therefore section 43B(h)
+                        of the Income Tax Act, covers micro and small suppliers only.
+                        Bills for this vendor are not tracked.
+                    </div>
+                    <div class="alert alert-warning" role="alert">
+                        This module is a tool to assist with compliance workflows.
+                        Responsibility for statutory compliance rests with the user
+                        and their tax professional.
+                    </div>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <record id="view_res_partner_filter_drkds_msme" model="ir.ui.view">
+        <field name="name">res.partner.search.drkds.msme</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <field name="category_id" position="before">
+                <field name="drkds_udyam_number" string="Udyam Number"/>
+            </field>
+            <filter name="type_company" position="after">
+                <separator/>
+                <filter name="drkds_msme_covered" string="MSME (Micro / Small)"
+                        domain="[('drkds_msme_covered', '=', True)]"/>
+                <filter name="drkds_msme_registered" string="MSME Registered"
+                        domain="[('drkds_msme_registered', '=', True)]"/>
+            </filter>
+            <group name="group_by" position="inside">
+                <filter name="drkds_msme_group_category" string="Enterprise Category"
+                        context="{'group_by': 'drkds_msme_category'}"/>
+            </group>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_drkds_ticket_user,drkds.ticket user,model_drkds_ticket,drkds_ticketing_lite.group_ticket_user,1,1,1,0
+access_drkds_ticket_manager,drkds.ticket manager,model_drkds_ticket,drkds_ticketing_lite.group_ticket_manager,1,1,1,1
+access_drkds_ticket_team_user,drkds.ticket.team user,model_drkds_ticket_team,drkds_ticketing_lite.group_ticket_user,1,0,0,0
+access_drkds_ticket_team_manager,drkds.ticket.team manager,model_drkds_ticket_team,drkds_ticketing_lite.group_ticket_manager,1,1,1,1
+access_drkds_ticket_stage_user,drkds.ticket.stage user,model_drkds_ticket_stage,drkds_ticketing_lite.group_ticket_user,1,0,0,0
+access_drkds_ticket_stage_manager,drkds.ticket.stage manager,model_drkds_ticket_stage,drkds_ticketing_lite.group_ticket_manager,1,1,1,1
+access_drkds_ticket_tag_user,drkds.ticket.tag user,model_drkds_ticket_tag,drkds_ticketing_lite.group_ticket_user,1,0,1,0
+access_drkds_ticket_tag_manager,drkds.ticket.tag manager,model_drkds_ticket_tag,drkds_ticketing_lite.group_ticket_manager,1,1,1,1

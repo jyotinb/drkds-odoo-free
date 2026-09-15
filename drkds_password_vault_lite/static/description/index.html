@@ -1,0 +1,102 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">Password Vault (Lite)</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">A personal encrypted vault for credentials, inside your own Odoo database</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        Every business keeps a handful of logins that are not in Odoo: the bank portal, the courier account, the domain registrar. They usually end up in a spreadsheet called passwords.xlsx, or in a chat message. This module gives each user a private vault in the database you already run and back up, with passwords encrypted at rest using a key that is deliberately kept outside the database.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Real encryption, not obfuscation</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Secrets are sealed with Fernet from the cryptography library Odoo already ships: AES-128-CBC with an HMAC-SHA256 tag and a fresh random IV for every value. A tampered value is refused, not silently mis-read.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">The key is not in the database</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The master secret is read from the DRKDS_VAULT_KEY environment variable or from drkds_vault_key in odoo.conf. A system parameter would sit in the same backup file as the ciphertext and protect nobody.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A key per database</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The configured secret is stretched with PBKDF2-HMAC-SHA256 over 240 000 iterations, salted with the database&#x27;s own uuid. A ciphertext copied into another database cannot be opened there.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Write-only password field</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">You type a password in; it never reads back. It is not stored in the ORM read path, cannot be searched on, and is excluded from exports.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Reveal is an act, and it is logged</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Seeing a password means clicking Reveal. That writes a line in the entry&#x27;s access log with the user and the timestamp. Storing and changing a secret are logged too.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Yours alone</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Global record rules limit entries, folders, tags and log lines to their owner. There is no manager group and no administrator override, because a vault with an override is not a vault.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center; padding:18px;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Need the full version? The drkds Password Vault app adds team vaults, controlled sharing, rotation reminders and password strength auditing.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>Set a long random key before use: python -c &quot;from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())&quot;, put it in odoo.conf as drkds_vault_key, and restart Odoo.</li>
+        <li>If the key is missing, too short or wrong, the vault raises an error. It never falls back to storing a password in clear text, and it never decrypts to garbage.</li>
+        <li>Back up the key separately from the database. Lose the key and the stored passwords are gone; there is no recovery path, by design.</li>
+        <li>Titles, URLs, usernames, notes, folders, tags and the access log are metadata and are not encrypted. Keep passwords out of the notes field.</li>
+        <li>Record rules are enforced by the Odoo ORM. A PostgreSQL superuser, or anyone who can run server-side Python on the instance, can read every row and can also read the key from the process environment; what this protects is a stolen dump or backup.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>

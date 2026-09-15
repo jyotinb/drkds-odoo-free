@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_company_form_drkds_asset" model="ir.ui.view">
+        <field name="name">res.company.form.drkds.asset</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <page name="general_info" position="inside">
+                <group string="Fixed Asset Register" name="drkds_asset">
+                    <field name="drkds_asset_fy_last_month"/>
+                    <field name="drkds_asset_fy_last_day"/>
+                </group>
+            </page>
+        </field>
+    </record>
+
+</odoo>

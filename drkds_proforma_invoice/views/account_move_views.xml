@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_move_form_drkds_proforma" model="ir.ui.view">
+        <field name="name">account.move.form.drkds.proforma</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_drkds_view_proformas" type="object"
+                        class="oe_stat_button" icon="fa-file-o"
+                        invisible="drkds_proforma_count == 0">
+                    <field name="drkds_proforma_count" widget="statinfo"
+                           string="Proformas"/>
+                </button>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_drkds_create_proforma" type="object"
+                        string="Create Proforma"
+                        invisible="state != 'draft' or move_type not in ('out_invoice', 'out_refund')"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

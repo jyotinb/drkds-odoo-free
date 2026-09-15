@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form_drkds_proforma" model="ir.ui.view">
+        <field name="name">sale.order.form.drkds.proforma</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_drkds_view_proformas" type="object"
+                        class="oe_stat_button" icon="fa-file-o"
+                        invisible="drkds_proforma_count == 0">
+                    <field name="drkds_proforma_count" widget="statinfo"
+                           string="Proformas"/>
+                </button>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_drkds_create_proforma" type="object"
+                        string="Create Proforma"
+                        invisible="state == 'cancel'"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

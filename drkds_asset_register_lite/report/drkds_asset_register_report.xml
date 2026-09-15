@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_asset_register" model="ir.actions.report">
+        <field name="name">Asset Register</field>
+        <field name="model">drkds.asset.register.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">drkds_asset_register_lite.report_asset_register</field>
+        <field name="report_file">drkds_asset_register_lite.report_asset_register</field>
+        <field name="print_report_name">'Asset Register - %s' % (object.as_at_date)</field>
+    </record>
+
+    <template id="report_asset_register">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Fixed Asset Register</h2>
+                        <p>
+                            <strong>As at:</strong>
+                            <span t-field="doc.as_at_date"/>
+                            <span t-if="doc.custodian_id">
+                                &amp;#8195;<strong>Custodian:</strong>
+                                <span t-field="doc.custodian_id.name"/>
+                            </span>
+                        </p>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Custodian</th>
+                                    <th class="text-end">Purchase Value</th>
+                                    <th class="text-end">Accumulated</th>
+                                    <th class="text-end">Written Down Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.line_ids" t-as="line">
+                                    <td><span t-field="line.code"/></td>
+                                    <td><span t-field="line.name"/></td>
+                                    <td><span t-field="line.category_name"/></td>
+                                    <td><span t-field="line.custodian_id.name"/></td>
+                                    <td class="text-end">
+                                        <span t-field="line.purchase_value"
+                                              t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-field="line.accumulated_depreciation"
+                                              t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-field="line.written_down_value"
+                                              t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="text-end"><strong>Total</strong></td>
+                                    <td class="text-end">
+                                        <span t-esc="sum(doc.line_ids.mapped('purchase_value'))"
+                                              t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-esc="sum(doc.line_ids.mapped('accumulated_depreciation'))"
+                                              t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-esc="sum(doc.line_ids.mapped('written_down_value'))"
+                                              t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <p class="text-muted">
+                            Straight line depreciation, informational only. This register does
+                            not post depreciation to your accounts.
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

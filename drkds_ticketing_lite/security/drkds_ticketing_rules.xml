@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="rule_ticket_user" model="ir.rule">
+        <field name="name">Support tickets: own teams</field>
+        <field name="model_id" ref="model_drkds_ticket"/>
+        <field name="domain_force">['|', '|',
+            ('user_id', '=', user.id),
+            ('team_id', '=', False),
+            ('team_id.member_ids', 'in', [user.id])]</field>
+        <field name="groups" eval="[(4, ref('group_ticket_user'))]"/>
+    </record>
+
+    <record id="rule_ticket_manager" model="ir.rule">
+        <field name="name">Support tickets: all</field>
+        <field name="model_id" ref="model_drkds_ticket"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_ticket_manager'))]"/>
+    </record>
+
+    <record id="rule_ticket_company" model="ir.rule">
+        <field name="name">Support tickets: multi-company</field>
+        <field name="model_id" ref="model_drkds_ticket"/>
+        <field name="domain_force">['|', ('company_id', '=', False),
+            ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+</odoo>

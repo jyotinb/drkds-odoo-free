@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_drkds_vault_root" name="Password Vault"
+              web_icon="drkds_password_vault_lite,static/description/icon.png"
+              sequence="95"/>
+
+    <menuitem id="menu_drkds_vault_entry" name="My Vault"
+              parent="menu_drkds_vault_root"
+              action="drkds_vault_entry_action" sequence="10"/>
+
+    <menuitem id="menu_drkds_vault_config" name="Configuration"
+              parent="menu_drkds_vault_root" sequence="90"/>
+
+    <menuitem id="menu_drkds_vault_folder" name="Folders"
+              parent="menu_drkds_vault_config"
+              action="drkds_vault_folder_action" sequence="10"/>
+
+    <menuitem id="menu_drkds_vault_tag" name="Tags"
+              parent="menu_drkds_vault_config"
+              action="drkds_vault_tag_action" sequence="20"/>
+
+    <menuitem id="menu_drkds_vault_access_log" name="Access Log"
+              parent="menu_drkds_vault_root"
+              action="drkds_vault_access_log_action" sequence="20"/>
+
+</odoo>

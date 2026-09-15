@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_asset_register_line_list" model="ir.ui.view">
+        <field name="name">drkds.asset.register.line.list</field>
+        <field name="model">drkds.asset.register.line</field>
+        <field name="arch" type="xml">
+            <list string="Asset Register" create="false" delete="false" edit="false">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category_name"/>
+                <field name="custodian_id" optional="show"/>
+                <field name="location" optional="hide"/>
+                <field name="purchase_date"/>
+                <field name="purchase_value" sum="Purchase Value"/>
+                <field name="accumulated_depreciation" sum="Accumulated Depreciation"/>
+                <field name="written_down_value" sum="Written Down Value"/>
+                <field name="state"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_asset_register_wizard_form" model="ir.ui.view">
+        <field name="name">drkds.asset.register.wizard.form</field>
+        <field name="model">drkds.asset.register.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Asset Register">
+                <group>
+                    <group>
+                        <field name="as_at_date"/>
+                        <field name="state_filter"/>
+                        <field name="include_zero"/>
+                    </group>
+                    <group>
+                        <field name="category_ids" widget="many2many_tags"/>
+                        <field name="custodian_id"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_view_register" type="object" string="View Register"
+                            class="btn-primary"/>
+                    <button name="action_print_register" type="object" string="Print"
+                            class="btn-secondary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_drkds_asset_register_wizard" model="ir.actions.act_window">
+        <field name="name">Asset Register</field>
+        <field name="res_model">drkds.asset.register.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

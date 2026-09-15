@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_kb_section_list" model="ir.ui.view">
+        <field name="name">drkds.kb.section.list</field>
+        <field name="model">drkds.kb.section</field>
+        <field name="arch" type="xml">
+            <list string="Sections" default_order="complete_name">
+                <field name="complete_name" string="Section"/>
+                <field name="description" optional="show"/>
+                <field name="article_count" string="Articles"/>
+                <field name="article_count_total" string="Including sub-sections" optional="hide"/>
+                <field name="sequence" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_kb_section_form" model="ir.ui.view">
+        <field name="name">drkds.kb.section.form</field>
+        <field name="model">drkds.kb.section</field>
+        <field name="arch" type="xml">
+            <form string="Section">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_articles" type="object"
+                                class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="article_count_total" widget="statinfo" string="Articles"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name" string="Section"/>
+                        <h1><field name="name" placeholder="e.g. Employee Handbook"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="parent_id"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="complete_name"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="What belongs in this section?"/>
+                    <notebook>
+                        <page string="Sub-sections" name="children">
+                            <field name="child_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="description"/>
+                                    <field name="article_count"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Articles" name="articles">
+                            <field name="article_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="author_id"/>
+                                    <field name="write_date" string="Updated"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'published'"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_kb_section_search" model="ir.ui.view">
+        <field name="name">drkds.kb.section.search</field>
+        <field name="model">drkds.kb.section</field>
+        <field name="arch" type="xml">
+            <search string="Sections">
+                <field name="complete_name" string="Section"
+                       filter_domain="['|', ('complete_name', 'ilike', self), ('description', 'ilike', self)]"/>
+                <field name="parent_id"/>
+                <filter name="top_level" string="Top Level Only"
+                        domain="[('parent_id', '=', False)]"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_parent" string="Parent Section"
+                            context="{'group_by': 'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_kb_section" model="ir.actions.act_window">
+        <field name="name">Sections</field>
+        <field name="res_model">drkds.kb.section</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a section</p>
+            <p>
+                Sections are the shelves of the knowledge base. Nest them as deeply
+                as the subject deserves - the reading list shows them as a tree.
+            </p>
+        </field>
+    </record>
+
+</odoo>

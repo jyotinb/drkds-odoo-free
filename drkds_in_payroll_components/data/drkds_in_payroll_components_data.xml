@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        Starting rates, ceilings and slabs for Indian statutory payroll.
+
+        Effective date used for every record below: 2026-04-01.
+        Checked on 2026-09-15 against:
+          * EPF  - employee 12%, employer 12% of which 8.33% to the pension
+                   scheme, statutory wage ceiling INR 15,000 per month.
+                   https://www.zoho.com/in/payroll/academy/taxes-and-compliance/epf-scheme-2026-guide.html
+                   https://mercans.com/glossary/employees-provident-fund-epf-contribution/
+          * ESI  - employee 0.75%, employer 3.25% of gross wages, coverage
+                   threshold INR 21,000 per month, contribution periods
+                   April-September and October-March.
+                   https://tallysolutions.com/business-guides/esi-contribution-rate-2026-current-percentage-for-employer-employee/
+                   https://hrone.cloud/blog/esi-contribution-calculation/
+          * Professional tax - state schedules for Maharashtra, Karnataka,
+                   West Bengal, Gujarat and Telangana only.
+                   https://hrone.cloud/blog/professional-tax-slab-rates-2026-27/
+                   https://saral.pro/blogs/professional-tax-slab-rates-in-different-states/
+
+        THESE NUMBERS CHANGE. They are shipped as ordinary editable records so
+        that a change of rate is a change of data, not a change of code. Verify
+        every figure against the current notification with your payroll adviser
+        before you rely on a computed sheet. Professional tax in particular is
+        a state levy with no national schedule; several states (Tamil Nadu for
+        one) levy it through local bodies on a half-yearly basis and are
+        deliberately not modelled here.
+    -->
+
+    <record id="pf_config_2026" model="drkds.in.pf.config">
+        <field name="name">Provident Fund from April 2026</field>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="employee_rate">12.0</field>
+        <field name="employer_rate">12.0</field>
+        <field name="wage_ceiling">15000.0</field>
+        <field name="pension_rate">8.33</field>
+        <field name="pension_ceiling">15000.0</field>
+        <field name="company_id" eval="False"/>
+        <field name="note">EPFO scheme rates, checked 2026-09-15. Verify before use.</field>
+    </record>
+
+    <record id="esi_config_2026" model="drkds.in.esi.config">
+        <field name="name">ESI from April 2026</field>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="employee_rate">0.75</field>
+        <field name="employer_rate">3.25</field>
+        <field name="wage_threshold">21000.0</field>
+        <field name="period_one_start_month">4</field>
+        <field name="period_length">6</field>
+        <field name="company_id" eval="False"/>
+        <field name="note">ESIC rates unchanged since July 2019, checked 2026-09-15. Verify before use.</field>
+    </record>
+
+    <!-- Maharashtra: nil to 7,500; 175 to 10,000; 200 above, 300 in February. -->
+    <record id="pt_mh_1" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_mh"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">0.0</field>
+        <field name="amount_to">7500.0</field>
+        <field name="monthly_tax">0.0</field>
+        <field name="note">Verify against the current Maharashtra notification.</field>
+    </record>
+    <record id="pt_mh_2" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_mh"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">7500.01</field>
+        <field name="amount_to">10000.0</field>
+        <field name="monthly_tax">175.0</field>
+    </record>
+    <record id="pt_mh_3" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_mh"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">10000.01</field>
+        <field name="amount_to">0.0</field>
+        <field name="monthly_tax">200.0</field>
+        <field name="special_month">2</field>
+        <field name="special_month_tax">300.0</field>
+        <field name="note">February carries 300 so the year reaches the 2,500 cap.</field>
+    </record>
+
+    <!-- Karnataka: nil up to 24,999; 200 above, 300 in February (from 2025). -->
+    <record id="pt_ka_1" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_ka"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">0.0</field>
+        <field name="amount_to">24999.99</field>
+        <field name="monthly_tax">0.0</field>
+    </record>
+    <record id="pt_ka_2" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_ka"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">25000.0</field>
+        <field name="amount_to">0.0</field>
+        <field name="monthly_tax">200.0</field>
+        <field name="special_month">2</field>
+        <field name="special_month_tax">300.0</field>
+    </record>
+
+    <!-- West Bengal: nil to 10,000; 110; 130; 150; 200. No special month. -->
+    <record id="pt_wb_1" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_wb"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">0.0</field>
+        <field name="amount_to">10000.0</field>
+        <field name="monthly_tax">0.0</field>
+    </record>
+    <record id="pt_wb_2" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_wb"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">10000.01</field>
+        <field name="amount_to">15000.0</field>
+        <field name="monthly_tax">110.0</field>
+    </record>
+    <record id="pt_wb_3" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_wb"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">15000.01</field>
+        <field name="amount_to">25000.0</field>
+        <field name="monthly_tax">130.0</field>
+    </record>
+    <record id="pt_wb_4" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_wb"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">25000.01</field>
+        <field name="amount_to">40000.0</field>
+        <field name="monthly_tax">150.0</field>
+    </record>
+    <record id="pt_wb_5" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_wb"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">40000.01</field>
+        <field name="amount_to">0.0</field>
+        <field name="monthly_tax">200.0</field>
+    </record>
+
+    <!-- Gujarat: nil to 12,000; 200 above. -->
+    <record id="pt_gj_1" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_gj"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">0.0</field>
+        <field name="amount_to">12000.0</field>
+        <field name="monthly_tax">0.0</field>
+    </record>
+    <record id="pt_gj_2" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_gj"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">12000.01</field>
+        <field name="amount_to">0.0</field>
+        <field name="monthly_tax">200.0</field>
+    </record>
+
+    <!-- Telangana: nil to 15,000; 150 to 20,000; 200 above. -->
+    <record id="pt_ts_1" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_ts"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">0.0</field>
+        <field name="amount_to">15000.0</field>
+        <field name="monthly_tax">0.0</field>
+    </record>
+    <record id="pt_ts_2" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_ts"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">15000.01</field>
+        <field name="amount_to">20000.0</field>
+        <field name="monthly_tax">150.0</field>
+    </record>
+    <record id="pt_ts_3" model="drkds.in.pt.slab">
+        <field name="state_id" ref="base.state_in_ts"/>
+        <field name="effective_from" eval="'2026-04-01'"/>
+        <field name="amount_from">20000.01</field>
+        <field name="amount_to">0.0</field>
+        <field name="monthly_tax">200.0</field>
+    </record>
+</odoo>

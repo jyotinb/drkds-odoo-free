@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_in_pf_config_list" model="ir.ui.view">
+        <field name="name">drkds.in.pf.config.list</field>
+        <field name="model">drkds.in.pf.config</field>
+        <field name="arch" type="xml">
+            <list string="Provident Fund Rates">
+                <field name="effective_from"/>
+                <field name="name"/>
+                <field name="employee_rate"/>
+                <field name="employer_rate"/>
+                <field name="pension_rate"/>
+                <field name="wage_ceiling"/>
+                <field name="pension_ceiling"/>
+                <field name="company_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_in_pf_config_form" model="ir.ui.view">
+        <field name="name">drkds.in.pf.config.form</field>
+        <field name="model">drkds.in.pf.config</field>
+        <field name="arch" type="xml">
+            <form string="Provident Fund Rates">
+                <sheet>
+                    <div class="alert alert-info" role="status">
+                        Rates, ceilings and the pension split change by notification.
+                        Confirm them with your payroll adviser and add a new record with a
+                        later effective date rather than editing history.
+                    </div>
+                    <group>
+                        <group string="Applies From">
+                            <field name="name"/>
+                            <field name="effective_from"/>
+                            <field name="company_id"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group string="Rates and Ceilings">
+                            <field name="employee_rate"/>
+                            <field name="employer_rate"/>
+                            <field name="pension_rate"/>
+                            <field name="wage_ceiling"/>
+                            <field name="pension_ceiling"/>
+                        </group>
+                    </group>
+                    <group string="Source">
+                        <field name="note" nolabel="1" placeholder="Where these rates came from and when they were checked."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_drkds_in_pf_config" model="ir.actions.act_window">
+        <field name="name">Provident Fund Rates</field>
+        <field name="res_model">drkds.in.pf.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add a PF rate set</p>
+            <p>Each record carries an effective-from date. A sheet uses the latest
+               record effective on or before the month it covers.</p>
+        </field>
+    </record>
+
+    <record id="view_drkds_in_esi_config_list" model="ir.ui.view">
+        <field name="name">drkds.in.esi.config.list</field>
+        <field name="model">drkds.in.esi.config</field>
+        <field name="arch" type="xml">
+            <list string="ESI Rates">
+                <field name="effective_from"/>
+                <field name="name"/>
+                <field name="employee_rate"/>
+                <field name="employer_rate"/>
+                <field name="wage_threshold"/>
+                <field name="company_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_in_esi_config_form" model="ir.ui.view">
+        <field name="name">drkds.in.esi.config.form</field>
+        <field name="model">drkds.in.esi.config</field>
+        <field name="arch" type="xml">
+            <form string="ESI Rates">
+                <sheet>
+                    <div class="alert alert-info" role="status">
+                        An employee who crosses the wage threshold inside a contribution
+                        period stays covered until that period ends. Set the date the
+                        employee became covered on the contract for that rule to apply.
+                    </div>
+                    <group>
+                        <group string="Applies From">
+                            <field name="name"/>
+                            <field name="effective_from"/>
+                            <field name="company_id"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group string="Rates and Threshold">
+                            <field name="employee_rate"/>
+                            <field name="employer_rate"/>
+                            <field name="wage_threshold"/>
+                            <field name="period_one_start_month"/>
+                            <field name="period_length"/>
+                        </group>
+                    </group>
+                    <group string="Source">
+                        <field name="note" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_drkds_in_esi_config" model="ir.actions.act_window">
+        <field name="name">ESI Rates</field>
+        <field name="res_model">drkds.in.esi.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_drkds_in_pt_slab_list" model="ir.ui.view">
+        <field name="name">drkds.in.pt.slab.list</field>
+        <field name="model">drkds.in.pt.slab</field>
+        <field name="arch" type="xml">
+            <list string="Professional Tax Slabs" editable="bottom">
+                <field name="state_id"/>
+                <field name="effective_from"/>
+                <field name="amount_from"/>
+                <field name="amount_to"/>
+                <field name="monthly_tax"/>
+                <field name="special_month"/>
+                <field name="special_month_tax"/>
+                <field name="note" optional="hide"/>
+                <field name="active" widget="boolean_toggle" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_in_pt_slab_search" model="ir.ui.view">
+        <field name="name">drkds.in.pt.slab.search</field>
+        <field name="model">drkds.in.pt.slab</field>
+        <field name="arch" type="xml">
+            <search string="Professional Tax Slabs">
+                <field name="state_id"/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_state" string="State" context="{'group_by': 'state_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_in_pt_slab" model="ir.actions.act_window">
+        <field name="name">Professional Tax Slabs</field>
+        <field name="res_model">drkds.in.pt.slab</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_group_state': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add a professional tax slab</p>
+            <p>
+                Professional tax is a state levy and every state publishes its own
+                schedule. The slabs shipped with this module cover a few major states
+                only and must be verified against the current state notification
+                before you rely on them. Add the states you operate in here.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,102 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">Fixed Asset Register (Lite)</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">A fixed asset register with a straight line depreciation schedule, without posting entries</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        Odoo 19 Community ships no fixed asset register, so most small businesses keep one in a spreadsheet: a list of what the company owns, a straight line calculation, and a written down value at year end for the accountant. This module is that spreadsheet, done properly, inside Odoo. It records the asset, builds the schedule and prints the register as at any date you choose. It does not post to your accounts - the depreciation journal entry stays a manual entry made by whoever closes your books.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">The asset record</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Description, an automatic reference from a sequence, category, purchase date and value, salvage value, useful life in years or months, depreciation start date, location, custodian, supplier and the supplier&#x27;s invoice reference, with a status of draft, in service, disposed or scrapped.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Categories carrying the defaults</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A class of asset holds the useful life, the period and the salvage percentage proposed for new assets. Editing a category never rewrites the schedule of an asset already entered.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A straight line schedule that adds up</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Periods are measured in months, so a full year of a leap year is worth exactly one year of depreciation. A mid-year purchase is pro-rated across the first and last periods, and the final period absorbs every rounding remainder so the schedule closes on the salvage value to the cent.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Rebuilt, never patched</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Change the value, the life or the start date and the schedule is rebuilt from scratch. No stale line is left behind. A useful life of zero or less is refused with a message that says why.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Disposal and scrapping</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Record the date and the proceeds. The schedule stops on that date rather than running on to the end of a life the asset never saw out, and the gain or loss against the written down value is shown for information.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">The register as at a date</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Every asset with its purchase value, accumulated depreciation and written down value as at the date you pick, with totals. The date need not be a period end; the value is pro-rated inside the period it falls in. Filter by category, custodian or status, view it on screen or print the PDF.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center; padding:18px;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Need the full version? The drkds Accounting Pro app adds posted depreciation entries, reducing balance and other methods, revaluation and asset components.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>This register is informational. It does not post depreciation entries to your ledger.</li>
+        <li>Straight line is the only method here. Reducing balance and other methods are not included.</li>
+        <li>Assets, categories and schedules are company scoped, with record rules to match, and the financial year end used to cut yearly periods is set per company.</li>
+        <li>Depends on the standard Odoo Community base and mail modules only - nothing else is dragged in.</li>
+        <li>Works on Odoo 19 Community Edition.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>

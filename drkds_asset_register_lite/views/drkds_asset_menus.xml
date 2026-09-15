@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_drkds_asset_root"
+              name="Fixed Assets"
+              web_icon="drkds_asset_register_lite,static/description/icon.png"
+              groups="group_drkds_asset_user"
+              sequence="95"/>
+
+    <menuitem id="menu_drkds_asset_register"
+              name="Register"
+              parent="menu_drkds_asset_root"
+              sequence="10"/>
+
+    <menuitem id="menu_drkds_asset_assets"
+              name="Assets"
+              parent="menu_drkds_asset_register"
+              action="action_drkds_asset"
+              sequence="10"/>
+
+    <menuitem id="menu_drkds_asset_report_root"
+              name="Reporting"
+              parent="menu_drkds_asset_root"
+              sequence="20"/>
+
+    <menuitem id="menu_drkds_asset_register_report"
+              name="Asset Register"
+              parent="menu_drkds_asset_report_root"
+              action="action_drkds_asset_register_wizard"
+              sequence="10"/>
+
+    <menuitem id="menu_drkds_asset_config"
+              name="Configuration"
+              parent="menu_drkds_asset_root"
+              groups="group_drkds_asset_manager"
+              sequence="90"/>
+
+    <menuitem id="menu_drkds_asset_categories"
+              name="Asset Categories"
+              parent="menu_drkds_asset_config"
+              action="action_drkds_asset_category"
+              sequence="10"/>
+
+</odoo>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="stage_new" model="drkds.ticket.stage">
+        <field name="name">New</field>
+        <field name="sequence">1</field>
+        <field name="description">Received, not yet looked at.</field>
+    </record>
+    <record id="stage_in_progress" model="drkds.ticket.stage">
+        <field name="name">In Progress</field>
+        <field name="sequence">10</field>
+        <field name="description">Someone is working on it.</field>
+    </record>
+    <record id="stage_waiting" model="drkds.ticket.stage">
+        <field name="name">Waiting on Customer</field>
+        <field name="sequence">20</field>
+        <field name="description">Blocked until the customer answers.</field>
+    </record>
+    <record id="stage_solved" model="drkds.ticket.stage">
+        <field name="name">Solved</field>
+        <field name="sequence">30</field>
+        <field name="folded" eval="True"/>
+        <field name="is_closed" eval="True"/>
+        <field name="description">Closed with a solution.</field>
+    </record>
+    <record id="stage_cancelled" model="drkds.ticket.stage">
+        <field name="name">Cancelled</field>
+        <field name="sequence">40</field>
+        <field name="folded" eval="True"/>
+        <field name="is_closed" eval="True"/>
+        <field name="description">Closed without a solution.</field>
+    </record>
+</odoo>

@@ -1,0 +1,102 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">Account Budgets (Lite)</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Set a budget per account and period, then track committed and actual spend against it</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        A budget document with a period, a company and a responsible owner. Budget an account or a whole account group, and the actual spend fills in from posted journal items. Variance and percentage are computed with the sign convention a finance person expects, in both directions.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Budget document</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Name, period, company, responsible user and a status of draft, confirmed, done or cancelled. The period locks once the budget is in force, so a circulated variance cannot quietly change meaning.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Lines on accounts or groups</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Budget a single account, or every account inside a group such as all travel accounts, with an optional analytic account. Planned figures are always entered as plain positive amounts.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Actuals from the ledger</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The sum of posted journal items on the covered accounts, inside the period, in the budget&#x27;s company. Draft and cancelled entries never count towards a figure.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Signs that come out right</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Odoo stores debits positive and credits negative. Expense lines take the balance as it is, income lines take its negative, so a cost budget and a revenue budget both read as positive amounts.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Variance stated favourably</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Positive variance always means good news. A line is flagged over budget when the variance is unfavourable: over-spend on an expense line, under-collection on an income line.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Budget versus Actual with drill-down</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A reporting view grouped by account, filtered by period, status and direction, with a button on every line that opens exactly the journal items behind the figure.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center; padding:18px;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Need the full version? The drkds Accounting Pro app adds budget revisions with approvals, forecasting and multi-company consolidation.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>Amounts are held in the company currency, the currency journal item balances are already stored in.</li>
+        <li>Budgets and lines carry a company and are isolated by record rules, so several companies under one group never see each other&#x27;s figures.</li>
+        <li>A line planned at zero reports a zero percentage rather than failing, because a nil budget is a legitimate thing to record.</li>
+        <li>Where an analytic account is set, only that analytic account&#x27;s share of each journal item counts, so a forty percent allocation does not consume the whole analytic budget.</li>
+        <li>Actual and variance are computed live rather than stored, so a back-dated posting shows up the next time the report is opened.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>
