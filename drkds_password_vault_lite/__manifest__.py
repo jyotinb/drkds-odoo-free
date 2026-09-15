@@ -70,6 +70,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "wizard/drkds_vault_reveal_views.xml",
         "views/drkds_vault_menus.xml",
     ],
+    "images": ["static/description/cover.png"],
     "installable": True,
     "application": True,
     "auto_install": False,

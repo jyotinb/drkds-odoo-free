@@ -86,6 +86,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "report/drkds_asset_register_report.xml",
         "views/drkds_asset_menus.xml",
     ],
+    "images": ["static/description/cover.png"],
     "installable": True,
     "application": True,
     "auto_install": False,

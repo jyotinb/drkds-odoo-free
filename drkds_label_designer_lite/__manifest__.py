@@ -65,6 +65,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/drkds_label_menus.xml",
         "data/drkds_label_template_data.xml",
     ],
+    "images": ["static/description/cover.png"],
     "installable": True,
     "application": False,
     "auto_install": False,

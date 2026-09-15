@@ -70,6 +70,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/drkds_in_payroll_sheet_views.xml",
         "views/hr_employee_views.xml",
     ],
+    "images": ["static/description/cover.png"],
     "installable": True,
     "application": False,
     "auto_install": False,

@@ -74,6 +74,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "security/ir.model.access.csv",
         "views/drkds_gst_summary_views.xml",
     ],
+    "images": ["static/description/cover.png"],
     "installable": True,
     "application": False,
     "auto_install": False,

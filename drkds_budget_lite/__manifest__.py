@@ -72,6 +72,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/drkds_budget_line_views.xml",
         "views/drkds_budget_menus.xml",
     ],
+    "images": ["static/description/cover.png"],
     "installable": True,
     "application": False,
     "auto_install": False,

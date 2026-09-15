@@ -55,6 +55,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/ir_sequence_views.xml",
         "wizard/drkds_fy_range_builder_views.xml",
     ],
+    "images": ["static/description/cover.png"],
     "installable": True,
     "application": False,
     "auto_install": False,

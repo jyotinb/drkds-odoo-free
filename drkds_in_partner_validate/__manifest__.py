@@ -64,6 +64,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/res_partner_views.xml",
         "views/drkds_in_state_code_views.xml",
     ],
+    "images": ["static/description/cover.png"],
     "installable": True,
     "application": False,
     "auto_install": False,

@@ -50,6 +50,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/report_invoice.xml",
         "views/account_portal_templates.xml",
     ],
+    "images": ["static/description/cover.png"],
     "installable": True,
     "application": False,
     "auto_install": False,

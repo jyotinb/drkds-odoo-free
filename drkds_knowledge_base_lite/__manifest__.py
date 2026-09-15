@@ -78,6 +78,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
             "drkds_knowledge_base_lite/static/src/scss/drkds_kb.scss",
         ],
     },
+    "images": ["static/description/cover.png"],
     "installable": True,
     "application": True,
     "auto_install": False,

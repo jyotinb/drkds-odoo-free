@@ -66,6 +66,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/res_config_settings_views.xml",
         "report/drkds_in_invoice_print_extras_templates.xml",
     ],
+    "images": ["static/description/cover.png"],
     "installable": True,
     "application": False,
     "auto_install": False,
