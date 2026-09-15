@@ -1,0 +1,113 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">GST Outward and Inward Summary (India)</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">A period GST summary by rate, by state and by HSN, for checking before you file</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        Pick a period and a company, press Compute, and read three tables back: outward supplies, inward supplies and an HSN summary. It is the working paper you want open next to the return before you press submit — a place to see, in one screen, what the books say the period contained.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Outward supplies by rate and state</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Taxable value, CGST, SGST, IGST and cess bucketed by the combined GST rate and by place of supply, with intra-state and inter-state separated.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Inward supplies</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The same breakdown for vendor bills and debit notes, so purchase tax can be checked with the same eye as sales tax.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">HSN summary</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">HSN/SAC code, description, UQC, quantity, taxable value and tax per rate, aggregated across the whole period.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Reconciliation totals</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Period figures grouped the way GSTR-3B table 3.1(a) and the GSTR-1 registered/unregistered split present them, so a difference shows up as a number rather than a hunch.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Drill-down to the invoices</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Every row opens the documents it was built from. A figure that looks wrong is traced to the invoice in two clicks.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Export</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">XLSX when the standard xlsxwriter library is present, CSV otherwise. No extra Python package is ever installed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center; padding:18px;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Need the full version? The drkds India accounting app adds GSTR-1 and GSTR-3B preparation and GSTR-2A reconciliation.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>This is a check-before-you-file summary. It does not generate a GST return and it does not produce a filing-ready JSON.</li>
+        <li>Nothing matches on tax names. Amounts are read from the Indian localisation&#x27;s own tax tags and from Odoo&#x27;s tax engine, the same code that produces the invoice totals.</li>
+        <li>Credit notes and debit notes are subtracted from the period rather than listed separately, because that is how they affect supplies.</li>
+        <li>Input tax credit is not split into eligible and ineligible: Odoo 19 Community records no ITC eligibility flag on a tax, so any split would be invented rather than read.</li>
+        <li>No government portal is ever contacted. Nothing leaves the database.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p style="font-size:14px; color:#7f8c8d; font-style:italic; border-top:1px solid #e0e0e0; padding-top:14px;">
+        This module is a tool to assist with compliance workflows. Responsibility
+        for statutory compliance rests with the user and their tax professional.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>

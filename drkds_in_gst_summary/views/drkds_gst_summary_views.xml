@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_gst_summary_line_list" model="ir.ui.view">
+        <field name="name">drkds.gst.summary.line.list</field>
+        <field name="model">drkds.gst.summary.line</field>
+        <field name="arch" type="xml">
+            <list string="GST Summary" create="false" edit="false" delete="false">
+                <field name="tax_rate"/>
+                <field name="state_id"/>
+                <field name="supply_type"/>
+                <field name="gstr_section" optional="show"/>
+                <field name="taxable_value" sum="Total"/>
+                <field name="cgst_amount" sum="Total"/>
+                <field name="sgst_amount" sum="Total"/>
+                <field name="igst_amount" sum="Total"/>
+                <field name="cess_amount" sum="Total"/>
+                <field name="total_tax" sum="Total"/>
+                <field name="invoice_total" sum="Total" optional="hide"/>
+                <field name="move_count"/>
+                <field name="currency_id" column_invisible="1"/>
+                <button name="action_open_moves" type="object" icon="fa-search-plus"
+                        string="Documents" title="Open the documents behind this figure"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_gst_hsn_line_list" model="ir.ui.view">
+        <field name="name">drkds.gst.hsn.line.list</field>
+        <field name="model">drkds.gst.hsn.line</field>
+        <field name="arch" type="xml">
+            <list string="HSN Summary" create="false" edit="false" delete="false">
+                <field name="summary_type"/>
+                <field name="hsn_code"/>
+                <field name="description"/>
+                <field name="uqc"/>
+                <field name="quantity" sum="Total"/>
+                <field name="tax_rate"/>
+                <field name="taxable_value" sum="Total"/>
+                <field name="cgst_amount" sum="Total"/>
+                <field name="sgst_amount" sum="Total"/>
+                <field name="igst_amount" sum="Total"/>
+                <field name="cess_amount" sum="Total"/>
+                <field name="total_tax" sum="Total"/>
+                <field name="currency_id" column_invisible="1"/>
+                <button name="action_open_moves" type="object" icon="fa-search-plus"
+                        string="Documents" title="Open the documents behind this figure"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_gst_summary_form" model="ir.ui.view">
+        <field name="name">drkds.gst.summary.form</field>
+        <field name="model">drkds.gst.summary</field>
+        <field name="arch" type="xml">
+            <form string="GST Summary">
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="include_draft"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="computed" invisible="1"/>
+                    </group>
+                </group>
+                <div class="alert alert-info" role="alert">
+                    A check-before-you-file summary of the period. It is not a GST
+                    return and it does not produce a filing-ready JSON. Compare the
+                    totals below against the return your filing tool prepares, and
+                    investigate any difference before you file.
+                </div>
+                <notebook invisible="not computed">
+                    <page string="Outward Supplies" name="outward">
+                        <field name="outward_line_ids" readonly="1"
+                               context="{'list_view_ref': 'drkds_in_gst_summary.view_drkds_gst_summary_line_list'}"/>
+                    </page>
+                    <page string="Inward Supplies" name="inward">
+                        <div class="text-muted mb-2">
+                            Input tax credit is not split into eligible and ineligible
+                            here. Odoo 19 Community records no ITC eligibility flag on
+                            a tax, so any split would be guesswork.
+                        </div>
+                        <field name="inward_line_ids" readonly="1"
+                               context="{'list_view_ref': 'drkds_in_gst_summary.view_drkds_gst_summary_line_list'}"/>
+                    </page>
+                    <page string="HSN Summary" name="hsn">
+                        <field name="hsn_line_ids" readonly="1"/>
+                    </page>
+                    <page string="Reconciliation" name="reconciliation">
+                        <group string="Outward - compare with GSTR-3B table 3.1(a) and GSTR-1">
+                            <group>
+                                <field name="outward_taxable"/>
+                                <field name="outward_b2b_taxable"/>
+                                <field name="outward_b2c_taxable"/>
+                            </group>
+                            <group>
+                                <field name="outward_cgst"/>
+                                <field name="outward_sgst"/>
+                                <field name="outward_igst"/>
+                                <field name="outward_cess"/>
+                            </group>
+                        </group>
+                        <group string="Inward - compare with GSTR-3B table 4 input tax credit">
+                            <group>
+                                <field name="inward_taxable"/>
+                            </group>
+                            <group>
+                                <field name="inward_cgst"/>
+                                <field name="inward_sgst"/>
+                                <field name="inward_igst"/>
+                                <field name="inward_cess"/>
+                            </group>
+                        </group>
+                        <group>
+                            <button name="action_open_outward_moves" type="object"
+                                    string="All outward documents" class="btn-link"/>
+                            <button name="action_open_inward_moves" type="object"
+                                    string="All inward documents" class="btn-link"/>
+                        </group>
+                    </page>
+                </notebook>
+                <footer>
+                    <button name="action_compute" type="object" string="Compute"
+                            class="btn-primary"/>
+                    <button name="action_export" type="object" string="Export"
+                            class="btn-secondary" invisible="not computed"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_drkds_gst_summary" model="ir.actions.act_window">
+        <field name="name">GST Outward and Inward Summary</field>
+        <field name="res_model">drkds.gst.summary</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_drkds_gst_summary"
+              name="GST Summary (India)"
+              parent="account.menu_finance_reports"
+              action="action_drkds_gst_summary"
+              sequence="90"/>
+
+</odoo>

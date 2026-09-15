@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_drkds_gst_summary,drkds.gst.summary user,model_drkds_gst_summary,account.group_account_readonly,1,1,1,1
+access_drkds_gst_summary_line,drkds.gst.summary.line user,model_drkds_gst_summary_line,account.group_account_readonly,1,1,1,1
+access_drkds_gst_hsn_line,drkds.gst.hsn.line user,model_drkds_gst_hsn_line,account.group_account_readonly,1,1,1,1
