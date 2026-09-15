@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="drkds_branch_res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.form.drkds.branch</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <block id="invoicing_settings" position="inside">
+                <setting id="drkds_branch_invoice_sequence_setting"
+                         string="Branch-wise Invoice Numbering"
+                         help="Give each branch its own invoice number series inside the same journal.">
+                    <field name="drkds_branch_invoice_sequence"/>
+                    <div class="text-muted" invisible="not drkds_branch_invoice_sequence">
+                        The branch code is inserted next to the journal code, so
+                        INV/2026/00001 becomes INV-BLR/2026/00001. Switch this on
+                        before the first invoice of a period.
+                    </div>
+                </setting>
+            </block>
+        </field>
+    </record>
+
+</odoo>

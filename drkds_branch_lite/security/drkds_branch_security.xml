@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="group_drkds_branch_manager" model="res.groups">
+        <field name="name">Manage Branches</field>
+        <field name="comment">Create and edit branches, and assign branches to users.</field>
+    </record>
+
+    <record id="base.group_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('drkds_branch_lite.group_drkds_branch_manager'))]"/>
+    </record>
+
+    <!--
+        Branch scoping.
+
+        A user with no allowed branch is unrestricted: they see every branch.
+        That is deliberate. The owner, the accountant and the system user are
+        the people with no branch, and silently blinding them would be worse
+        than showing too much. Restriction starts the moment a branch is put on
+        the user's Allowed Branches.
+
+        A restricted user always keeps sight of documents with no branch at all,
+        so records that predate this module, or that a background job created,
+        never disappear from view.
+
+        Both rules are GLOBAL, not group rules. Odoo ORs the rules of the groups
+        a user belongs to, and account ships account_move_see_all with the
+        domain [(1, '=', 1)] for the invoicing group, so a group rule here would
+        be ORed away for exactly the users it is meant to restrict. A global
+        rule is ANDed with all of them.
+
+        Contacts are intentionally NOT scoped. They are shared master data
+        pointed at by users, companies and vendors; hiding them breaks far more
+        than it protects. The branch on a contact is a reporting label.
+    -->
+    <record id="drkds_branch_rule_sale_order" model="ir.rule">
+        <field name="name">Sales orders: own branches only</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="domain_force">[('drkds_branch_id', 'in', user.drkds_branch_ids.ids + [False])] if user.drkds_branch_ids else [(1, '=', 1)]</field>
+    </record>
+
+    <record id="drkds_branch_rule_account_move" model="ir.rule">
+        <field name="name">Journal entries: own branches only</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="domain_force">[('drkds_branch_id', 'in', user.drkds_branch_ids.ids + [False])] if user.drkds_branch_ids else [(1, '=', 1)]</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="drkds_branch_view_partner_form" model="ir.ui.view">
+        <field name="name">res.partner.form.drkds.branch</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="drkds_branch_id" options="{'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="drkds_branch_view_partner_filter" model="ir.ui.view">
+        <field name="name">res.partner.search.drkds.branch</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="drkds_branch_id" string="Branch"/>
+            </field>
+            <group name="group_by" position="inside">
+                <filter name="drkds_group_branch" string="Branch"
+                        context="{'group_by': 'drkds_branch_id'}"/>
+            </group>
+        </field>
+    </record>
+
+</odoo>

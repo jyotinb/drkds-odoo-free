@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="drkds_branch_view_order_form" model="ir.ui.view">
+        <field name="name">sale.order.form.drkds.branch</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="drkds_branch_id" options="{'no_create': True}"
+                       readonly="state in ('sale', 'cancel')"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="drkds_branch_view_order_list" model="ir.ui.view">
+        <field name="name">sale.order.list.drkds.branch</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="drkds_branch_id" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="drkds_branch_view_sales_order_filter" model="ir.ui.view">
+        <field name="name">sale.order.search.drkds.branch</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="drkds_branch_id" string="Branch"/>
+            </field>
+            <filter name="salesperson" position="after">
+                <filter name="drkds_group_branch" string="Branch"
+                        context="{'group_by': 'drkds_branch_id'}"/>
+            </filter>
+        </field>
+    </record>
+
+</odoo>

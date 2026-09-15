@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="drkds_upi_report_invoice_document"
+              inherit_id="account.report_invoice_document"
+              name="UPI Payment QR on the invoice PDF">
+        <xpath expr="//div[@id='payment_link_qrcode']" position="after">
+            <t t-set="drkds_upi_qr" t-value="o._drkds_upi_qr_data_uri()"/>
+            <div t-if="drkds_upi_qr" id="drkds_upi_qrcode"
+                 class="d-flex mb-3 avoid-page-break-inside">
+                <img t-att-src="drkds_upi_qr" alt="UPI payment QR code"
+                     style="width:120px;height:120px;" class="me-3"/>
+                <div class="d-inline lh-sm">
+                    <p class="fw-bold mb-0">PAY BY UPI</p>
+                    <p class="text-muted fst-italic mb-0">
+                        Scan with any UPI application
+                    </p>
+                    <p class="mb-0">
+                        UPI ID: <span t-out="o.company_id.drkds_upi_vpa"/>
+                    </p>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

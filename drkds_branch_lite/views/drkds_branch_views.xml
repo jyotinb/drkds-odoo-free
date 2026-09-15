@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="drkds_branch_view_list" model="ir.ui.view">
+        <field name="name">drkds.branch.list</field>
+        <field name="model">drkds.branch</field>
+        <field name="arch" type="xml">
+            <list string="Branches">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="city"/>
+                <field name="state_id" optional="show"/>
+                <field name="phone" optional="hide"/>
+                <field name="manager_id" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="drkds_branch_view_form" model="ir.ui.view">
+        <field name="name">drkds.branch.form</field>
+        <field name="model">drkds.branch</field>
+        <field name="arch" type="xml">
+            <form string="Branch">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Bengaluru Showroom"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identification">
+                            <field name="code" placeholder="e.g. BLR"/>
+                            <field name="manager_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Contact">
+                            <field name="phone"/>
+                            <field name="email" widget="email"/>
+                        </group>
+                    </group>
+                    <group string="Address">
+                        <group>
+                            <field name="street" placeholder="Street..."/>
+                            <field name="street2" placeholder="Street 2..."/>
+                            <field name="city" placeholder="City"/>
+                        </group>
+                        <group>
+                            <field name="state_id" options="{'no_create': True}"/>
+                            <field name="zip" placeholder="PIN"/>
+                            <field name="country_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group string="Internal Notes">
+                        <field name="note" nolabel="1" placeholder="Anything the branch staff should know."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="drkds_branch_view_search" model="ir.ui.view">
+        <field name="name">drkds.branch.search</field>
+        <field name="model">drkds.branch</field>
+        <field name="arch" type="xml">
+            <search string="Branches">
+                <field name="name" string="Branch"
+                       filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                <field name="city"/>
+                <field name="state_id"/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_state" string="State" context="{'group_by': 'state_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="drkds_branch_action" model="ir.actions.act_window">
+        <field name="name">Branches</field>
+        <field name="res_model">drkds.branch</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add your first branch</p>
+            <p>A branch is a place of business inside this company - a showroom,
+               a godown, a second counter. Tag contacts, sales orders and
+               invoices with it and read any of those lists branch by branch.</p>
+        </field>
+    </record>
+
+    <menuitem id="drkds_branch_menu"
+              name="Branches"
+              parent="base.menu_custom"
+              action="drkds_branch_action"
+              groups="drkds_branch_lite.group_drkds_branch_manager"
+              sequence="30"/>
+
+</odoo>

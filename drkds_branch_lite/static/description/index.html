@@ -1,0 +1,102 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">Branches (Lite)</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Tag sales, invoices and contacts with a branch and report by it, inside one company</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        One company, one GSTIN, several counters. This module adds a branch - a plain place of business - to contacts, sales orders and invoices, defaults it from the user so counter staff never have to pick one, and keeps each branch inside its own documents. Odoo&#x27;s analytic accounting remains the right tool for cost and margin analysis; it just cannot default from a user, cannot restrict who reads a document, and has nothing to do with numbering. Use both.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A branch, not a second company</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Name, code, address, manager, ordering and an archive flag, all inside one company. No second chart of accounts, no second currency, no inter-branch accounting to reconcile.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">On the documents that matter</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Branch on contacts, sales orders and customer and vendor invoices. The branch on a sales order is carried onto the invoice it creates.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Defaulted from the user</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Each user gets one default branch and, optionally, a list of branches they may use. Counter staff never pick a branch; it is already filled in.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Branch-scoped visibility</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Global record rules on sales orders and journal entries. A user restricted to Bengaluru does not see Mumbai&#x27;s invoices. A user with no branch assigned stays unrestricted, which is what an owner or an accountant needs.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Branch-wise reporting</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A Branch filter and a Branch group-by on the contact, sales order and invoice lists. Group the posted invoice list by branch and read turnover per branch off the list totals.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Optional branch-wise numbering</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">One switch turns INV/2026/00001 into INV-BLR/2026/00001, with each branch numbering independently inside the same journal. Built on Odoo&#x27;s own invoice sequence, so gap detection and resequencing keep working.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center; padding:18px;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Need the full version? The drkds Branch Operations app extends branches to purchases, transfers and payments, with branch-wise access across the suite and consolidated reporting.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>A user with no allowed branches is deliberately unrestricted and sees every branch. Restriction begins the moment you fill in Allowed Branches. Owners and accountants are the people with no branch, and silently blinding them is the worse failure.</li>
+        <li>A restricted user always keeps sight of documents that carry no branch at all, so records created before install never disappear from view.</li>
+        <li>Contacts are labelled by branch, never hidden by it. A contact is shared master data pointed at by users, companies and vendors; hiding it breaks more than it protects.</li>
+        <li>Depends on sale and account only. Stock transfers, purchases and payments carry no branch here, and the dependency list does not reach into every app.</li>
+        <li>Switch branch-wise numbering on before the first invoice of a period. Turning it on mid-series leaves a visible break in the numbers, and a branch code should never change once it has appeared in an invoice number.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>

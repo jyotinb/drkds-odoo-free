@@ -1,0 +1,102 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">UPI Payment QR on Invoices (India)</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Print a scannable UPI QR code on the customer invoice, pre-filled with the amount due</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        Your customer opens the invoice, scans the code with any UPI application, and the amount, the payee and the invoice reference are already filled in. Nothing is typed, so nothing is mistyped, and the credit that lands in your bank carries the invoice number you need to match it.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">QR code on the invoice PDF</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Rendered next to the payment block, with your UPI ID printed underneath for anyone who would rather type it in.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">QR code on the customer portal</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The same code above the invoice preview, so a customer reading the invoice online can pay without downloading anything.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Amount pre-filled from the balance</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A partly paid invoice asks for what is left, not for the original total.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Invoice reference travels with the payment</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Carried as both the UPI transaction note and the transaction reference, which is what makes an incoming credit easy to match.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">UPI ID validated on save</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The company setting is checked for the name@handle shape, with a message that says exactly what is wrong. Blank is allowed and simply prints no code.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Printed only where it belongs</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Never on a vendor bill, a credit note, a draft or a fully paid invoice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center; padding:18px;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Need the full version? The drkds GST suite adds GSTR-1 and GSTR-3B preparation, GSTR-2A reconciliation and an e-invoice workflow.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>The link follows the NPCI UPI Linking Specifications for deep linking: upi://pay with pa, pn, am, cu, tn and tr, every value percent-encoded.</li>
+        <li>The QR image is rendered by Odoo&#x27;s own barcode helper. No bundled QR library and no extra Python dependency.</li>
+        <li>Two switches control the payload: embed the amount, and embed the invoice reference. With the amount switch off the customer types their own amount, which suits a deposit or a part payment.</li>
+        <li>UPI settles in INR only, so an amount-bearing code is printed on INR invoices.</li>
+        <li>Depends on account alone. Odoo 19 Community, no Enterprise module required.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+    </div>
+  </div>
+</section>
