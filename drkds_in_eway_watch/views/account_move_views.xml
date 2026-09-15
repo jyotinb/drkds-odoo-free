@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_invoice_filter_drkds_eway" model="ir.ui.view">
+        <field name="name">account.move.select.drkds.eway.watch</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <filter name="late" position="after">
+                <separator/>
+                <filter name="drkds_eway_missing" string="E-Way Bill Missing"
+                        domain="[('drkds_eway_missing', '=', True)]"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="action_drkds_eway_missing" model="ir.actions.act_window">
+        <field name="name">Invoices Without an E-Way Bill</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('drkds_eway_missing', '=', True)]</field>
+        <field name="context">{'default_move_type': 'out_invoice'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nothing to chase</p>
+            <p>
+                No posted customer document is at or above your e-way bill
+                threshold without a generated e-way bill.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_drkds_eway_missing"
+              name="Invoices Without an E-Way Bill"
+              parent="account.menu_finance_entries"
+              action="action_drkds_eway_missing"
+              sequence="87"/>
+
+</odoo>

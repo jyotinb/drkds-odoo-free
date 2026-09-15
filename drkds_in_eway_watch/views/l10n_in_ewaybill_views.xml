@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_eway_watch_list" model="ir.ui.view">
+        <field name="name">l10n.in.ewaybill.list.drkds.watch</field>
+        <field name="model">l10n.in.ewaybill</field>
+        <field name="arch" type="xml">
+            <list string="E-Way Bills" create="false"
+                  decoration-danger="drkds_watch_status == 'expired'"
+                  decoration-warning="drkds_watch_status == 'expiring'"
+                  decoration-muted="drkds_watch_status == 'cancelled'">
+                <field name="name"/>
+                <field name="document_number"/>
+                <field name="partner_bill_to_id" string="Bill To"/>
+                <field name="transporter_id"/>
+                <field name="ewaybill_date"/>
+                <field name="ewaybill_expiry_date"/>
+                <field name="drkds_days_to_expiry"/>
+                <field name="drkds_suggested_expiry" optional="hide"/>
+                <field name="drkds_validity_mismatch" optional="hide" widget="boolean_toggle" readonly="1"/>
+                <field name="distance" optional="hide"/>
+                <field name="mode" optional="hide"/>
+                <field name="vehicle_no" optional="hide"/>
+                <field name="state" optional="hide"/>
+                <field name="drkds_watch_status" widget="badge"
+                       decoration-success="drkds_watch_status == 'active'"
+                       decoration-warning="drkds_watch_status == 'expiring'"
+                       decoration-danger="drkds_watch_status == 'expired'"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_eway_watch_search" model="ir.ui.view">
+        <field name="name">l10n.in.ewaybill.search.drkds.watch</field>
+        <field name="model">l10n.in.ewaybill</field>
+        <field name="arch" type="xml">
+            <search string="E-Way Bills">
+                <field name="name" string="E-Way Bill Number"/>
+                <field name="document_number"/>
+                <field name="partner_bill_to_id"/>
+                <field name="transporter_id"/>
+                <field name="vehicle_no"/>
+                <filter name="drkds_filter_active" string="Active"
+                        domain="[('drkds_watch_status', '=', 'active')]"/>
+                <filter name="drkds_filter_24h" string="Expiring within 24 hours"
+                        domain="[('state', '=', 'generated'),
+                                 ('ewaybill_expiry_date', '&gt;=', context_today().strftime('%Y-%m-%d')),
+                                 ('ewaybill_expiry_date', '&lt;=', (context_today() + datetime.timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="drkds_filter_3d" string="Expiring within 3 days"
+                        domain="[('state', '=', 'generated'),
+                                 ('ewaybill_expiry_date', '&gt;=', context_today().strftime('%Y-%m-%d')),
+                                 ('ewaybill_expiry_date', '&lt;=', (context_today() + datetime.timedelta(days=3)).strftime('%Y-%m-%d'))]"/>
+                <filter name="drkds_filter_expired" string="Expired"
+                        domain="[('drkds_watch_status', '=', 'expired')]"/>
+                <separator/>
+                <filter name="drkds_filter_mismatch" string="Validity Differs from Rule"
+                        domain="[('drkds_validity_mismatch', '=', True)]"/>
+                <filter name="drkds_filter_cancelled" string="Cancelled"
+                        domain="[('state', '=', 'cancel')]"/>
+                <separator/>
+                <!-- Group-by filters sit directly in the search: a <group> that
+                     wraps only filters fails RNG validation, which expects a
+                     field child, and core ships no named group to slot into. -->
+                <filter name="drkds_group_status" string="Expiry Status"
+                        context="{'group_by': 'drkds_watch_status'}"/>
+                <filter name="drkds_group_transporter" string="Transporter"
+                        context="{'group_by': 'transporter_id'}"/>
+                <filter name="drkds_group_mode" string="Transport Mode"
+                        context="{'group_by': 'mode'}"/>
+                <filter name="drkds_group_date" string="E-Way Bill Date"
+                        context="{'group_by': 'ewaybill_date'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_eway_watch" model="ir.actions.act_window">
+        <field name="name">E-Way Bill Watch</field>
+        <field name="res_model">l10n.in.ewaybill</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_drkds_eway_watch_search"/>
+        <field name="context">{'search_default_drkds_group_status': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No e-way bill yet</p>
+            <p>
+                E-way bills are generated by Odoo's own Indian E-waybill module,
+                through the government channel. They appear here so you can see
+                which ones are about to lapse.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_drkds_eway_watch_list" model="ir.actions.act_window.view">
+        <field name="sequence">1</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_drkds_eway_watch_list"/>
+        <field name="act_window_id" ref="action_drkds_eway_watch"/>
+    </record>
+
+    <record id="action_drkds_eway_watch_form" model="ir.actions.act_window.view">
+        <field name="sequence">2</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="l10n_in_ewaybill.l10n_in_ewaybill_form_view"/>
+        <field name="act_window_id" ref="action_drkds_eway_watch"/>
+    </record>
+
+    <record id="view_drkds_eway_watch_form" model="ir.ui.view">
+        <field name="name">l10n.in.ewaybill.form.drkds.watch</field>
+        <field name="model">l10n.in.ewaybill</field>
+        <field name="inherit_id" ref="l10n_in_ewaybill.l10n_in_ewaybill_form_view"/>
+        <field name="arch" type="xml">
+            <field name="ewaybill_date" position="after">
+                <field name="ewaybill_expiry_date" invisible="not ewaybill_expiry_date"/>
+                <field name="drkds_watch_status"/>
+                <field name="drkds_days_to_expiry"
+                       invisible="drkds_watch_status in ('pending', 'cancelled')"/>
+                <field name="drkds_suggested_expiry"/>
+                <field name="drkds_validity_mismatch" invisible="not drkds_validity_mismatch"/>
+            </field>
+        </field>
+    </record>
+
+    <menuitem id="menu_drkds_eway_watch"
+              name="E-Way Bill Watch"
+              parent="account.menu_finance_entries"
+              action="action_drkds_eway_watch"
+              sequence="86"/>
+
+</odoo>
