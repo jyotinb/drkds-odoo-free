@@ -20,6 +20,7 @@ as a trial of something else.
 
 | Module | What it does | Depends on |
 |---|---|---|
+| [`drkds_in_eway_watch`](drkds_in_eway_watch/)<br>**E-Way Bill Expiry Watch and Threshold Reminder (India)** | Adds an expired state, expiry filters and a threshold reminder to Odoo's e-way bill | `l10n_in_ewaybill` |
 | [`drkds_in_fy_sequence`](drkds_in_fy_sequence/)<br>**Indian Financial Year Numbering** | Number invoices as INV/2026-27/0001 and reset the counter every 1 April | `base` |
 | [`drkds_in_gst_summary`](drkds_in_gst_summary/)<br>**GST Outward and Inward Summary (India)** | A period GST summary by rate, by state and by HSN, for checking before you file | `l10n_in` |
 | [`drkds_in_inr_words`](drkds_in_inr_words/)<br>**Rupee Amounts in Words (Lakh and Crore)** | Make Odoo's amount in words read rupees in lakh and crore, whatever language the user runs | `account` |
