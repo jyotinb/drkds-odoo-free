@@ -66,7 +66,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
     "version": "19.0.1.0.0",
     "category": "Sales/Sales",
     "author": "drkds",
-    "website": "https://github.com/drkds/drkds-odoo-free",
+    "website": "https://drkdsinfo.com",
     "license": "LGPL-3",
     "depends": ["sale", "account"],
     "data": [
