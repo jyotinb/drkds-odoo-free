@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_res_lang_form_drkds_in_grouping" model="ir.ui.view">
+        <field name="name">res.lang.form.drkds.in.grouping</field>
+        <field name="model">res.lang</field>
+        <field name="inherit_id" ref="base.res_lang_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='grouping']" position="after">
+                <field name="drkds_in_is_indian_grouping" invisible="1"/>
+                <field name="drkds_in_grouping_sample"/>
+                <button name="drkds_in_action_apply_indian_grouping"
+                        type="object"
+                        string="Use Indian Grouping (1,23,45,678)"
+                        class="btn-link"
+                        icon="fa-inr"
+                        invisible="drkds_in_is_indian_grouping"/>
+                <button name="drkds_in_action_restore_default_grouping"
+                        type="object"
+                        string="Restore International Grouping (123,456,789)"
+                        class="btn-link"
+                        icon="fa-undo"
+                        invisible="not drkds_in_is_indian_grouping"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_res_lang_list_drkds_in_grouping" model="ir.ui.view">
+        <field name="name">res.lang.list.drkds.in.grouping</field>
+        <field name="model">res.lang</field>
+        <field name="inherit_id" ref="base.res_lang_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="drkds_in_action_apply_indian_grouping"
+                        type="object"
+                        string="Use Indian Grouping"/>
+                <button name="drkds_in_action_restore_default_grouping"
+                        type="object"
+                        string="Restore International Grouping"/>
+            </xpath>
+            <xpath expr="//field[@name='active']" position="before">
+                <field name="drkds_in_grouping_sample" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_drkds_in_apply_indian_grouping" model="ir.actions.server">
+        <field name="name">Use Indian Grouping (Lakh, Crore)</field>
+        <field name="model_id" ref="base.model_res_lang"/>
+        <field name="binding_model_id" ref="base.model_res_lang"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">action = records.drkds_in_action_apply_indian_grouping()</field>
+    </record>
+
+    <record id="action_drkds_in_restore_default_grouping" model="ir.actions.server">
+        <field name="name">Restore International Grouping</field>
+        <field name="model_id" ref="base.model_res_lang"/>
+        <field name="binding_model_id" ref="base.model_res_lang"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">action = records.drkds_in_action_restore_default_grouping()</field>
+    </record>
+
+    <record id="action_drkds_in_language_format" model="ir.actions.act_window">
+        <field name="name">Number Format (Lakh, Crore)</field>
+        <field name="res_model">res.lang</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('active', '=', True)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Choose a language</p>
+            <p>
+                Select the active languages that should print amounts in the Indian
+                grouping, then use the <b>Use Indian Grouping</b> button. Nothing is
+                changed until you do.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_drkds_in_language_format"
+              name="Indian Number Format"
+              parent="base.menu_custom"
+              action="action_drkds_in_language_format"
+              sequence="95"/>
+
+</odoo>
