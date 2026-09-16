@@ -13,7 +13,7 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
 
     drkds_branch_id = fields.Many2one(
-        "drkds.branch", string="Branch",
+        "drkds.lite.branch", string="Branch",
         default=lambda self: self.env.user._drkds_default_branch(),
         index="btree_not_null",
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]",

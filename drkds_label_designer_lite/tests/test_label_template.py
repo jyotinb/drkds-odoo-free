@@ -9,7 +9,7 @@ class TestLabelTemplate(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.Template = cls.env["drkds.label.template"]
+        cls.Template = cls.env["drkds.lite.label.template"]
 
     def _template(self, **vals):
         return self.Template.create(dict({
@@ -95,7 +95,7 @@ class TestLabelTemplate(TransactionCase):
     def test_unknown_field_path_is_refused(self):
         template = self._template()
         with self.assertRaises(ValidationError):
-            self.env["drkds.label.template.line"].create({
+            self.env["drkds.lite.label.template.line"].create({
                 "template_id": template.id,
                 "content_type": "field",
                 "field_path": "no_such_field",
@@ -104,7 +104,7 @@ class TestLabelTemplate(TransactionCase):
     def test_path_through_a_non_relation_is_refused(self):
         template = self._template()
         with self.assertRaises(ValidationError):
-            self.env["drkds.label.template.line"].create({
+            self.env["drkds.lite.label.template.line"].create({
                 "template_id": template.id,
                 "content_type": "field",
                 "field_path": "default_code.name",
@@ -112,7 +112,7 @@ class TestLabelTemplate(TransactionCase):
 
     def test_dotted_path_through_a_relation_is_accepted(self):
         template = self._template(applies_to="lot")
-        line = self.env["drkds.label.template.line"].create({
+        line = self.env["drkds.lite.label.template.line"].create({
             "template_id": template.id,
             "content_type": "field",
             "field_path": "product_id.default_code",

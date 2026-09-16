@@ -10,7 +10,7 @@ class DrkdsBudget(models.Model):
     period being moved once people have started reporting against it.
     """
 
-    _name = "drkds.budget"
+    _name = "drkds.lite.budget"
     _description = "Budget"
     _order = "date_from desc, name"
     _check_company_auto = True
@@ -54,7 +54,7 @@ class DrkdsBudget(models.Model):
         "reported against. Done is a closed period. Cancelled is abandoned.",
     )
     line_ids = fields.One2many(
-        "drkds.budget.line", "budget_id", string="Budget Lines",
+        "drkds.lite.budget.line", "budget_id", string="Budget Lines",
         copy=True,
     )
     note = fields.Html(string="Notes")

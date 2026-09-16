@@ -2,7 +2,7 @@
 <odoo>
     <record id="seq_drkds_material_request" model="ir.sequence">
         <field name="name">Material Request</field>
-        <field name="code">drkds.material.request</field>
+        <field name="code">drkds.lite.material.request</field>
         <field name="prefix">MR/%(year)s/</field>
         <field name="padding">5</field>
         <field name="company_id" eval="False"/>

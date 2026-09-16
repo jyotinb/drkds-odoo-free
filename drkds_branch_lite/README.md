@@ -68,6 +68,10 @@ consolidated cross-branch reporting.
 The drkds Branch Operations app extends branches to purchases, transfers and
 payments, with branch-wise access across the suite and consolidated reporting.
 
+This module can be installed alongside the paid drkds Branch Operations app:
+they use separate models and keep separate data, so neither blocks the other
+and no branch defined here is carried across.
+
 Part of the drkds Indian SME suite for Odoo 19 Community.
 
 Licence: LGPL-3.

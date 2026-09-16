@@ -18,15 +18,15 @@ SOURCE_MODELS = {
 class DrkdsLabelPrint(models.TransientModel):
     """Pick a label template and a number of copies, then print."""
 
-    _name = "drkds.label.print"
+    _name = "drkds.lite.label.print"
     _description = "Print drkds Labels"
 
     template_id = fields.Many2one(
-        "drkds.label.template", string="Label Template", required=True,
+        "drkds.lite.label.template", string="Label Template", required=True,
         domain="[('applies_to', '=', applies_to)]",
     )
     applies_to = fields.Selection(
-        selection=lambda self: self.env["drkds.label.template"]._fields["applies_to"].selection,
+        selection=lambda self: self.env["drkds.lite.label.template"]._fields["applies_to"].selection,
         string="Record Type", required=True, readonly=True,
     )
     res_model = fields.Char(string="Source Model", required=True, readonly=True)
@@ -74,7 +74,7 @@ class DrkdsLabelPrint(models.TransientModel):
             "res_model": APPLIES_TO_MODEL[applies_to],
             "res_ids_text": ",".join(str(record_id) for record_id in records.ids),
         })
-        template = self.env["drkds.label.template"].search(
+        template = self.env["drkds.lite.label.template"].search(
             [("applies_to", "=", applies_to)], limit=1,
         )
         if template:

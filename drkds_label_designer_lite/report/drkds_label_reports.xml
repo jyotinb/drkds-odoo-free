@@ -7,7 +7,7 @@
     -->
     <record id="action_report_drkds_label" model="ir.actions.report">
         <field name="name">Label (drkds)</field>
-        <field name="model">drkds.label.template</field>
+        <field name="model">drkds.lite.label.template</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">drkds_label_designer_lite.report_drkds_label</field>
         <field name="report_file">drkds_label_designer_lite.report_drkds_label</field>

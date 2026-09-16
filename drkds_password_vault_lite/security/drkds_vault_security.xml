@@ -11,7 +11,7 @@
 
         <record id="drkds_vault_entry_own_rule" model="ir.rule">
             <field name="name">Vault entry: owner only</field>
-            <field name="model_id" ref="model_drkds_vault_entry"/>
+            <field name="model_id" ref="model_drkds_lite_vault_entry"/>
             <field name="domain_force">[('user_id', '=', user.id)]</field>
             <field name="global" eval="True"/>
         </record>
@@ -25,14 +25,14 @@
 
         <record id="drkds_vault_tag_own_rule" model="ir.rule">
             <field name="name">Vault tag: owner only</field>
-            <field name="model_id" ref="model_drkds_vault_tag"/>
+            <field name="model_id" ref="model_drkds_lite_vault_tag"/>
             <field name="domain_force">[('user_id', '=', user.id)]</field>
             <field name="global" eval="True"/>
         </record>
 
         <record id="drkds_vault_access_log_own_rule" model="ir.rule">
             <field name="name">Vault access log: owner only</field>
-            <field name="model_id" ref="model_drkds_vault_access_log"/>
+            <field name="model_id" ref="model_drkds_lite_vault_access_log"/>
             <field name="domain_force">[('user_id', '=', user.id)]</field>
             <field name="global" eval="True"/>
         </record>

@@ -89,7 +89,7 @@ class TestDrkdsBudget(TransactionCase):
             "line_ids": [Command.create(line) for line in lines],
         }
         vals.update(kwargs)
-        return self.env["drkds.budget"].create(vals)
+        return self.env["drkds.lite.budget"].create(vals)
 
     # ------------------------------------------------------------------
     # actuals: period, posting state and account selection
@@ -370,7 +370,7 @@ class TestDrkdsBudget(TransactionCase):
             [{"account_id": self.expense_account.id, "planned_amount": 100.0}],
             name="Mine",
         )
-        theirs = self.env["drkds.budget"].create({
+        theirs = self.env["drkds.lite.budget"].create({
             "name": "Theirs",
             "date_from": self.date_from,
             "date_to": self.date_to,
@@ -382,7 +382,7 @@ class TestDrkdsBudget(TransactionCase):
             company_id=self.company.id,
             company_ids=[Command.set(self.company.ids)],
         )
-        visible = self.env["drkds.budget"].with_user(reader).search([])
+        visible = self.env["drkds.lite.budget"].with_user(reader).search([])
         self.assertIn(mine, visible)
         self.assertNotIn(theirs, visible)
         with self.assertRaises(AccessError):

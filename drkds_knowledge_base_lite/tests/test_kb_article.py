@@ -8,14 +8,14 @@ class TestKbArticle(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.Section = cls.env["drkds.kb.section"]
-        cls.Article = cls.env["drkds.kb.article"]
+        cls.Section = cls.env["drkds.lite.kb.section"]
+        cls.Article = cls.env["drkds.lite.kb.article"]
         cls.handbook = cls.Section.create({"name": "Handbook"})
         cls.leave = cls.Section.create({"name": "Leave", "parent_id": cls.handbook.id})
         cls.expenses = cls.Section.create({
             "name": "Expenses", "parent_id": cls.handbook.id,
         })
-        cls.tag = cls.env["drkds.kb.tag"].create({"name": "policy"})
+        cls.tag = cls.env["drkds.lite.kb.tag"].create({"name": "policy"})
 
     # -- filing --------------------------------------------------------
     def test_moving_an_article_updates_section_and_counts(self):

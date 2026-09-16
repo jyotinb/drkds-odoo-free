@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_drkds_material_request_refuse_form" model="ir.ui.view">
-        <field name="name">drkds.material.request.refuse.form</field>
-        <field name="model">drkds.material.request.refuse</field>
+        <field name="name">drkds.lite.material.request.refuse.form</field>
+        <field name="model">drkds.lite.material.request.refuse</field>
         <field name="arch" type="xml">
             <form string="Refuse Material Request">
                 <field name="request_id" invisible="1"/>

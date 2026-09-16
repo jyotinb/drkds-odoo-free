@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_drkds_label_cell">
-        <!-- One line of a label. `cell` comes from drkds.label.template.line._render_cell. -->
+        <!-- One line of a label. `cell` comes from drkds.lite.label.template.line._render_cell. -->
         <div t-att-style="cell['style']">
             <t t-if="cell['kind'] == 'text'">
                 <span t-out="cell['value']"/>

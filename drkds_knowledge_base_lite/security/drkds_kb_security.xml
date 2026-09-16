@@ -28,7 +28,7 @@
     <!-- Readers see published articles only; a draft is an editor's workbench. -->
     <record id="rule_kb_article_reader" model="ir.rule">
         <field name="name">Knowledge Base: readers see published articles</field>
-        <field name="model_id" ref="model_drkds_kb_article"/>
+        <field name="model_id" ref="model_drkds_lite_kb_article"/>
         <field name="domain_force">[('state', '=', 'published')]</field>
         <field name="groups" eval="[(4, ref('group_kb_reader'))]"/>
         <field name="perm_read" eval="True"/>
@@ -39,7 +39,7 @@
 
     <record id="rule_kb_article_editor" model="ir.rule">
         <field name="name">Knowledge Base: editors see every article</field>
-        <field name="model_id" ref="model_drkds_kb_article"/>
+        <field name="model_id" ref="model_drkds_lite_kb_article"/>
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="groups" eval="[(4, ref('group_kb_editor'))]"/>
     </record>

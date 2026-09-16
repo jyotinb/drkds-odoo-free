@@ -11,7 +11,7 @@ class DrkdsKbSection(models.Model):
     in a single indexed query instead of walking the tree in Python.
     """
 
-    _name = "drkds.kb.section"
+    _name = "drkds.lite.kb.section"
     _description = "Knowledge Base Section"
     _parent_name = "parent_id"
     _parent_store = True
@@ -28,15 +28,15 @@ class DrkdsKbSection(models.Model):
         "Handbook / Onboarding / First Week.",
     )
     parent_id = fields.Many2one(
-        "drkds.kb.section", string="Parent Section", index=True, ondelete="restrict",
+        "drkds.lite.kb.section", string="Parent Section", index=True, ondelete="restrict",
     )
     parent_path = fields.Char(index=True)
-    child_ids = fields.One2many("drkds.kb.section", "parent_id", string="Sub-sections")
+    child_ids = fields.One2many("drkds.lite.kb.section", "parent_id", string="Sub-sections")
     sequence = fields.Integer(default=10, help="Order of the section among its siblings.")
     description = fields.Char(
         translate=True, help="One line telling a reader what belongs in this section.",
     )
-    article_ids = fields.One2many("drkds.kb.article", "section_id", string="Articles")
+    article_ids = fields.One2many("drkds.lite.kb.article", "section_id", string="Articles")
     article_count = fields.Integer(
         string="Article Count", compute="_compute_article_count",
         help="Articles filed directly in this section.",
@@ -55,7 +55,7 @@ class DrkdsKbSection(models.Model):
                 section.complete_name = section.name
 
     def _compute_article_count(self):
-        Article = self.env["drkds.kb.article"]
+        Article = self.env["drkds.lite.kb.article"]
         direct = dict(Article._read_group(
             [("section_id", "in", self.ids)], ["section_id"], ["__count"],
         ))

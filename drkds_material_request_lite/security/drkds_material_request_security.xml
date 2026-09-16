@@ -30,35 +30,35 @@
 
     <record id="rule_material_request_own" model="ir.rule">
         <field name="name">Material request: requester sees own</field>
-        <field name="model_id" ref="model_drkds_material_request"/>
+        <field name="model_id" ref="model_drkds_lite_material_request"/>
         <field name="domain_force">[('requester_id', '=', user.id)]</field>
         <field name="groups" eval="[(4, ref('group_material_request_user'))]"/>
     </record>
 
     <record id="rule_material_request_all" model="ir.rule">
         <field name="name">Material request: approver sees all</field>
-        <field name="model_id" ref="model_drkds_material_request"/>
+        <field name="model_id" ref="model_drkds_lite_material_request"/>
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="groups" eval="[(4, ref('group_material_request_approver'))]"/>
     </record>
 
     <record id="rule_material_request_company" model="ir.rule">
         <field name="name">Material request: multi-company</field>
-        <field name="model_id" ref="model_drkds_material_request"/>
+        <field name="model_id" ref="model_drkds_lite_material_request"/>
         <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
         <field name="global" eval="True"/>
     </record>
 
     <record id="rule_material_request_line_own" model="ir.rule">
         <field name="name">Material request line: requester sees own</field>
-        <field name="model_id" ref="model_drkds_material_request_line"/>
+        <field name="model_id" ref="model_drkds_lite_material_request_line"/>
         <field name="domain_force">[('request_id.requester_id', '=', user.id)]</field>
         <field name="groups" eval="[(4, ref('group_material_request_user'))]"/>
     </record>
 
     <record id="rule_material_request_line_all" model="ir.rule">
         <field name="name">Material request line: approver sees all</field>
-        <field name="model_id" ref="model_drkds_material_request_line"/>
+        <field name="model_id" ref="model_drkds_lite_material_request_line"/>
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="groups" eval="[(4, ref('group_material_request_approver'))]"/>
     </record>

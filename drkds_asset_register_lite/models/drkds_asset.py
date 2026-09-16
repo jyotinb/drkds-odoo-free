@@ -60,7 +60,7 @@ class DrkdsAsset(models.Model):
     worth on paper and shows how it got there; it never writes a journal entry.
     """
 
-    _name = "drkds.asset"
+    _name = "drkds.lite.asset"
     _description = "Fixed Asset"
     _order = "code desc, id desc"
     _inherit = ["mail.thread"]
@@ -78,7 +78,7 @@ class DrkdsAsset(models.Model):
     )
     currency_id = fields.Many2one(related="company_id.currency_id", string="Currency")
     category_id = fields.Many2one(
-        "drkds.asset.category", string="Category", required=True, tracking=True,
+        "drkds.lite.asset.category", string="Category", required=True, tracking=True,
         domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]",
     )
     state = fields.Selection(
@@ -261,7 +261,7 @@ class DrkdsAsset(models.Model):
             if not vals.get("code") or vals["code"] == _("New"):
                 company_id = vals.get("company_id") or self.env.company.id
                 vals["code"] = self.env["ir.sequence"].with_company(company_id).next_by_code(
-                    "drkds.asset"
+                    "drkds.lite.asset"
                 ) or _("New")
         assets = super().create(vals_list)
         assets._build_schedule()

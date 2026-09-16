@@ -12,7 +12,7 @@ class DrkdsKbArticle(models.Model):
     stored compute, never edited by hand, so it cannot drift from the body.
     """
 
-    _name = "drkds.kb.article"
+    _name = "drkds.lite.kb.article"
     _description = "Knowledge Base Article"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "write_date desc, id desc"
@@ -39,14 +39,14 @@ class DrkdsKbArticle(models.Model):
         help="Virtual field: searching it looks in the title, the body and the tags.",
     )
     section_id = fields.Many2one(
-        "drkds.kb.section", string="Section", index=True, ondelete="restrict",
+        "drkds.lite.kb.section", string="Section", index=True, ondelete="restrict",
         tracking=True,
     )
     section_path = fields.Char(
         string="Filed Under", related="section_id.complete_name", store=True,
     )
     tag_ids = fields.Many2many(
-        "drkds.kb.tag", "drkds_kb_article_tag_rel", "article_id", "tag_id",
+        "drkds.lite.kb.tag", "drkds_lite_kb_article_tag_rel", "article_id", "tag_id",
         string="Tags",
     )
     author_id = fields.Many2one(

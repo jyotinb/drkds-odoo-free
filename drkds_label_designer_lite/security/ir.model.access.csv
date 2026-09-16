@@ -1,6 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_drkds_label_template_user,drkds.label.template user,model_drkds_label_template,base.group_user,1,0,0,0
-access_drkds_label_template_manager,drkds.label.template manager,model_drkds_label_template,stock.group_stock_manager,1,1,1,1
-access_drkds_label_template_line_user,drkds.label.template.line user,model_drkds_label_template_line,base.group_user,1,0,0,0
-access_drkds_label_template_line_manager,drkds.label.template.line manager,model_drkds_label_template_line,stock.group_stock_manager,1,1,1,1
-access_drkds_label_print_user,drkds.label.print user,model_drkds_label_print,base.group_user,1,1,1,1
+access_drkds_label_template_user,drkds.lite.label.template user,model_drkds_lite_label_template,base.group_user,1,0,0,0
+access_drkds_label_template_manager,drkds.lite.label.template manager,model_drkds_lite_label_template,stock.group_stock_manager,1,1,1,1
+access_drkds_label_template_line_user,drkds.lite.label.template.line user,model_drkds_lite_label_template_line,base.group_user,1,0,0,0
+access_drkds_label_template_line_manager,drkds.lite.label.template.line manager,model_drkds_lite_label_template_line,stock.group_stock_manager,1,1,1,1
+access_drkds_label_print_user,drkds.lite.label.print user,model_drkds_lite_label_print,base.group_user,1,1,1,1

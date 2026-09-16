@@ -23,7 +23,7 @@ class DrkdsLabelTemplate(models.Model):
     rectangle centred on A4.
     """
 
-    _name = "drkds.label.template"
+    _name = "drkds.lite.label.template"
     _description = "Label Template"
     _order = "name"
 
@@ -61,7 +61,7 @@ class DrkdsLabelTemplate(models.Model):
     margin_right = fields.Float(string="Right Margin (mm)", default=1.0)
 
     line_ids = fields.One2many(
-        "drkds.label.template.line", "template_id", string="Lines", copy=True,
+        "drkds.lite.label.template.line", "template_id", string="Lines", copy=True,
     )
     paperformat_id = fields.Many2one(
         "report.paperformat", string="Paper Format", readonly=True, copy=False, ondelete="set null",

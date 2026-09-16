@@ -9,7 +9,7 @@ class TestKbSection(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.Section = cls.env["drkds.kb.section"]
+        cls.Section = cls.env["drkds.lite.kb.section"]
         cls.handbook = cls.Section.create({"name": "Handbook"})
         cls.onboarding = cls.Section.create({
             "name": "Onboarding", "parent_id": cls.handbook.id,
@@ -57,7 +57,7 @@ class TestKbSection(TransactionCase):
             self.handbook.parent_id = self.first_week
 
     def test_article_counts_direct_and_branch(self):
-        Article = self.env["drkds.kb.article"]
+        Article = self.env["drkds.lite.kb.article"]
         Article.create({"name": "Welcome", "section_id": self.onboarding.id})
         Article.create({"name": "Day One", "section_id": self.first_week.id})
         self.assertEqual(self.onboarding.article_count, 1)

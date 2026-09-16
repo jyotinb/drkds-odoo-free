@@ -2,8 +2,8 @@
 <odoo>
 
     <record id="view_drkds_asset_list" model="ir.ui.view">
-        <field name="name">drkds.asset.list</field>
-        <field name="model">drkds.asset</field>
+        <field name="name">drkds.lite.asset.list</field>
+        <field name="model">drkds.lite.asset</field>
         <field name="arch" type="xml">
             <list string="Fixed Assets">
                 <field name="code"/>
@@ -26,8 +26,8 @@
     </record>
 
     <record id="view_drkds_asset_form" model="ir.ui.view">
-        <field name="name">drkds.asset.form</field>
-        <field name="model">drkds.asset</field>
+        <field name="name">drkds.lite.asset.form</field>
+        <field name="model">drkds.lite.asset</field>
         <field name="arch" type="xml">
             <form string="Fixed Asset">
                 <header>
@@ -113,8 +113,8 @@
     </record>
 
     <record id="view_drkds_asset_search" model="ir.ui.view">
-        <field name="name">drkds.asset.search</field>
-        <field name="model">drkds.asset</field>
+        <field name="name">drkds.lite.asset.search</field>
+        <field name="model">drkds.lite.asset</field>
         <field name="arch" type="xml">
             <search string="Fixed Assets">
                 <field name="name" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"
@@ -141,7 +141,7 @@
 
     <record id="action_drkds_asset" model="ir.actions.act_window">
         <field name="name">Fixed Assets</field>
-        <field name="res_model">drkds.asset</field>
+        <field name="res_model">drkds.lite.asset</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_drkds_asset_search"/>
         <field name="help" type="html">

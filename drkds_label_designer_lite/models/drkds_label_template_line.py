@@ -14,12 +14,12 @@ class DrkdsLabelTemplateLine(models.Model):
     editor no one would maintain.
     """
 
-    _name = "drkds.label.template.line"
+    _name = "drkds.lite.label.template.line"
     _description = "Label Template Line"
     _order = "sequence, id"
 
     template_id = fields.Many2one(
-        "drkds.label.template", string="Label Template", required=True, ondelete="cascade",
+        "drkds.lite.label.template", string="Label Template", required=True, ondelete="cascade",
     )
     sequence = fields.Integer(default=10)
     content_type = fields.Selection(

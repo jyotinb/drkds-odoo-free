@@ -81,4 +81,11 @@ Odoo 19 Community. Depends on `account` only.
 The drkds Accounting Pro app adds budget revisions with approvals, forecasting
 and multi-company consolidation.
 
+## Alongside the paid app
+
+This module and the paid drkds Accounting Pro app can be installed in the same
+database: their models are named differently (`drkds.lite.budget` here) and each
+keeps its own records. Nothing is migrated between them, so budgets entered here
+do not appear in the paid app and would have to be re-entered.
+
 Part of the drkds Indian SME suite for Odoo 19 Community.

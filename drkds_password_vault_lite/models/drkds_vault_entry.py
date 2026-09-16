@@ -12,7 +12,7 @@ class DrkdsVaultEntry(models.Model):
     reveal wizard, and it leaves a line in the access log.
     """
 
-    _name = "drkds.vault.entry"
+    _name = "drkds.lite.vault.entry"
     _description = "Vault Entry"
     _order = "name"
 
@@ -28,7 +28,7 @@ class DrkdsVaultEntry(models.Model):
         domain="[('user_id', '=', user_id)]",
     )
     tag_ids = fields.Many2many(
-        "drkds.vault.tag", string="Tags", domain="[('user_id', '=', user_id)]",
+        "drkds.lite.vault.tag", string="Tags", domain="[('user_id', '=', user_id)]",
     )
     user_id = fields.Many2one(
         "res.users", string="Owner", required=True, index=True, ondelete="cascade",
@@ -53,7 +53,7 @@ class DrkdsVaultEntry(models.Model):
         help="Whether a password is currently stored, without revealing it.",
     )
     access_log_ids = fields.One2many(
-        "drkds.vault.access.log", "entry_id", string="Access Log", readonly=True,
+        "drkds.lite.vault.access.log", "entry_id", string="Access Log", readonly=True,
     )
     last_access_date = fields.Datetime(
         string="Last Revealed", compute="_compute_last_access", store=False,
@@ -86,7 +86,7 @@ class DrkdsVaultEntry(models.Model):
             entry.has_secret = bool(entry.secret_encrypted)
 
     def _compute_last_access(self):
-        log = self.env["drkds.vault.access.log"]
+        log = self.env["drkds.lite.vault.access.log"]
         for entry in self:
             last = log.search(
                 [("entry_id", "=", entry.id), ("event", "=", "reveal")],
@@ -110,7 +110,7 @@ class DrkdsVaultEntry(models.Model):
         entries = super().create(vals_list)
         for entry in entries:
             if entry.secret_encrypted:
-                self.env["drkds.vault.access.log"]._log(entry, "create")
+                self.env["drkds.lite.vault.access.log"]._log(entry, "create")
         return entries
 
     def write(self, vals):
@@ -125,7 +125,7 @@ class DrkdsVaultEntry(models.Model):
         result = super().write(vals)
         if changing_secret:
             for entry in self:
-                self.env["drkds.vault.access.log"]._log(entry, "update")
+                self.env["drkds.lite.vault.access.log"]._log(entry, "update")
         return result
 
     def copy_data(self, default=None):
@@ -146,7 +146,7 @@ class DrkdsVaultEntry(models.Model):
         if not self.secret_encrypted:
             raise UserError(_("This entry has no password stored."))
         plaintext = self.env["drkds.vault.crypto"]._decrypt(self.secret_encrypted)
-        self.env["drkds.vault.access.log"]._log(self, "reveal")
+        self.env["drkds.lite.vault.access.log"]._log(self, "reveal")
         return plaintext
 
     def action_reveal_secret(self):
@@ -167,7 +167,7 @@ class DrkdsVaultEntry(models.Model):
         return {
             "type": "ir.actions.act_window",
             "name": _("Access Log"),
-            "res_model": "drkds.vault.access.log",
+            "res_model": "drkds.lite.vault.access.log",
             "view_mode": "list",
             "domain": [("entry_id", "=", self.id)],
         }

@@ -13,14 +13,14 @@ class ResUsers(models.Model):
     _inherit = "res.users"
 
     drkds_branch_id = fields.Many2one(
-        "drkds.branch", string="Default Branch",
+        "drkds.lite.branch", string="Default Branch",
         domain="[('company_id', 'in', company_ids)]",
         help="Branch put on sales orders, invoices and contacts this user creates. "
         "The user can still change it on the document if their allowed branches "
         "include more than one.",
     )
     drkds_branch_ids = fields.Many2many(
-        "drkds.branch", "drkds_branch_res_users_rel", "user_id", "branch_id",
+        "drkds.lite.branch", "drkds_lite_branch_res_users_rel", "user_id", "branch_id",
         string="Allowed Branches",
         help="Branches this user may see and use. Leave empty to give the user "
         "an unrestricted view of every branch, which is what an owner or an "

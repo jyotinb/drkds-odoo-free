@@ -15,7 +15,7 @@ class ReportDrkdsLabel(models.AbstractModel):
     @api.model
     def _get_report_values(self, docids, data=None):
         data = data or {}
-        template = self.env["drkds.label.template"].browse(data.get("template_id") or docids or []).exists()
+        template = self.env["drkds.lite.label.template"].browse(data.get("template_id") or docids or []).exists()
         if not template:
             raise UserError(_("No label template was given to print."))
         template.ensure_one()
@@ -34,7 +34,7 @@ class ReportDrkdsLabel(models.AbstractModel):
 
         return {
             "doc_ids": template.ids,
-            "doc_model": "drkds.label.template",
+            "doc_model": "drkds.lite.label.template",
             "docs": template,
             "template": template,
             "page_style": template._page_style(),

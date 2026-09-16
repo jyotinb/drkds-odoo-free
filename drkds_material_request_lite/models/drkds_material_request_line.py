@@ -11,13 +11,13 @@ class DrkdsMaterialRequestLine(models.Model):
     typed in, so the request and the warehouse can never disagree.
     """
 
-    _name = "drkds.material.request.line"
+    _name = "drkds.lite.material.request.line"
     _description = "Material Request Line"
     _order = "request_id, sequence, id"
 
     sequence = fields.Integer(default=10)
     request_id = fields.Many2one(
-        "drkds.material.request", string="Request", required=True,
+        "drkds.lite.material.request", string="Request", required=True,
         ondelete="cascade", index=True,
     )
     company_id = fields.Many2one(

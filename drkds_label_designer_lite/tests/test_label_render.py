@@ -44,7 +44,7 @@ class TestLabelRender(TransactionCase):
             "barcode": "8901234567894",
             "is_storable": True,
         })
-        cls.template = cls.env["drkds.label.template"].create({
+        cls.template = cls.env["drkds.lite.label.template"].create({
             "name": "Render test 50 x 25",
             "applies_to": "product",
             "width_mm": 50,
@@ -83,7 +83,7 @@ class TestLabelRender(TransactionCase):
         self.assertNotIn("TUR-500", html)
 
     def test_adding_a_line_adds_its_value(self):
-        self.env["drkds.label.template.line"].create({
+        self.env["drkds.lite.label.template.line"].create({
             "template_id": self.template.id,
             "sequence": 30,
             "content_type": "field",
@@ -94,7 +94,7 @@ class TestLabelRender(TransactionCase):
         self.assertIn("Ref TUR-500", html)
 
     def test_fixed_text_and_formatting(self):
-        self.env["drkds.label.template.line"].create({
+        self.env["drkds.lite.label.template.line"].create({
             "template_id": self.template.id,
             "sequence": 40,
             "content_type": "text",
@@ -109,7 +109,7 @@ class TestLabelRender(TransactionCase):
 
     def test_empty_value_drops_its_line(self):
         """A product with no reference must not leave a blank row behind."""
-        self.env["drkds.label.template.line"].create({
+        self.env["drkds.lite.label.template.line"].create({
             "template_id": self.template.id,
             "sequence": 30,
             "content_type": "field",
@@ -124,7 +124,7 @@ class TestLabelRender(TransactionCase):
 
     # -- barcode -------------------------------------------------------
     def _add_barcode_line(self):
-        return self.env["drkds.label.template.line"].create({
+        return self.env["drkds.lite.label.template.line"].create({
             "template_id": self.template.id,
             "sequence": 50,
             "content_type": "barcode",
@@ -177,7 +177,7 @@ class TestLabelRender(TransactionCase):
 
     # -- guards --------------------------------------------------------
     def test_wrong_record_type_is_refused(self):
-        lot_template = self.env["drkds.label.template"].create({
+        lot_template = self.env["drkds.lite.label.template"].create({
             "name": "Lot only", "applies_to": "lot", "width_mm": 40, "height_mm": 20,
         })
         with self.assertRaises(Exception):
@@ -201,9 +201,9 @@ class TestLabelPrintWizard(TransactionCase):
         })
 
     def _wizard(self, records, **vals):
-        return self.env["drkds.label.print"].with_context(
+        return self.env["drkds.lite.label.print"].with_context(
             active_model=records._name, active_ids=records.ids,
-        ).create(vals) if vals else self.env["drkds.label.print"].with_context(
+        ).create(vals) if vals else self.env["drkds.lite.label.print"].with_context(
             active_model=records._name, active_ids=records.ids,
         ).create({})
 
@@ -236,6 +236,6 @@ class TestLabelPrintWizard(TransactionCase):
 
     def test_an_unsupported_model_is_refused(self):
         with self.assertRaises(UserError):
-            self.env["drkds.label.print"].with_context(
+            self.env["drkds.lite.label.print"].with_context(
                 active_model="res.users", active_ids=[self.env.uid],
             ).create({})

@@ -1,8 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_drkds_kb_section_reader,drkds.kb.section reader,model_drkds_kb_section,drkds_knowledge_base_lite.group_kb_reader,1,0,0,0
-access_drkds_kb_section_editor,drkds.kb.section editor,model_drkds_kb_section,drkds_knowledge_base_lite.group_kb_editor,1,1,1,1
-access_drkds_kb_tag_reader,drkds.kb.tag reader,model_drkds_kb_tag,drkds_knowledge_base_lite.group_kb_reader,1,0,0,0
-access_drkds_kb_tag_editor,drkds.kb.tag editor,model_drkds_kb_tag,drkds_knowledge_base_lite.group_kb_editor,1,1,1,1
-access_drkds_kb_article_reader,drkds.kb.article reader,model_drkds_kb_article,drkds_knowledge_base_lite.group_kb_reader,1,0,0,0
-access_drkds_kb_article_editor,drkds.kb.article editor,model_drkds_kb_article,drkds_knowledge_base_lite.group_kb_editor,1,1,1,1
+access_drkds_kb_section_reader,drkds.lite.kb.section reader,model_drkds_lite_kb_section,drkds_knowledge_base_lite.group_kb_reader,1,0,0,0
+access_drkds_kb_section_editor,drkds.lite.kb.section editor,model_drkds_lite_kb_section,drkds_knowledge_base_lite.group_kb_editor,1,1,1,1
+access_drkds_kb_tag_reader,drkds.lite.kb.tag reader,model_drkds_lite_kb_tag,drkds_knowledge_base_lite.group_kb_reader,1,0,0,0
+access_drkds_kb_tag_editor,drkds.lite.kb.tag editor,model_drkds_lite_kb_tag,drkds_knowledge_base_lite.group_kb_editor,1,1,1,1
+access_drkds_kb_article_reader,drkds.lite.kb.article reader,model_drkds_lite_kb_article,drkds_knowledge_base_lite.group_kb_reader,1,0,0,0
+access_drkds_kb_article_editor,drkds.lite.kb.article editor,model_drkds_lite_kb_article,drkds_knowledge_base_lite.group_kb_editor,1,1,1,1
 access_drkds_kb_favourite_reader,drkds.kb.favourite reader,model_drkds_kb_favourite,drkds_knowledge_base_lite.group_kb_reader,1,1,1,1

@@ -17,7 +17,7 @@ class DrkdsMaterialRequest(models.Model):
     second-guesses the inventory engine.
     """
 
-    _name = "drkds.material.request"
+    _name = "drkds.lite.material.request"
     _description = "Material Request"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "date_request desc, id desc"
@@ -91,7 +91,7 @@ class DrkdsMaterialRequest(models.Model):
         copy=False, index=True,
     )
     line_ids = fields.One2many(
-        "drkds.material.request.line", "request_id", string="Requested Material",
+        "drkds.lite.material.request.line", "request_id", string="Requested Material",
         copy=True,
     )
     approver_id = fields.Many2one(
@@ -199,7 +199,7 @@ class DrkdsMaterialRequest(models.Model):
                 company_id = vals.get("company_id") or self.env.company.id
                 vals["name"] = self.env["ir.sequence"].with_company(
                     company_id
-                ).next_by_code("drkds.material.request") or _("New")
+                ).next_by_code("drkds.lite.material.request") or _("New")
         return super().create(vals_list)
 
     def write(self, vals):
@@ -282,7 +282,7 @@ class DrkdsMaterialRequest(models.Model):
         return {
             "type": "ir.actions.act_window",
             "name": _("Refuse Material Request"),
-            "res_model": "drkds.material.request.refuse",
+            "res_model": "drkds.lite.material.request.refuse",
             "view_mode": "form",
             "target": "new",
             "context": {"default_request_id": self.id},

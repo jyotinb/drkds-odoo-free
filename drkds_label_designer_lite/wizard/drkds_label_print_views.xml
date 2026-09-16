@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_drkds_label_print_form" model="ir.ui.view">
-        <field name="name">drkds.label.print.form</field>
-        <field name="model">drkds.label.print</field>
+        <field name="name">drkds.lite.label.print.form</field>
+        <field name="model">drkds.lite.label.print</field>
         <field name="arch" type="xml">
             <form string="Print Labels">
                 <group>
@@ -25,7 +25,7 @@
 
     <record id="action_drkds_label_print_product" model="ir.actions.act_window">
         <field name="name">Print Labels (drkds)</field>
-        <field name="res_model">drkds.label.print</field>
+        <field name="res_model">drkds.lite.label.print</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
         <field name="binding_model_id" ref="product.model_product_product"/>
@@ -34,7 +34,7 @@
 
     <record id="action_drkds_label_print_product_template" model="ir.actions.act_window">
         <field name="name">Print Labels (drkds)</field>
-        <field name="res_model">drkds.label.print</field>
+        <field name="res_model">drkds.lite.label.print</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
         <field name="binding_model_id" ref="product.model_product_template"/>
@@ -43,7 +43,7 @@
 
     <record id="action_drkds_label_print_lot" model="ir.actions.act_window">
         <field name="name">Print Labels (drkds)</field>
-        <field name="res_model">drkds.label.print</field>
+        <field name="res_model">drkds.lite.label.print</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
         <field name="binding_model_id" ref="stock.model_stock_lot"/>
@@ -52,7 +52,7 @@
 
     <record id="action_drkds_label_print_package" model="ir.actions.act_window">
         <field name="name">Print Labels (drkds)</field>
-        <field name="res_model">drkds.label.print</field>
+        <field name="res_model">drkds.lite.label.print</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
         <field name="binding_model_id" ref="stock.model_stock_package"/>
@@ -61,7 +61,7 @@
 
     <record id="action_drkds_label_print_picking" model="ir.actions.act_window">
         <field name="name">Print Labels (drkds)</field>
-        <field name="res_model">drkds.label.print</field>
+        <field name="res_model">drkds.lite.label.print</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
         <field name="binding_model_id" ref="stock.model_stock_picking"/>

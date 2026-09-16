@@ -2,7 +2,7 @@
 <odoo>
 
     <record id="drkds_branch_view_partner_form" model="ir.ui.view">
-        <field name="name">res.partner.form.drkds.branch</field>
+        <field name="name">res.partner.form.drkds.lite.branch</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
@@ -13,7 +13,7 @@
     </record>
 
     <record id="drkds_branch_view_partner_filter" model="ir.ui.view">
-        <field name="name">res.partner.search.drkds.branch</field>
+        <field name="name">res.partner.search.drkds.lite.branch</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_res_partner_filter"/>
         <field name="arch" type="xml">

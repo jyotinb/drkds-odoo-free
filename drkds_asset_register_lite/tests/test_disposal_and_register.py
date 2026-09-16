@@ -14,14 +14,14 @@ class TestDisposalAndRegister(TransactionCase):
             "drkds_asset_fy_last_month": "3",
             "drkds_asset_fy_last_day": 31,
         })
-        cls.category = cls.env["drkds.asset.category"].create({
+        cls.category = cls.env["drkds.lite.asset.category"].create({
             "name": "Vehicles",
             "code": "VEH",
             "useful_life_value": 3,
             "company_id": cls.company.id,
         })
         cls.custodian = cls.env["res.partner"].create({"name": "Site Manager"})
-        cls.asset = cls.env["drkds.asset"].create({
+        cls.asset = cls.env["drkds.lite.asset"].create({
             "name": "Delivery Van",
             "category_id": cls.category.id,
             "custodian_id": cls.custodian.id,
@@ -129,7 +129,7 @@ class TestDisposalAndRegister(TransactionCase):
         self.assertEqual(len(wizard.line_ids), 1)
 
     def test_register_excludes_a_draft_asset(self):
-        self.env["drkds.asset"].create({
+        self.env["drkds.lite.asset"].create({
             "name": "Not yet in use",
             "category_id": self.category.id,
             "purchase_date": date(2024, 4, 1),
@@ -145,7 +145,7 @@ class TestDisposalAndRegister(TransactionCase):
         self.assertFalse(rows)
 
     def test_register_filters_by_category_and_custodian(self):
-        other = self.env["drkds.asset.category"].create({
+        other = self.env["drkds.lite.asset.category"].create({
             "name": "Furniture", "useful_life_value": 5, "company_id": self.company.id,
         })
         self.assertFalse(self._wizard(category_ids=[(6, 0, other.ids)])._register_rows())
@@ -178,10 +178,10 @@ class TestDisposalAndRegister(TransactionCase):
     # -- multi-company -------------------------------------------------
     def test_assets_are_scoped_to_their_company(self):
         other_company = self.env["res.company"].create({"name": "Second Co"})
-        other_category = self.env["drkds.asset.category"].create({
+        other_category = self.env["drkds.lite.asset.category"].create({
             "name": "Vehicles", "useful_life_value": 3, "company_id": other_company.id,
         })
-        other_asset = self.env["drkds.asset"].create({
+        other_asset = self.env["drkds.lite.asset"].create({
             "name": "Other Van",
             "company_id": other_company.id,
             "category_id": other_category.id,

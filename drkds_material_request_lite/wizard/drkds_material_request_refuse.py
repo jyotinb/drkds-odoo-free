@@ -9,11 +9,11 @@ class DrkdsMaterialRequestRefuse(models.TransientModel):
     is therefore mandatory, both here and on the model method behind it.
     """
 
-    _name = "drkds.material.request.refuse"
+    _name = "drkds.lite.material.request.refuse"
     _description = "Refuse Material Request"
 
     request_id = fields.Many2one(
-        "drkds.material.request", string="Request", required=True,
+        "drkds.lite.material.request", string="Request", required=True,
         ondelete="cascade",
     )
     reason = fields.Text(string="Refusal Reason", required=True)

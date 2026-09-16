@@ -9,13 +9,13 @@ class DrkdsVaultAccessLog(models.Model):
     control file grants read and create, never write or unlink.
     """
 
-    _name = "drkds.vault.access.log"
+    _name = "drkds.lite.vault.access.log"
     _description = "Vault Access Log"
     _order = "create_date desc, id desc"
     _rec_name = "entry_id"
 
     entry_id = fields.Many2one(
-        "drkds.vault.entry", string="Entry", required=True,
+        "drkds.lite.vault.entry", string="Entry", required=True,
         ondelete="cascade", index=True,
     )
     user_id = fields.Many2one(

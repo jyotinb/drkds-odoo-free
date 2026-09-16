@@ -8,7 +8,7 @@ class DrkdsAssetDisposalWizard(models.TransientModel):
     _name = "drkds.asset.disposal.wizard"
     _description = "Asset Disposal"
 
-    asset_id = fields.Many2one("drkds.asset", string="Asset", required=True, ondelete="cascade")
+    asset_id = fields.Many2one("drkds.lite.asset", string="Asset", required=True, ondelete="cascade")
     currency_id = fields.Many2one(related="asset_id.currency_id")
     disposal_date = fields.Date(required=True, default=fields.Date.context_today)
     proceeds = fields.Monetary(string="Proceeds", default=0.0)

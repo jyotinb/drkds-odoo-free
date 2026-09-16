@@ -20,7 +20,7 @@ that fulfils a request.
 
 | Field | Meaning |
 | --- | --- |
-| Reference | Filled automatically from the `drkds.material.request` sequence. |
+| Reference | Filled automatically from the `drkds.lite.material.request` sequence. |
 | Requester | You, by default. Only editable while the request is Draft. |
 | Department | Taken from your employee record; editable. |
 | Request Date | Now, by default. |

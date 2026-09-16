@@ -7,7 +7,7 @@ class StockMove(models.Model):
     _inherit = "stock.move"
 
     drkds_request_line_id = fields.Many2one(
-        "drkds.material.request.line", string="Material Request Line",
+        "drkds.lite.material.request.line", string="Material Request Line",
         ondelete="set null", index="btree_not_null", copy=False,
     )
 

@@ -13,7 +13,7 @@ class DrkdsVaultReveal(models.TransientModel):
     _description = "Reveal Vault Password"
 
     entry_id = fields.Many2one(
-        "drkds.vault.entry", string="Entry", required=True, readonly=True,
+        "drkds.lite.vault.entry", string="Entry", required=True, readonly=True,
         ondelete="cascade",
     )
     entry_name = fields.Char(related="entry_id.name", string="Title", readonly=True)

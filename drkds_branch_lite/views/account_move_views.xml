@@ -2,7 +2,7 @@
 <odoo>
 
     <record id="drkds_branch_view_move_form" model="ir.ui.view">
-        <field name="name">account.move.form.drkds.branch</field>
+        <field name="name">account.move.form.drkds.lite.branch</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
@@ -14,7 +14,7 @@
     </record>
 
     <record id="drkds_branch_view_invoice_list" model="ir.ui.view">
-        <field name="name">account.move.list.drkds.branch</field>
+        <field name="name">account.move.list.drkds.lite.branch</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_invoice_tree"/>
         <field name="arch" type="xml">
@@ -25,7 +25,7 @@
     </record>
 
     <record id="drkds_branch_view_account_invoice_filter" model="ir.ui.view">
-        <field name="name">account.move.search.drkds.branch</field>
+        <field name="name">account.move.search.drkds.lite.branch</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_account_invoice_filter"/>
         <field name="arch" type="xml">

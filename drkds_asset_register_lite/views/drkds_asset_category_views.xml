@@ -2,8 +2,8 @@
 <odoo>
 
     <record id="view_drkds_asset_category_list" model="ir.ui.view">
-        <field name="name">drkds.asset.category.list</field>
-        <field name="model">drkds.asset.category</field>
+        <field name="name">drkds.lite.asset.category.list</field>
+        <field name="model">drkds.lite.asset.category</field>
         <field name="arch" type="xml">
             <list string="Asset Categories">
                 <field name="name"/>
@@ -20,8 +20,8 @@
     </record>
 
     <record id="view_drkds_asset_category_form" model="ir.ui.view">
-        <field name="name">drkds.asset.category.form</field>
-        <field name="model">drkds.asset.category</field>
+        <field name="name">drkds.lite.asset.category.form</field>
+        <field name="model">drkds.lite.asset.category</field>
         <field name="arch" type="xml">
             <form string="Asset Category">
                 <sheet>
@@ -63,8 +63,8 @@
     </record>
 
     <record id="view_drkds_asset_category_search" model="ir.ui.view">
-        <field name="name">drkds.asset.category.search</field>
-        <field name="model">drkds.asset.category</field>
+        <field name="name">drkds.lite.asset.category.search</field>
+        <field name="model">drkds.lite.asset.category</field>
         <field name="arch" type="xml">
             <search string="Asset Categories">
                 <field name="name"/>
@@ -79,7 +79,7 @@
 
     <record id="action_drkds_asset_category" model="ir.actions.act_window">
         <field name="name">Asset Categories</field>
-        <field name="res_model">drkds.asset.category</field>
+        <field name="res_model">drkds.lite.asset.category</field>
         <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Define an asset category</p>

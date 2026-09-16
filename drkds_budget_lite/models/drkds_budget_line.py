@@ -27,13 +27,13 @@ class DrkdsBudgetLine(models.Model):
     means over-spend on an expense line and under-collection on an income line.
     """
 
-    _name = "drkds.budget.line"
+    _name = "drkds.lite.budget.line"
     _description = "Budget Line"
     _order = "budget_id, sequence, id"
     _check_company_auto = True
 
     budget_id = fields.Many2one(
-        "drkds.budget", string="Budget", required=True,
+        "drkds.lite.budget", string="Budget", required=True,
         ondelete="cascade", index=True,
     )
     sequence = fields.Integer(default=10)

@@ -15,7 +15,7 @@ class IrActionsReport(models.Model):
     def get_paperformat(self):
         template_id = self.env.context.get("drkds_label_template_id")
         if template_id and self.report_name == "drkds_label_designer_lite.report_drkds_label":
-            template = self.env["drkds.label.template"].sudo().browse(template_id).exists()
+            template = self.env["drkds.lite.label.template"].sudo().browse(template_id).exists()
             if template.paperformat_id:
                 return template.paperformat_id
         return super().get_paperformat()

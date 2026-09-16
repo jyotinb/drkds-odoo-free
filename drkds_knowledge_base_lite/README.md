@@ -54,4 +54,8 @@ LGPL-3.
 The drkds Wiki Articles app adds article versioning with rollback, portal
 sharing and approval workflows.
 
+This module can be installed alongside the paid drkds Wiki Articles app: they
+use separate models and keep separate data, so neither blocks the other and
+nothing you write here is carried across.
+
 Part of the drkds Indian SME suite for Odoo 19 Community.

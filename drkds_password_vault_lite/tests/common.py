@@ -20,8 +20,8 @@ class VaultCase(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls._set_key(TEST_MASTER_KEY)
-        cls.Entry = cls.env["drkds.vault.entry"]
-        cls.Log = cls.env["drkds.vault.access.log"]
+        cls.Entry = cls.env["drkds.lite.vault.entry"]
+        cls.Log = cls.env["drkds.lite.vault.access.log"]
         cls.other_user = cls.env["res.users"].create([{
             "name": "Vault Outsider",
             "login": "vault.outsider@example.com",
@@ -32,7 +32,12 @@ class VaultCase(TransactionCase):
     def _set_key(cls, value):
         """Set (or clear, with ``None``) the configured master secret."""
         if value is None:
-            config.options.pop(vault_crypto.KEY_CONFIG_OPTION, None)
+            # ``config.options`` is a ChainMap (runtime, cli, env, file,
+            # defaults). A plain pop only clears the first layer, so a key
+            # set in odoo.conf would survive and "no key configured" would
+            # never actually be tested. Clear every layer.
+            for layer in getattr(config.options, "maps", [config.options]):
+                layer.pop(vault_crypto.KEY_CONFIG_OPTION, None)
         else:
             config.options[vault_crypto.KEY_CONFIG_OPTION] = value
         vault_crypto._DERIVED_KEY_CACHE.clear()

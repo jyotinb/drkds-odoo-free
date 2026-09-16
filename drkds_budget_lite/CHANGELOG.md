@@ -19,3 +19,6 @@ First release.
 - Budget vs Actual reporting view grouped by account, with drill-down from a
   line to the underlying journal items.
 - Multi-company record rules on both models.
+- Models are named `drkds.lite.budget` and `drkds.lite.budget.line` so the
+  module can be installed alongside the paid drkds Accounting Pro app, which
+  uses the unprefixed names. The two keep entirely separate tables and records.

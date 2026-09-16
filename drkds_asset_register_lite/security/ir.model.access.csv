@@ -1,8 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_drkds_asset_category_user,drkds.asset.category reader,model_drkds_asset_category,group_drkds_asset_user,1,0,0,0
-access_drkds_asset_category_manager,drkds.asset.category manager,model_drkds_asset_category,group_drkds_asset_manager,1,1,1,1
-access_drkds_asset_user,drkds.asset reader,model_drkds_asset,group_drkds_asset_user,1,0,0,0
-access_drkds_asset_manager,drkds.asset manager,model_drkds_asset,group_drkds_asset_manager,1,1,1,1
+access_drkds_asset_category_user,drkds.lite.asset.category reader,model_drkds_lite_asset_category,group_drkds_asset_user,1,0,0,0
+access_drkds_asset_category_manager,drkds.lite.asset.category manager,model_drkds_lite_asset_category,group_drkds_asset_manager,1,1,1,1
+access_drkds_asset_user,drkds.lite.asset reader,model_drkds_lite_asset,group_drkds_asset_user,1,0,0,0
+access_drkds_asset_manager,drkds.lite.asset manager,model_drkds_lite_asset,group_drkds_asset_manager,1,1,1,1
 access_drkds_asset_depreciation_line_user,drkds.asset.depreciation.line reader,model_drkds_asset_depreciation_line,group_drkds_asset_user,1,0,0,0
 access_drkds_asset_depreciation_line_manager,drkds.asset.depreciation.line manager,model_drkds_asset_depreciation_line,group_drkds_asset_manager,1,1,1,1
 access_drkds_asset_register_wizard_user,drkds.asset.register.wizard reader,model_drkds_asset_register_wizard,group_drkds_asset_user,1,1,1,1

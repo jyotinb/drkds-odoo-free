@@ -10,7 +10,7 @@ class DrkdsAssetCategory(models.Model):
     rewrites the schedule of an asset that was already entered.
     """
 
-    _name = "drkds.asset.category"
+    _name = "drkds.lite.asset.category"
     _description = "Fixed Asset Category"
     _order = "name"
 
@@ -55,7 +55,7 @@ class DrkdsAssetCategory(models.Model):
 
     def _compute_asset_count(self):
         counts = dict(
-            self.env["drkds.asset"]._read_group(
+            self.env["drkds.lite.asset"]._read_group(
                 [("category_id", "in", self.ids)], ["category_id"], ["__count"]
             )
         )
@@ -84,7 +84,7 @@ class DrkdsAssetCategory(models.Model):
         return {
             "type": "ir.actions.act_window",
             "name": _("Assets"),
-            "res_model": "drkds.asset",
+            "res_model": "drkds.lite.asset",
             "view_mode": "list,form",
             "domain": [("category_id", "=", self.id)],
             "context": {"default_category_id": self.id},

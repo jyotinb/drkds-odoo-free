@@ -60,4 +60,11 @@ deliberately not here.
 The drkds Accounting Pro app adds posted depreciation entries, reducing balance
 and other methods, revaluation and asset components.
 
+## Alongside the paid app
+
+This module and the paid drkds Accounting Pro app can be installed in the same
+database: their models are named differently (`drkds.lite.asset` here) and each
+keeps its own records. Nothing is migrated between them, so assets entered here
+do not appear in the paid app and would have to be re-entered.
+
 Part of the drkds Indian SME suite for Odoo 19 Community.

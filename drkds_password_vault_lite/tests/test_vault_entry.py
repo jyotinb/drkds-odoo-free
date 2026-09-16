@@ -16,7 +16,7 @@ class TestVaultEntry(VaultCase):
         entry = self._entry(secret=SECRET)
         self.env.flush_all()
         self.env.cr.execute(
-            "SELECT secret_encrypted FROM drkds_vault_entry WHERE id = %s", (entry.id,)
+            "SELECT secret_encrypted FROM drkds_lite_vault_entry WHERE id = %s", (entry.id,)
         )
         stored = self.env.cr.fetchone()[0]
         self.assertTrue(stored)
@@ -31,7 +31,7 @@ class TestVaultEntry(VaultCase):
         entry = self._entry(secret=SECRET, notes="nothing sensitive here")
         self.env.flush_all()
         self.env.cr.execute(
-            "SELECT * FROM drkds_vault_entry WHERE id = %s", (entry.id,)
+            "SELECT * FROM drkds_lite_vault_entry WHERE id = %s", (entry.id,)
         )
         row = self.env.cr.fetchone()
         for value in row:
@@ -127,7 +127,7 @@ class TestVaultEntry(VaultCase):
     def test_log_is_append_only_for_users(self):
         """Ordinary users may create log lines, never edit or delete them."""
         access = self.env["ir.model.access"].search([
-            ("model_id.model", "=", "drkds.vault.access.log"),
+            ("model_id.model", "=", "drkds.lite.vault.access.log"),
             ("group_id", "=", self.env.ref("base.group_user").id),
         ])
         self.assertTrue(access)

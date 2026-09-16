@@ -11,7 +11,7 @@ class DrkdsBranch(models.Model):
     touches stays inside a single ``res.company`` and, in India, a single GSTIN.
     """
 
-    _name = "drkds.branch"
+    _name = "drkds.lite.branch"
     _description = "Branch"
     _order = "sequence, code"
     _rec_name = "display_name"

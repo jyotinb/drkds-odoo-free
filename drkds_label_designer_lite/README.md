@@ -57,4 +57,8 @@ Print Labels (drkds)**, choose a template and the number of copies.
 The drkds Label Designer app adds a drag and drop visual designer, customer
 specific label variants and printing from any document.
 
+This module can be installed alongside the paid drkds Label Designer app:
+they use separate models and keep separate data, so neither blocks the other
+and no template defined here is carried across.
+
 Part of the drkds Indian SME suite for Odoo 19 Community.

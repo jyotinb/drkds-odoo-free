@@ -18,7 +18,7 @@ class DrkdsKbFavourite(models.Model):
         default=lambda self: self.env.user,
     )
     article_id = fields.Many2one(
-        "drkds.kb.article", string="Article", required=True, index=True,
+        "drkds.lite.kb.article", string="Article", required=True, index=True,
         ondelete="cascade",
     )
 

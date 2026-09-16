@@ -78,7 +78,7 @@ class TestVaultCrypto(VaultCase):
             "the key must never be written to ir.config_parameter",
         )
         self.env.cr.execute(
-            "SELECT secret_encrypted FROM drkds_vault_entry WHERE id = %s", (entry.id,)
+            "SELECT secret_encrypted FROM drkds_lite_vault_entry WHERE id = %s", (entry.id,)
         )
         self.assertNotIn(TEST_MASTER_KEY, self.env.cr.fetchone()[0])
 
@@ -96,7 +96,7 @@ class TestVaultCrypto(VaultCase):
         token = entry.secret_encrypted
         tampered = token[:-4] + ("AAAA" if not token.endswith("AAAA") else "BBBB")
         self.env.cr.execute(
-            "UPDATE drkds_vault_entry SET secret_encrypted = %s WHERE id = %s",
+            "UPDATE drkds_lite_vault_entry SET secret_encrypted = %s WHERE id = %s",
             (tampered, entry.id),
         )
         entry.invalidate_recordset()

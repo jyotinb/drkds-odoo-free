@@ -62,13 +62,13 @@ class TestVaultIsolation(VaultCase):
 
     def test_folders_and_tags_are_personal_too(self):
         folder = self.env["drkds.vault.folder"].create([{"name": "Banking"}])[0]
-        tag = self.env["drkds.vault.tag"].create([{"name": "work"}])[0]
+        tag = self.env["drkds.lite.vault.tag"].create([{"name": "work"}])[0]
         self.assertFalse(
             self.env["drkds.vault.folder"].with_user(self.other_user)
             .search([("id", "=", folder.id)])
         )
         self.assertFalse(
-            self.env["drkds.vault.tag"].with_user(self.other_user)
+            self.env["drkds.lite.vault.tag"].with_user(self.other_user)
             .search([("id", "=", tag.id)])
         )
 
@@ -76,8 +76,8 @@ class TestVaultIsolation(VaultCase):
         """Every vault rule is global, so no group can be granted an override."""
         rules = self.env["ir.rule"].search([
             ("model_id.model", "in", [
-                "drkds.vault.entry", "drkds.vault.folder",
-                "drkds.vault.tag", "drkds.vault.access.log",
+                "drkds.lite.vault.entry", "drkds.vault.folder",
+                "drkds.lite.vault.tag", "drkds.lite.vault.access.log",
             ]),
         ])
         self.assertEqual(len(rules), 4)

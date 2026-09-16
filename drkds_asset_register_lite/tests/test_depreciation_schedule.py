@@ -16,8 +16,8 @@ class TestDepreciationSchedule(TransactionCase):
             "drkds_asset_fy_last_month": "3",
             "drkds_asset_fy_last_day": 31,
         })
-        cls.Asset = cls.env["drkds.asset"]
-        cls.category = cls.env["drkds.asset.category"].create({
+        cls.Asset = cls.env["drkds.lite.asset"]
+        cls.category = cls.env["drkds.lite.asset.category"].create({
             "name": "Plant and Machinery",
             "code": "PM",
             "useful_life_unit": "year",
@@ -162,7 +162,7 @@ class TestDepreciationSchedule(TransactionCase):
 
     def test_category_with_zero_life_is_refused(self):
         with self.assertRaises(ValidationError):
-            self.env["drkds.asset.category"].create({
+            self.env["drkds.lite.asset.category"].create({
                 "name": "Nonsense",
                 "useful_life_value": 0,
                 "company_id": self.company.id,

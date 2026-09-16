@@ -7,7 +7,7 @@ class TestMaterialRequest(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.Request = cls.env["drkds.material.request"]
+        cls.Request = cls.env["drkds.lite.material.request"]
         cls.company = cls.env.company
         cls.warehouse = cls.env["stock.warehouse"].search(
             [("company_id", "=", cls.company.id)], limit=1
@@ -165,7 +165,7 @@ class TestMaterialRequest(TransactionCase):
     def test_refusal_with_a_reason_is_recorded(self):
         request = self._make_request()
         request.action_submit()
-        wizard = self.env["drkds.material.request.refuse"].with_user(self.approver).create({
+        wizard = self.env["drkds.lite.material.request.refuse"].with_user(self.approver).create({
             "request_id": request.id,
             "reason": "Budget exhausted for this quarter",
         })

@@ -11,7 +11,7 @@ class DrkdsAssetRegisterLine(models.TransientModel):
     wizard_id = fields.Many2one(
         "drkds.asset.register.wizard", required=True, ondelete="cascade", index=True,
     )
-    asset_id = fields.Many2one("drkds.asset", string="Asset", ondelete="cascade")
+    asset_id = fields.Many2one("drkds.lite.asset", string="Asset", ondelete="cascade")
     currency_id = fields.Many2one(related="wizard_id.currency_id")
     code = fields.Char(string="Reference")
     name = fields.Char(string="Description")
@@ -45,7 +45,7 @@ class DrkdsAssetRegisterWizard(models.TransientModel):
         default=lambda self: self.env.company,
     )
     currency_id = fields.Many2one(related="company_id.currency_id")
-    category_ids = fields.Many2many("drkds.asset.category", string="Categories")
+    category_ids = fields.Many2many("drkds.lite.asset.category", string="Categories")
     custodian_id = fields.Many2one("res.partner", string="Custodian")
     state_filter = fields.Selection(
         [
@@ -83,7 +83,7 @@ class DrkdsAssetRegisterWizard(models.TransientModel):
         self.ensure_one()
         currency = self.currency_id or self.env.company.currency_id
         rows = []
-        for asset in self.env["drkds.asset"].search(self._asset_domain()):
+        for asset in self.env["drkds.lite.asset"].search(self._asset_domain()):
             as_at = self.as_at_date
             if asset.disposal_date and asset.disposal_date < as_at:
                 as_at = asset.disposal_date

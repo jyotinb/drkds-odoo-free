@@ -4,14 +4,14 @@
 
         <record id="drkds_budget_company_rule" model="ir.rule">
             <field name="name">Budget: multi-company</field>
-            <field name="model_id" ref="model_drkds_budget"/>
+            <field name="model_id" ref="model_drkds_lite_budget"/>
             <field name="global" eval="True"/>
             <field name="domain_force">[('company_id', 'in', company_ids)]</field>
         </record>
 
         <record id="drkds_budget_line_company_rule" model="ir.rule">
             <field name="name">Budget Line: multi-company</field>
-            <field name="model_id" ref="model_drkds_budget_line"/>
+            <field name="model_id" ref="model_drkds_lite_budget_line"/>
             <field name="global" eval="True"/>
             <field name="domain_force">[('company_id', 'in', company_ids)]</field>
         </record>

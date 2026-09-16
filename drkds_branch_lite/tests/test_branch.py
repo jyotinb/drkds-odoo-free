@@ -12,7 +12,7 @@ class TestDrkdsBranch(AccountTestInvoicingCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        Branch = cls.env["drkds.branch"]
+        Branch = cls.env["drkds.lite.branch"]
         cls.branch_blr = Branch.create({"name": "Bengaluru", "code": "blr"})
         cls.branch_mum = Branch.create({"name": "Mumbai", "code": "MUM"})
 
@@ -67,11 +67,11 @@ class TestDrkdsBranch(AccountTestInvoicingCommon):
         self.assertEqual(self.branch_blr.display_name, "[BLR] Bengaluru")
         with self.assertRaises(Exception):
             with self.cr.savepoint():
-                self.env["drkds.branch"].create({"name": "Other", "code": "blr"})
+                self.env["drkds.lite.branch"].create({"name": "Other", "code": "blr"})
 
     def test_code_rejects_punctuation(self):
         with self.assertRaises(ValidationError):
-            self.env["drkds.branch"].create({"name": "Bad", "code": "A B!"})
+            self.env["drkds.lite.branch"].create({"name": "Bad", "code": "A B!"})
 
     # -- defaults from the user ----------------------------------------
     def test_default_branch_on_sale_order(self):

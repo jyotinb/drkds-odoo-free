@@ -14,7 +14,7 @@ class DrkdsAssetDepreciationLine(models.Model):
     _order = "asset_id, sequence"
 
     asset_id = fields.Many2one(
-        "drkds.asset", string="Asset", required=True, ondelete="cascade", index=True,
+        "drkds.lite.asset", string="Asset", required=True, ondelete="cascade", index=True,
     )
     company_id = fields.Many2one(related="asset_id.company_id", store=True, index=True)
     currency_id = fields.Many2one(related="asset_id.currency_id")

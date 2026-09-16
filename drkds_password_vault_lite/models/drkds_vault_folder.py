@@ -14,7 +14,7 @@ class DrkdsVaultFolder(models.Model):
         default=lambda self: self.env.user,
         help="Folders are personal. Only the owner sees them.",
     )
-    entry_ids = fields.One2many("drkds.vault.entry", "folder_id", string="Entries")
+    entry_ids = fields.One2many("drkds.lite.vault.entry", "folder_id", string="Entries")
     entry_count = fields.Integer(compute="_compute_entry_count")
     active = fields.Boolean(default=True)
 

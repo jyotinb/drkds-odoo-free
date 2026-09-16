@@ -9,7 +9,7 @@ class TestKbSecurity(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.Article = cls.env["drkds.kb.article"]
+        cls.Article = cls.env["drkds.lite.kb.article"]
         cls.reader = new_test_user(
             cls.env, login="kb_reader",
             groups="base.group_user,drkds_knowledge_base_lite.group_kb_reader",
@@ -18,7 +18,7 @@ class TestKbSecurity(TransactionCase):
             cls.env, login="kb_editor",
             groups="base.group_user,drkds_knowledge_base_lite.group_kb_editor",
         )
-        cls.section = cls.env["drkds.kb.section"].create({"name": "Handbook"})
+        cls.section = cls.env["drkds.lite.kb.section"].create({"name": "Handbook"})
         cls.published = cls.Article.create({
             "name": "Published article", "section_id": cls.section.id,
             "body": "<p>visible to everyone</p>", "state": "published",
@@ -58,7 +58,7 @@ class TestKbSecurity(TransactionCase):
         with self.assertRaises(AccessError):
             self.section.with_user(self.reader).write({"name": "Renamed"})
         with self.assertRaises(AccessError):
-            self.env["drkds.kb.tag"].with_user(self.reader).create({"name": "nope"})
+            self.env["drkds.lite.kb.tag"].with_user(self.reader).create({"name": "nope"})
 
     def test_reader_may_still_bookmark(self):
         """A bookmark must not require write access to the article."""
@@ -86,7 +86,7 @@ class TestKbSecurity(TransactionCase):
         self.assertIn(article, self.Article.with_user(self.reader).search([]))
 
     def test_editor_manages_sections(self):
-        child = self.env["drkds.kb.section"].with_user(self.editor).create({
+        child = self.env["drkds.lite.kb.section"].with_user(self.editor).create({
             "name": "Leave", "parent_id": self.section.id,
         })
         self.assertEqual(child.complete_name, "Handbook / Leave")

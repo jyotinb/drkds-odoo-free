@@ -2,8 +2,8 @@
 <odoo>
 
     <record id="view_drkds_budget_line_report_list" model="ir.ui.view">
-        <field name="name">drkds.budget.line.report.list</field>
-        <field name="model">drkds.budget.line</field>
+        <field name="name">drkds.lite.budget.line.report.list</field>
+        <field name="model">drkds.lite.budget.line</field>
         <field name="arch" type="xml">
             <list string="Budget vs Actual" create="false" edit="false"
                   decoration-danger="is_over_budget">
@@ -29,8 +29,8 @@
     </record>
 
     <record id="view_drkds_budget_line_form" model="ir.ui.view">
-        <field name="name">drkds.budget.line.form</field>
-        <field name="model">drkds.budget.line</field>
+        <field name="name">drkds.lite.budget.line.form</field>
+        <field name="model">drkds.lite.budget.line</field>
         <field name="arch" type="xml">
             <form string="Budget Line">
                 <sheet>
@@ -65,8 +65,8 @@
     </record>
 
     <record id="view_drkds_budget_line_search" model="ir.ui.view">
-        <field name="name">drkds.budget.line.search</field>
-        <field name="model">drkds.budget.line</field>
+        <field name="name">drkds.lite.budget.line.search</field>
+        <field name="model">drkds.lite.budget.line</field>
         <field name="arch" type="xml">
             <search string="Budget vs Actual">
                 <field name="budget_id"/>
@@ -101,7 +101,7 @@
 
     <record id="action_drkds_budget_line_report" model="ir.actions.act_window">
         <field name="name">Budget vs Actual</field>
-        <field name="res_model">drkds.budget.line</field>
+        <field name="res_model">drkds.lite.budget.line</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_drkds_budget_line_search"/>
         <field name="domain">[('state', 'in', ['confirmed', 'done'])]</field>

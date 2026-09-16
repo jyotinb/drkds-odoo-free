@@ -52,6 +52,10 @@ point of the lite module.
 The drkds Material Requests app adds purchase fulfilment for shortfalls,
 multi-step approvals and budget checks.
 
+This module can be installed alongside the paid drkds Material Requests app:
+they use separate models and keep separate data, so neither blocks the other
+and no request raised here is carried across.
+
 ## Install
 
 Depends on `stock` and `hr` only, both Odoo 19 Community.

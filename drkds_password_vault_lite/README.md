@@ -92,4 +92,8 @@ vault, complete.
 The drkds Credential Vault app adds team vaults, controlled sharing, rotation
 reminders and password strength auditing.
 
+This module can be installed alongside the paid drkds Credential Vault app:
+they use separate models and keep separate data, so neither blocks the other
+and no entry stored here is carried across.
+
 Part of the drkds Indian SME suite for Odoo 19 Community.

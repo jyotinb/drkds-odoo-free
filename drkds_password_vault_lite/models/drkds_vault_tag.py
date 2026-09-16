@@ -4,7 +4,7 @@ from odoo import fields, models
 class DrkdsVaultTag(models.Model):
     """A personal label for vault entries, for example 'work' or 'banking'."""
 
-    _name = "drkds.vault.tag"
+    _name = "drkds.lite.vault.tag"
     _description = "Vault Tag"
     _order = "name"
 

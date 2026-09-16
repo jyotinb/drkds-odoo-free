@@ -3,7 +3,7 @@
 
     <record id="seq_drkds_asset" model="ir.sequence">
         <field name="name">Fixed Asset Reference</field>
-        <field name="code">drkds.asset</field>
+        <field name="code">drkds.lite.asset</field>
         <field name="prefix">FA/%(year)s/</field>
         <field name="padding">4</field>
         <field name="company_id" eval="False"/>

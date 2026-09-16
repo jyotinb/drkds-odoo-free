@@ -4,8 +4,8 @@
     <!-- Reading form: a page, not a data-entry screen. Metadata is small and
          out of the way; the title and the body own the width. -->
     <record id="view_drkds_kb_article_form" model="ir.ui.view">
-        <field name="name">drkds.kb.article.form</field>
-        <field name="model">drkds.kb.article</field>
+        <field name="name">drkds.lite.kb.article.form</field>
+        <field name="model">drkds.lite.kb.article</field>
         <field name="arch" type="xml">
             <form string="Article" class="o_drkds_kb_article_form">
                 <header>
@@ -59,8 +59,8 @@
     </record>
 
     <record id="view_drkds_kb_article_list" model="ir.ui.view">
-        <field name="name">drkds.kb.article.list</field>
-        <field name="model">drkds.kb.article</field>
+        <field name="name">drkds.lite.kb.article.list</field>
+        <field name="model">drkds.lite.kb.article</field>
         <field name="arch" type="xml">
             <list string="Articles" multi_edit="1">
                 <field name="is_favourite" widget="boolean_favorite" nolabel="1" optional="show"/>
@@ -82,8 +82,8 @@
     <!-- Card view: the browsing surface. A snippet of the body is shown so a
          reader can judge an article without opening it. -->
     <record id="view_drkds_kb_article_kanban" model="ir.ui.view">
-        <field name="name">drkds.kb.article.kanban</field>
-        <field name="model">drkds.kb.article</field>
+        <field name="name">drkds.lite.kb.article.kanban</field>
+        <field name="model">drkds.lite.kb.article</field>
         <field name="arch" type="xml">
             <kanban class="o_drkds_kb_kanban" default_order="write_date desc"
                     quick_create="false">
@@ -117,8 +117,8 @@
     </record>
 
     <record id="view_drkds_kb_article_search" model="ir.ui.view">
-        <field name="name">drkds.kb.article.search</field>
-        <field name="model">drkds.kb.article</field>
+        <field name="name">drkds.lite.kb.article.search</field>
+        <field name="model">drkds.lite.kb.article</field>
         <field name="arch" type="xml">
             <search string="Articles">
                 <!-- The default search box searches the body too, not just the title. -->
@@ -168,7 +168,7 @@
 
     <record id="action_drkds_kb_article" model="ir.actions.act_window">
         <field name="name">Articles</field>
-        <field name="res_model">drkds.kb.article</field>
+        <field name="res_model">drkds.lite.kb.article</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="view_drkds_kb_article_search"/>
         <field name="context">{'search_default_published': 1}</field>
@@ -184,7 +184,7 @@
 
     <record id="action_drkds_kb_article_recent" model="ir.actions.act_window">
         <field name="name">Recently Updated</field>
-        <field name="res_model">drkds.kb.article</field>
+        <field name="res_model">drkds.lite.kb.article</field>
         <field name="view_mode">list,kanban,form</field>
         <field name="search_view_id" ref="view_drkds_kb_article_search"/>
         <field name="domain">[('state', '=', 'published')]</field>
@@ -197,7 +197,7 @@
 
     <record id="action_drkds_kb_article_favourite" model="ir.actions.act_window">
         <field name="name">My Bookmarks</field>
-        <field name="res_model">drkds.kb.article</field>
+        <field name="res_model">drkds.lite.kb.article</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="view_drkds_kb_article_search"/>
         <field name="context">{'search_default_my_bookmarks': 1}</field>
