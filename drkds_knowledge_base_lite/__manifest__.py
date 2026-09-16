@@ -63,6 +63,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
     "category": "Productivity",
     "author": "drkds",
     "website": "https://drkdsinfo.com",
+    "support": "jyotinboghani@gmail.com",
     "license": "LGPL-3",
     "depends": ["mail"],
     "data": [
