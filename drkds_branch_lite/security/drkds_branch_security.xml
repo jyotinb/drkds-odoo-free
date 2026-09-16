@@ -4,6 +4,10 @@
     <record id="group_drkds_branch_manager" model="res.groups">
         <field name="name">Manage Branches</field>
         <field name="comment">Create and edit branches, and assign branches to users.</field>
+        <!-- The installing administrator gets the manager group, so the app
+             works the moment it is installed rather than raising an access
+             error on the first click. -->
+        <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
     </record>
 
     <record id="base.group_system" model="res.groups">

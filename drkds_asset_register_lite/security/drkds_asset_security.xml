@@ -19,6 +19,10 @@
         <field name="privilege_id" ref="privilege_drkds_asset"/>
         <field name="implied_ids" eval="[(4, ref('group_drkds_asset_user'))]"/>
         <field name="comment">Can record assets, categories and disposals.</field>
+        <!-- The installing administrator gets the manager group, so the app
+             works the moment it is installed rather than raising an access
+             error on the first click. -->
+        <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
     </record>
 
     <record id="rule_drkds_asset_company" model="ir.rule">
