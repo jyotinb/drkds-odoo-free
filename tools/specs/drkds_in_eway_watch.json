@@ -1,0 +1,48 @@
+{
+  "module": "drkds_in_eway_watch",
+  "title": "E-Way Bill Expiry Watch and Threshold Reminder (India)",
+  "summary": "Adds an expired state, expiry filters and a threshold reminder to Odoo's e-way bill",
+  "intro": "This module does not generate e-way bills. Odoo Community's own Indian E-waybill module does that, through the government channel, and stores the number, date and validity date it gets back. What it does not do is act on that validity date: its status is only Pending, Generated or Cancelled, it ships no scheduled action, and its views carry no filters at all, so a bill that lapsed last night still reads Generated. This module adds the watch on top, and nothing else.",
+  "shots": [
+    [
+      "screenshot_01.png",
+      "E-way bill expiry watch",
+      "E-Way Bill Watch grouped by expiry status: active, expired and expiring soon bills with the transporter, e-waybill date, validity date and days to expiry. Expired rows are red, expiring soon amber, so the ones needing an extension stand out."
+    ]
+  ],
+  "features": [
+    [
+      "An expiry status",
+      "Active, Expiring Soon, Expired and Cancelled, computed from the validity date the portal returned, in a separate field beside Odoo's own status rather than bolted into a selection driven by API responses."
+    ],
+    [
+      "A daily scheduled action",
+      "Expiry depends on today's date, which no database dependency can trigger. The job refreshes the status and posts one message on each bill that has lapsed, so a stale e-way bill reaches an inbox instead of waiting to be noticed."
+    ],
+    [
+      "The filters core lacks entirely",
+      "Expiring within 24 hours, expiring within 3 days, already expired, validity differs from rule, and cancelled, plus group by expiry status, transporter, transport mode and date."
+    ],
+    [
+      "A list view with warning colours",
+      "Odoo ships only a form view for e-way bills. This adds the list, with red rows for expired bills and amber for those about to lapse, and days to expiry as a column."
+    ],
+    [
+      "A threshold reminder",
+      "Posted customer invoices and credit notes at or above a configurable amount, 50,000 by default, with no generated e-way bill. A list and a filter, never a block on posting."
+    ],
+    [
+      "A validity estimate",
+      "One day per 200 km or part thereof under rule 138(10), shown beside the portal's own date as a sanity check, with a flag when the portal's validity is shorter than the rule would give."
+    ]
+  ],
+  "notes": [
+    "Requires Odoo's Indian E-waybill module, which does the generation. This module depends on it and is useless without it.",
+    "No government API calls and no portal automation. It reads what Odoo already stored and contacts nothing.",
+    "Odoo's own e-way bill status is never modified, and the fields the API owns are never written to.",
+    "Kilometres per day of validity is a company setting defaulting to 200, because the figure moved from 100 to 200 in 2021 and is 20 for over dimensional cargo.",
+    "Manual entry of a hand-generated e-way bill number is deliberately not supported: core owns those fields as API results and marks them readonly."
+  ],
+  "disclaimer": true,
+  "paid_sentence": "The drkds Accounting India app adds e-way bill generation through the official NIC channel, plus GSTR filing and reconciliation."
+}

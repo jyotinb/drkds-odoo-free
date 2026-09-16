@@ -1,0 +1,49 @@
+{
+  "module": "drkds_branch_lite",
+  "title": "Branches (Lite)",
+  "summary": "Tag sales, invoices and contacts with a branch and report by it, inside one company",
+  "intro": "One company, one GSTIN, several counters. This module adds a branch - a plain place of business - to contacts, sales orders and invoices, defaults it from the user so counter staff never have to pick one, and keeps each branch inside its own documents. Odoo's analytic accounting remains the right tool for cost and margin analysis; it just cannot default from a user, cannot restrict who reads a document, and has nothing to do with numbering. Use both.",
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Branches",
+      "The Branches list with four branches in a single company: HO Head Office in Chennai, BLR Bengaluru Showroom, MUM Mumbai Depot and HYD Hyderabad Counter, each with its code, city, state and, where one is set, the branch manager. The handles on the left set the order branches appear in on every branch field.",
+      "Branches"
+    ]
+  ],
+  "features": [
+    [
+      "A branch, not a second company",
+      "Name, code, address, manager, ordering and an archive flag, all inside one company. No second chart of accounts, no second currency, no inter-branch accounting to reconcile."
+    ],
+    [
+      "On the documents that matter",
+      "Branch on contacts, sales orders and customer and vendor invoices. The branch on a sales order is carried onto the invoice it creates."
+    ],
+    [
+      "Defaulted from the user",
+      "Each user gets one default branch and, optionally, a list of branches they may use. Counter staff never pick a branch; it is already filled in."
+    ],
+    [
+      "Branch-scoped visibility",
+      "Global record rules on sales orders and journal entries. A user restricted to Bengaluru does not see Mumbai's invoices. A user with no branch assigned stays unrestricted, which is what an owner or an accountant needs."
+    ],
+    [
+      "Branch-wise reporting",
+      "A Branch filter and a Branch group-by on the contact, sales order and invoice lists. Group the posted invoice list by branch and read turnover per branch off the list totals."
+    ],
+    [
+      "Optional branch-wise numbering",
+      "One switch turns INV/2026/00001 into INV-BLR/2026/00001, with each branch numbering independently inside the same journal. Built on Odoo's own invoice sequence, so gap detection and resequencing keep working."
+    ]
+  ],
+  "notes": [
+    "A user with no allowed branches is deliberately unrestricted and sees every branch. Restriction begins the moment you fill in Allowed Branches. Owners and accountants are the people with no branch, and silently blinding them is the worse failure.",
+    "A restricted user always keeps sight of documents that carry no branch at all, so records created before install never disappear from view.",
+    "Contacts are labelled by branch, never hidden by it. A contact is shared master data pointed at by users, companies and vendors; hiding it breaks more than it protects.",
+    "Depends on sale and account only. Stock transfers, purchases and payments carry no branch here, and the dependency list does not reach into every app.",
+    "Switch branch-wise numbering on before the first invoice of a period. Turning it on mid-series leaves a visible break in the numbers, and a branch code should never change once it has appeared in an invoice number."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds Branch Operations app extends branches to purchases, transfers and payments, with branch-wise access across the suite and consolidated reporting."
+}

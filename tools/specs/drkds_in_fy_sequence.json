@@ -1,0 +1,42 @@
+{
+  "module": "drkds_in_fy_sequence",
+  "title": "Indian Financial Year Numbering",
+  "summary": "Number invoices as INV/2026-27/0001 and reset the counter every 1 April",
+  "intro": "The Indian financial year runs 1 April to 31 March and is written 2026-27, and GST rules expect a fresh, consecutive invoice series for each one. Odoo's built-in sequence tokens are strftime codes, so they can print a calendar year but never a year that straddles two of them. This module adds the missing token and, just as importantly, makes the counter behind it genuinely restart.",
+  "shots": [],
+  "features": [
+    [
+      "A financial year token",
+      "Write %(fy)s in any sequence prefix or suffix and it renders 2026-27; %(fy_short)s renders 2627. They mix freely with Odoo's own %(month)s and %(day)s tokens."
+    ],
+    [
+      "Range-aware variants",
+      "%(range_fy)s and %(range_fy_short)s report the financial year of the subsequence the number is actually drawn from, mirroring Odoo's own %(range_year)s."
+    ],
+    [
+      "A configurable start month",
+      "April by default, set once on the company. Books that genuinely close on another month shift every calculation with one field - nothing is hardcoded to April."
+    ],
+    [
+      "A range builder action",
+      "One action creates an April-to-March date range per financial year on a chosen sequence, for as many years ahead as you want. Re-running it leaves existing years untouched."
+    ],
+    [
+      "Restart, not just relabel",
+      "A token in the prefix changes how a number is printed; only a date range per year makes the counter restart at 0001. The module does both and the manual explains the difference."
+    ],
+    [
+      "A helper for your own code",
+      "company.drkds_fy_string(date) returns the financial year of any date, with a short form and the year's start and end dates, so reports and other modules never re-derive it."
+    ]
+  ],
+  "notes": [
+    "Built on Odoo's own sequence mechanism - use_date_range and ir.sequence.date_range - rather than a parallel numbering scheme.",
+    "Depends on base alone. No accounting module is required, and nothing here is Enterprise.",
+    "Changing the start month does not renumber documents already issued; set it before a financial year opens.",
+    "Backdating a document draws from that financial year's counter, which is correct but can produce a number out of chronological order.",
+    "No network calls, no portal integration and no telemetry of any kind."
+  ],
+  "disclaimer": true,
+  "paid_sentence": "The drkds Accounting India app adds GSTR-1 and GSTR-3B preparation, GSTR-2A reconciliation, TDS and TCS with Form 26Q and an E-Way Bill register."
+}

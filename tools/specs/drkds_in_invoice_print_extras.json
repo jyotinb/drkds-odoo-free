@@ -1,0 +1,42 @@
+{
+  "module": "drkds_in_invoice_print_extras",
+  "title": "Indian Invoice Print Extras",
+  "summary": "Adds GST state codes, full bank and IFSC details, a declaration, a signature block and a reverse charge marker to the standard Indian invoice PDF",
+  "intro": "Odoo's own Indian localisation already produces the GST invoice: the standard invoice PDF is titled Tax Invoice or Bill of Supply as the case requires, carries the HSN/SAC column and the full HSN summary with the CGST/SGST, IGST and Cess split, and shows the place of supply and the GSTINs. This module does not repeat any of that. It fills the small gaps that are left, adding five blocks to that same PDF and changing nothing else.",
+  "shots": [],
+  "features": [
+    [
+      "GST state codes",
+      "The two digit code sits on the state record and the localisation maintains it, but never prints it. It now appears beside the supplier state, the buyer state, the shipping state and the place of supply."
+    ],
+    [
+      "A proper bank block",
+      "The standard PDF mentions the recipient bank only as a phrase inside the payment terms sentence. You get a labelled block with account holder, account number, IFSC and branch."
+    ],
+    [
+      "A bank fallback",
+      "If the invoice carries no recipient bank, the company's own first bank account is printed rather than leaving the block empty."
+    ],
+    [
+      "A declaration",
+      "The customary declaration sentence, as a company setting with a sensible default. Not present in the standard PDF at all."
+    ],
+    [
+      "A signature block",
+      "For <company> and Authorised Signatory, with room to sign. Not present in the standard PDF at all."
+    ],
+    [
+      "A reverse charge marker",
+      "The localisation already flags reverse charge on the tax and shows it on the tax form, but never prints it. When any tax on the lines is flagged, the invoice now says so."
+    ]
+  ],
+  "notes": [
+    "No second report and no extra print menu entry. There is one invoice PDF and this module extends it.",
+    "No amount, tax computation or total is touched, and the way amounts are spelled in words is left alone.",
+    "The extras appear only for an Indian, GST registered company, the same condition the localisation uses for its own GST blocks.",
+    "A state with no GST code, a partner with no state and a bank account with no bank record all degrade gracefully instead of breaking the PDF.",
+    "This is a print layout module. It makes the standard Indian invoice PDF more complete for everyday use; it is not a GST compliance engine and does not claim to be one."
+  ],
+  "disclaimer": true,
+  "paid_sentence": "The drkds Accounting India app adds GSTR-1 and GSTR-3B preparation, GSTR-2A reconciliation, TDS and TCS with Form 26Q and an E-Way Bill register."
+}

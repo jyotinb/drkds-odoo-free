@@ -1,0 +1,48 @@
+{
+  "module": "drkds_knowledge_base_lite",
+  "title": "Knowledge Base (Lite)",
+  "summary": "Internal articles in a section tree, with rich text, tags and search, on Odoo 19 Community",
+  "intro": "A place to write down how your company actually does things, and a way to find it again six months later. Articles are rich text, filed in a tree of sections, tagged, searched and bookmarked - all inside Odoo, with nothing sent anywhere else.",
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Article cards and the section tree",
+      "The Articles view filtered on Published: five article cards, each showing its section, an extract of the text and a Published badge, beside the Sections sidebar listing GST, Shop Floor and Staff Handbook with a count for each."
+    ]
+  ],
+  "features": [
+    [
+      "Sections that nest",
+      "Build a tree as deep as the subject deserves. Every section carries its full path, so 'First Week' is never ambiguous - it reads as Handbook / Onboarding / First Week."
+    ],
+    [
+      "Articles that read like pages",
+      "Rich text with headings, lists, tables and images, on a comfortable measure. Title, section, tags, author, last editor and status sit quietly above the text instead of crowding it."
+    ],
+    [
+      "Search that reaches the body",
+      "The search box looks inside the article, not only at the title. A word that appears once in the third paragraph is still findable, because every save keeps a flattened plain text copy alongside the formatted one."
+    ],
+    [
+      "A sidebar tree while you browse",
+      "Sections appear beside the article list with live counts. Pick a branch and everything below it shows, including articles filed in sub-sections."
+    ],
+    [
+      "Filters, group-bys and what changed",
+      "Filter by section, tag, author, status or recency. Group by section, author, last editor, status or month. A Recently Updated view answers 'what changed while I was away'."
+    ],
+    [
+      "Private bookmarks",
+      "One click keeps an article in My Bookmarks. Bookmarks are per user and stored separately from the article, so someone with read-only access can still keep their own list."
+    ]
+  ],
+  "notes": [
+    "Two groups: Reader sees published articles and keeps bookmarks; Editor writes articles, manages sections and tags, and is the only one who sees drafts.",
+    "Access is enforced by record rules, not by hiding buttons - a reader cannot reach a draft by any route.",
+    "The last editor is stamped automatically whenever the text, the filing or the status changes, so it is never stale.",
+    "Section nesting uses a materialised path, so 'everything under this branch' stays one indexed query as the tree grows.",
+    "Full chatter on every article: comments, followers and activities. Depends on the mail module only."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds Wiki Articles app adds article versioning with rollback, portal sharing and approval workflows."
+}

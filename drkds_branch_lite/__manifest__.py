@@ -80,7 +80,10 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/account_move_views.xml",
         "views/res_config_settings_views.xml",
     ],
-    "images": ["static/description/cover.png"],
+    "images": [
+        "static/description/cover.png",
+        "static/description/screenshot_01.png",
+    ],
     "installable": True,
     "application": False,
     "auto_install": False,

@@ -1,0 +1,48 @@
+{
+  "module": "drkds_in_msme_vendor",
+  "title": "MSME Vendor Payment Tracking (India)",
+  "summary": "Flag micro and small vendors, watch the 45 day payment clock and list what is overdue",
+  "intro": "Section 43B(h) of the Income Tax Act disallows the deduction for an expense owed to a micro or small enterprise until it is actually paid, if it was not paid inside the limitation period of section 15 of the MSMED Act. That period is the period agreed in writing, capped at 45 days from the day of acceptance, or 15 days where there is no written agreement. The hard part is not the arithmetic, it is knowing which bills are on the clock at all. This module answers that every day, without a spreadsheet.",
+  "shots": [
+    [
+      "screenshot_01.png",
+      "MSME Outstanding Payments report",
+      "MSME Outstanding Payments grouped by vendor: three open bills from Konkan Steels, a small enterprise, each with its Udyam number, the computed MSME due date, days outstanding and an ageing bucket. The two bills past the 45 day limit are shown in red, 454,500.00 outstanding in total."
+    ]
+  ],
+  "features": [
+    [
+      "Vendor MSME record",
+      "Registered flag, Udyam registration number validated against the published UDYAM-XX-00-0000000 format, enterprise category and registration date, all on the contact."
+    ],
+    [
+      "Micro and small only",
+      "A medium enterprise is registered under the MSMED Act and appears on Udyam, but section 15 does not cover it. Medium vendors are shown as out of scope and their bills are never tracked. Getting this wrong is the most common mistake in MSME tracking."
+    ],
+    [
+      "Both statutory periods",
+      "45 days where the payment agreement is in writing, 15 days where it is not. The basis defaults per vendor, and the day counts are company settings rather than hardcoded constants, so a stricter internal policy is possible. Neither can be set longer than the statute allows."
+    ],
+    [
+      "The clock on the bill",
+      "An MSME due date computed from the acceptance date, or the bill date where acceptance is the same day, plus days outstanding, days overdue and a status of Within Limit, Due Soon or Overdue."
+    ],
+    [
+      "A warning you cannot miss",
+      "An overdue bill from a micro or small vendor carries a red banner on the form, naming the due date and the days lost, so it is seen before the payment run, not after the year end."
+    ],
+    [
+      "The report the auditor asks for",
+      "Outstanding MSME payments grouped by vendor with ageing buckets, as a list, a pivot and a graph, with a one click filter for bills that breach the limit inside the current Indian financial year."
+    ]
+  ],
+  "notes": [
+    "No disallowance figure and no section 16 interest calculation are produced. Those depend on the year of actual payment, the accounting method and positions your adviser takes. This module tracks the clock and gives you the evidence; the tax treatment is a matter for your tax professional.",
+    "Udyam numbers are validated for structure and state code only, entirely offline. There are no government portal calls of any kind.",
+    "The ageing figures and the financial year filter are computed live against today's date, so the report is right every morning with no scheduled job to run.",
+    "Depends on Accounting only. Works on Odoo 19 Community with no Enterprise module.",
+    "Changing a company day count immediately reprices the MSME due date on existing vendor bills, so a policy change does not leave stale figures behind."
+  ],
+  "disclaimer": true,
+  "paid_sentence": "The drkds Accounting India app adds GSTR-1 and GSTR-3B preparation, GSTR-2A reconciliation, TDS and TCS with Form 26Q and an E-Way Bill register."
+}

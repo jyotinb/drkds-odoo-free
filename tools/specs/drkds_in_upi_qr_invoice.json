@@ -1,0 +1,42 @@
+{
+  "module": "drkds_in_upi_qr_invoice",
+  "title": "UPI Payment QR on Invoices (India)",
+  "summary": "Print a scannable UPI QR code on the customer invoice, pre-filled with the amount due",
+  "intro": "Your customer opens the invoice, scans the code with any UPI application, and the amount, the payee and the invoice reference are already filled in. Nothing is typed, so nothing is mistyped, and the credit that lands in your bank carries the invoice number you need to match it.",
+  "shots": [],
+  "features": [
+    [
+      "QR code on the invoice PDF",
+      "Rendered next to the payment block, with your UPI ID printed underneath for anyone who would rather type it in."
+    ],
+    [
+      "QR code on the customer portal",
+      "The same code above the invoice preview, so a customer reading the invoice online can pay without downloading anything."
+    ],
+    [
+      "Amount pre-filled from the balance",
+      "A partly paid invoice asks for what is left, not for the original total."
+    ],
+    [
+      "Invoice reference travels with the payment",
+      "Carried as both the UPI transaction note and the transaction reference, which is what makes an incoming credit easy to match."
+    ],
+    [
+      "UPI ID validated on save",
+      "The company setting is checked for the name@handle shape, with a message that says exactly what is wrong. Blank is allowed and simply prints no code."
+    ],
+    [
+      "Printed only where it belongs",
+      "Never on a vendor bill, a credit note, a draft or a fully paid invoice."
+    ]
+  ],
+  "notes": [
+    "The link follows the NPCI UPI Linking Specifications for deep linking: upi://pay with pa, pn, am, cu, tn and tr, every value percent-encoded.",
+    "The QR image is rendered by Odoo's own barcode helper. No bundled QR library and no extra Python dependency.",
+    "Two switches control the payload: embed the amount, and embed the invoice reference. With the amount switch off the customer types their own amount, which suits a deposit or a part payment.",
+    "UPI settles in INR only, so an amount-bearing code is printed on INR invoices.",
+    "Depends on account alone. Odoo 19 Community, no Enterprise module required."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds Accounting India app adds GSTR-1 and GSTR-3B preparation, GSTR-2A reconciliation, TDS and TCS with Form 26Q and an E-Way Bill register."
+}

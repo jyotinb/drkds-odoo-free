@@ -1,0 +1,42 @@
+{
+  "module": "drkds_in_inr_words",
+  "title": "Rupee Amounts in Words (Lakh and Crore)",
+  "summary": "Make Odoo's amount in words read rupees in lakh and crore, whatever language the user runs",
+  "intro": "Odoo already prints an amount in words. This module does not add that feature — it corrects the scale. Odoo asks num2words for the wording using the interface language of the user, so only someone running the English (IN) language gets lakh and crore. Almost every Indian business runs English (US), and their rupee invoices therefore print 'One Hundred Thousand' and 'Ten Million' on a document that goes to a customer and sometimes to a bank. The language a user picked for their menus has nothing to do with the currency being printed. This module keys the scale off the currency instead.",
+  "shots": [],
+  "features": [
+    [
+      "Follows the currency, not the language",
+      "When the amount is in INR it is read on the Indian scale whatever language the user runs and whatever country the company is in."
+    ],
+    [
+      "Every other currency untouched",
+      "A dollar or euro amount is handed straight back to Odoo's own converter, unchanged, switch on or off."
+    ],
+    [
+      "Fixes every place at once",
+      "The correction sits on res.currency.amount_to_text itself, so the invoice total in letters and the amount in words on a printed cheque are both right."
+    ],
+    [
+      "Paise and a closing suffix",
+      "Core's sentence is bare. Here the fractional part is read as paise and the sentence closes with 'Only' — the word that stops a printed figure being extended by hand."
+    ],
+    [
+      "Wording you control",
+      "Connector word, closing suffix, and whether a round figure still says 'and Zero Paise'. Per company, because banks and departments each insist on their own phrasing."
+    ],
+    [
+      "Tax amount in words",
+      "Indian invoices customarily carry the tax figure in words as well as digits. Odoo has no field for it; this module adds one."
+    ]
+  ],
+  "notes": [
+    "The invoice PDF layout is not touched. Odoo's existing 'Total amount of invoice in letters' switch still decides whether the sentence prints, and where.",
+    "No second total-in-words field is added. Odoo's amount_total_words is the field, and it now reads correctly.",
+    "No number-to-words code is written here. num2words is already a hard dependency of Odoo and its en_IN locale is correct; this module points Odoo at it.",
+    "Depends on Accounting only. Settings are per company, under Accounting > Configuration > Settings.",
+    "Turn the switch off and Odoo's stock behaviour returns exactly, with nothing left behind."
+  ],
+  "disclaimer": false,
+  "paid_sentence": null
+}

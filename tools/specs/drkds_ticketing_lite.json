@@ -1,0 +1,48 @@
+{
+  "module": "drkds_ticketing_lite",
+  "title": "Support Tickets (Lite)",
+  "summary": "Customer support tickets with teams, stages and assignment, on Odoo 19 Community",
+  "intro": "A customer writes in, and the request becomes a numbered ticket that belongs to a team, has an owner, and sits in a stage on a Kanban board. Drag it across as the work moves on. When it lands in a closing stage the closing date is recorded for you. Chatter, followers and scheduled activities come as standard, so the whole conversation stays on the record.",
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Ticket Kanban board",
+      "The Tickets Kanban board filtered on Open: five numbered tickets (TKT/00001 to TKT/00006) with their customer and priority stars, sitting in the New, In Progress, Waiting on Customer and Solved columns."
+    ]
+  ],
+  "features": [
+    [
+      "Numbered tickets",
+      "Every ticket takes a unique reference from a sequence, so it can be quoted on the phone or in an email and found again instantly."
+    ],
+    [
+      "Teams",
+      "A team has members and an optional default assignee. Members see their team's tickets; the default assignee picks up anything created without an owner."
+    ],
+    [
+      "Stages that behave",
+      "Ordered stages, global or specific to one team, each with a folded flag for the Kanban and a closing flag that stamps the closing date."
+    ],
+    [
+      "Kanban, list and form",
+      "Drag and drop between stages, bulk edit from the list, and a form carrying the description, tags, priority and the full chatter."
+    ],
+    [
+      "Search that answers questions",
+      "My tickets, unassigned, my teams, open, closed, urgent, blocked and opened this month, with group by stage, team, assignee, priority or customer."
+    ],
+    [
+      "Reporting",
+      "A pivot and a bar chart of tickets by team, assignee and stage, built straight on the ticket records rather than a custom SQL view."
+    ]
+  ],
+  "notes": [
+    "Two access groups: a user works with their own teams' tickets, a manager sees everything and maintains teams, stages and tags.",
+    "Record rules enforce the visibility, so it holds in the API and in exports, not only in the interface.",
+    "Stages are plain records. Rename them, reorder them or add a team specific column without touching code.",
+    "Depends only on base and mail. Nothing else is dragged into your database.",
+    "The lite edition has no incoming mail gateway: tickets are created in the interface or through the API."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds Support Desk app adds service level policies, a customer portal, satisfaction ratings, canned replies and ticket merging."
+}

@@ -1,0 +1,48 @@
+{
+  "module": "drkds_material_request_lite",
+  "title": "Material Request (Lite)",
+  "summary": "Let employees request materials from stock and approve them, on Odoo 19 Community",
+  "intro": "Odoo 19 Community moves goods between locations perfectly well. What it has no document for is the step before that: an employee asking for the material, and somebody deciding whether they get it. Purchase Agreements covers vendor tenders and blanket orders, which is a different question entirely. This module adds the missing internal document, and nothing else.",
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Material requests and their status",
+      "The Material Requests list filtered on My Requests: five requests with reference, requester, department, request and required dates, an outstanding quantity per request totalling 197.00, and Draft, Submitted and Approved statuses."
+    ]
+  ],
+  "features": [
+    [
+      "A numbered request",
+      "Sequence reference, requester, department, request date, required-by date, warehouse, source and destination location, reason and status — on one legible document."
+    ],
+    [
+      "Three quantities, kept apart",
+      "Every line tracks what was asked for, what has actually been delivered and what is still outstanding. The delivered figure is read back from the stock moves, never typed in."
+    ],
+    [
+      "On hand where it matters",
+      "Each line shows the real quantity available at the request's own source location, converted into the line's unit of measure, so the approver decides on facts rather than a guess."
+    ],
+    [
+      "Submit, approve, refuse",
+      "One approver group and one decision. A refusal must carry a reason. The state machine refuses every transition it does not define, and nobody can approve a request they raised themselves."
+    ],
+    [
+      "Fulfilment is a normal transfer",
+      "Approving creates an internal transfer for the outstanding lines and links each move back to its line. Validate it and the request updates itself — the stock side stays entirely standard."
+    ],
+    [
+      "Closes itself",
+      "A partial delivery leaves the request open, and a further transfer can be raised for the remainder. Once every line is delivered in full the request moves to Done on its own."
+    ]
+  ],
+  "notes": [
+    "Depends on Inventory and Employees only, both Odoo 19 Community. Nothing from Enterprise.",
+    "Two groups: a Requester sees only their own requests, an Approver sees them all.",
+    "List, Kanban by status, form and search views, with My Requests, Awaiting My Approval and Outstanding filters.",
+    "The approval step is one step and stays one step. There is no configurable approval engine here.",
+    "No outbound calls of any kind. Everything stays in your database."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds Material Requests app adds purchase fulfilment for shortfalls, multi-step approvals and budget checks."
+}

@@ -1,0 +1,42 @@
+{
+  "module": "drkds_in_payroll_components",
+  "title": "Indian Payroll Components (PF, ESI, Professional Tax)",
+  "summary": "Statutory Indian payroll contributions on employee contracts, with a monthly computation sheet",
+  "intro": "Provident Fund, ESI and professional tax worked out from the data already on the employee's contract, with the month's working kept as a record you can review. Every rate, ceiling, threshold and slab is an editable record carrying its own effective-from date, so a change of rate is a change of data rather than a change of code.",
+  "shots": [],
+  "features": [
+    [
+      "Provident Fund",
+      "Employee and employer share, the statutory wage ceiling, and the split of the employer share between the pension scheme and the PF account. A per-contract switch contributes on actual wages above the ceiling where the employer has agreed to."
+    ],
+    [
+      "ESI",
+      "Employee and employer share on gross wages with the coverage threshold, including the rule most spreadsheets get wrong: an employee who crosses the threshold part way through a contribution period stays covered until that period ends."
+    ],
+    [
+      "Professional tax by state",
+      "A state levy, so it is modelled as a state-wise slab table - state, wage band, monthly tax, and the special-month amount used by states such as Maharashtra and Karnataka to reach the annual cap."
+    ],
+    [
+      "Contract fields",
+      "PF account number, UAN, ESI number, a switch per component and the state whose professional tax schedule applies. No Aadhaar number is stored anywhere."
+    ],
+    [
+      "Monthly computation sheet",
+      "Pick a month and a set of employees, press Compute, and every component is worked out per employee with a line, per-component totals and a grand total. Confirm the sheet to keep it as reviewed."
+    ],
+    [
+      "Nothing hardcoded",
+      "Rates, ceilings, thresholds and slabs are ordinary records with effective-from dates, so a revision is added alongside the old one and history is never rewritten."
+    ]
+  ],
+  "notes": [
+    "Depends on hr only. No Enterprise module and no third-party module is required.",
+    "It does not generate payslips, it posts no accounting entries and it makes no call to any government portal.",
+    "Starting figures were checked on 15 September 2026: PF 12% both sides on a wage ceiling of INR 15,000 with 8.33% to the pension scheme, ESI 0.75% and 3.25% on a threshold of INR 21,000. Sources are cited in the data file header.",
+    "Professional tax slabs ship for Maharashtra, Karnataka, West Bengal, Gujarat and Telangana only. Verify them against the current state notification and add the states you operate in.",
+    "These figures change and states revise their schedules. Review every number with your payroll adviser before relying on a computed sheet."
+  ],
+  "disclaimer": true,
+  "paid_sentence": null
+}

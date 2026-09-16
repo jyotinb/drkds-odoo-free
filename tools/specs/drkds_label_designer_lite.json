@@ -1,0 +1,49 @@
+{
+  "module": "drkds_label_designer_lite",
+  "title": "Label Designer Lite",
+  "summary": "Print product, lot, package and transfer labels at a custom physical size, with the fields you choose and a barcode",
+  "intro": "Odoo already prints labels on five fixed sheet layouts, with a fixed set of fields. If your stock is a 50 x 25 mm thermal roll, or the label has to carry a lot number, an expiry date or a field of your own, there is no way through it. This module adds label templates that state their own size in millimetres and their own contents.\n\nIt does not replace the built-in wizard, and it is not meant to. If you print labels on A4 sheets in one of those grids, Odoo's own wizard already does the job and there is no reason to install anything. This module is for label stock that has its own size, or for contents core's fixed templates do not carry.",
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Label Templates",
+      "The Label Templates list under Inventory, with two templates: Lot 50 x 25 mm applying to a Lot / Serial Number, and Product 50 x 25 mm applying to a Product. Each row carries its own width and height in millimetres and the paper format generated for it, here Label Lot 50 x 25 mm (50mm x 25mm) and Label Product 50 x 25 mm (50mm x 25mm).",
+      "Label Templates"
+    ]
+  ],
+  "features": [
+    [
+      "A real physical page",
+      "Each template generates its own paper format at the width and height you typed, with smart shrinking disabled. A 50 x 25 mm label is produced as a 50 x 25 mm page, not a small rectangle on an A4 sheet."
+    ],
+    [
+      "Your own fields",
+      "A label is an ordered list of lines. A line prints a field read by dotted path from the record - internal reference, barcode, expiry date, product name through a relation - or fixed text, or the company logo."
+    ],
+    [
+      "Any field, including your own",
+      "Field paths are plain technical names, so a field added by another module or by Studio prints exactly like a standard one. Paths are checked against the model when you save."
+    ],
+    [
+      "Barcodes with no new dependency",
+      "Automatic, Code 128, EAN-13, EAN-8 or QR, drawn by the barcode engine Odoo already ships. No extra library and no pip install."
+    ],
+    [
+      "Four record types",
+      "Products, lot and serial numbers, packages and transfers. Printing starts from the Actions menu of the record with a number of copies, and every copy is a separate label."
+    ],
+    [
+      "Per line formatting",
+      "Font size in points, bold, alignment, a prefix and suffix around the value, and an option to drop a line whose value is empty so the rest of the label closes up."
+    ]
+  ],
+  "notes": [
+    "Depends on Inventory (stock) only. Odoo 19 Community.",
+    "The layout is a declarative list of stacked lines. There is no drag and drop canvas.",
+    "Two ready templates are installed, Product 50 x 25 mm and Lot 50 x 25 mm.",
+    "Print at 100% scale, never fit to page, and the label matches the stock.",
+    "No network calls, no telemetry, LGPL-3."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds Label Designer app adds a drag and drop visual designer, customer specific label variants and printing from any document."
+}

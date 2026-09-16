@@ -1,0 +1,48 @@
+{
+  "module": "drkds_in_tds_rate_register",
+  "title": "India TDS: Automatic Rate and Deduction Register",
+  "summary": "Picks the right TDS rate from the vendor's PAN status and gives you a line level deduction register",
+  "intro": "This is an add-on to the TDS support already built into Odoo, not a replacement for it. The Indian localisation shipped with Odoo Community provides the TDS sections and their thresholds, the rate taxes for each section, the threshold alert on a vendor bill and the withholding entry itself. This module fills the gap it leaves: it chooses the rate for you from the vendor's PAN situation, and it gives you the line level register and running yearly total that the tax report does not.",
+  "shots": [
+    [
+      "screenshot_01.png",
+      "TDS deduction register",
+      "The TDS Deduction Register grouped by section: posted deductions under 194C, 194H and 194J with the vendor, PAN, base amount, rate, TDS deducted and the bill it came from, 40,500.00 deducted on an 800,000.00 base."
+    ]
+  ],
+  "features": [
+    [
+      "The rate is chosen for you",
+      "Odoo's TDS wizard guesses the rate from the last withhold posted for the same PAN, account and section, and where the vendor has no PAN it prints a sentence asking you to remember the higher rate. Map a section once to its normal rate and its rate without PAN, and the wizard selects the right one by itself, section 206AA included."
+    ],
+    [
+      "Your explicit choices are respected",
+      "A PAN entity marked for lower deduction gets the lower rate you set up, or nothing at all if you set none, rather than being quietly charged the normal rate over a section 197 certificate. A PAN entity marked for no deduction is left alone entirely."
+    ],
+    [
+      "Odoo's own guess is left alone",
+      "For an unremarkable vendor whose section the localisation already recognises from an earlier withhold, its answer stands. The rate stays editable in the wizard, so you always have the last word, and a line of text says why the rate was proposed."
+    ],
+    [
+      "A deduction register",
+      "One row per deduction: vendor, PAN, section, base, rate, amount, bill and date. Filter and group by section, vendor, quarter and financial year, then use the standard list export to XLSX or CSV. This is the working paper Form 26Q preparation is built from."
+    ],
+    [
+      "A year to date view",
+      "What each vendor has been billed under each section since 1 April, against the section's annual threshold, beside what has actually been deducted. Odoo works this figure out privately, one bill at a time, to decide whether to warn you; here you can open it and act on it before the quarter closes."
+    ],
+    [
+      "Nothing of its own to reconcile",
+      "Both reports are database views over the localisation's own records. Correct a withhold and the register follows. No section, no threshold and no rate is duplicated anywhere in this module."
+    ]
+  ],
+  "notes": [
+    "Requires the Indian localisation, l10n_in, which ships with Odoo Community, and the TDS feature switched on for the company in Accounting settings.",
+    "Requires the Indian chart of accounts. The TDS rate taxes are part of that chart template, so on any other chart of accounts those taxes do not exist, there is nothing for the rate map to point at, and this module has nothing to do. Check this before installing.",
+    "A section has to be set on the expense accounts you want tracked. That is how the localisation decides a bill is in scope, and this module does not change it.",
+    "The register and the year to date view use the statutory April to March year, and the quarters follow it: Q1 is April to June.",
+    "No government portal is contacted, nothing is filed and no data leaves the database."
+  ],
+  "disclaimer": true,
+  "paid_sentence": "The drkds Accounting India app adds Form 26Q preparation, challan tracking and GSTR reconciliation."
+}

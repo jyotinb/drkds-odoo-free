@@ -56,7 +56,10 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "report/drkds_ticket_report_views.xml",
         "views/drkds_ticketing_menus.xml",
     ],
-    "images": ["static/description/cover.png"],
+    "images": [
+        "static/description/cover.png",
+        "static/description/screenshot_01.png",
+    ],
     "installable": True,
     "application": True,
     "auto_install": False,

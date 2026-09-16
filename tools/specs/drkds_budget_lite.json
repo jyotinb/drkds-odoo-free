@@ -1,0 +1,48 @@
+{
+  "module": "drkds_budget_lite",
+  "title": "Account Budgets (Lite)",
+  "summary": "Set a budget per account and period, then track committed and actual spend against it",
+  "intro": "A budget document with a period, a company and a responsible owner. Budget an account or a whole account group, and the actual spend fills in from posted journal items. Variance and percentage are computed with the sign convention a finance person expects, in both directions.",
+  "shots": [
+    [
+      "screenshot_01.png",
+      "A budget with its variance",
+      "The Budgets list showing a draft budget, FY 2026-27 operating budget, running to 31 March 2027, with planned 1,115,000.00, actual 455,122.27, variance 659,877.73 and one line over budget."
+    ]
+  ],
+  "features": [
+    [
+      "Budget document",
+      "Name, period, company, responsible user and a status of draft, confirmed, done or cancelled. The period locks once the budget is in force, so a circulated variance cannot quietly change meaning."
+    ],
+    [
+      "Lines on accounts or groups",
+      "Budget a single account, or every account inside a group such as all travel accounts, with an optional analytic account. Planned figures are always entered as plain positive amounts."
+    ],
+    [
+      "Actuals from the ledger",
+      "The sum of posted journal items on the covered accounts, inside the period, in the budget's company. Draft and cancelled entries never count towards a figure."
+    ],
+    [
+      "Signs that come out right",
+      "Odoo stores debits positive and credits negative. Expense lines take the balance as it is, income lines take its negative, so a cost budget and a revenue budget both read as positive amounts."
+    ],
+    [
+      "Variance stated favourably",
+      "Positive variance always means good news. A line is flagged over budget when the variance is unfavourable: over-spend on an expense line, under-collection on an income line."
+    ],
+    [
+      "Budget versus Actual with drill-down",
+      "A reporting view grouped by account, filtered by period, status and direction, with a button on every line that opens exactly the journal items behind the figure."
+    ]
+  ],
+  "notes": [
+    "Amounts are held in the company currency, the currency journal item balances are already stored in.",
+    "Budgets and lines carry a company and are isolated by record rules, so several companies under one group never see each other's figures.",
+    "A line planned at zero reports a zero percentage rather than failing, because a nil budget is a legitimate thing to record.",
+    "Where an analytic account is set, only that analytic account's share of each journal item counts, so a forty percent allocation does not consume the whole analytic budget.",
+    "Actual and variance are computed live rather than stored, so a back-dated posting shows up the next time the report is opened."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds Accounting Pro app adds budget revisions with approvals, forecasting and multi-company consolidation."
+}

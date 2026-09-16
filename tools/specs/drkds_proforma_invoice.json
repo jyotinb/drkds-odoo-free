@@ -1,0 +1,49 @@
+{
+  "module": "drkds_proforma_invoice",
+  "title": "Proforma Invoice",
+  "summary": "Issue a numbered proforma invoice from a quotation or a draft invoice, without touching your accounts",
+  "intro": "A proforma invoice tells a buyer exactly what a sale will cost so they can open a letter of credit, clear customs, release a budget or obtain an import licence. It is not a tax invoice and it must never reach the ledger. This module issues one from a quotation or a draft customer invoice, numbers it from its own sequence, and guarantees structurally that no accounting entry is ever created.",
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Proforma Invoices",
+      "The Proforma Invoices list with five documents numbered from their own sequence, PRO/2026/00001 to PRO/2026/00005, each showing the customer, the source quotation it was raised from (S00003, S00005, S00006, S00020, S00024) and its total. Three are Issued and two are still Draft, and the list totals 6,470.00. The Final Invoice column is empty because no accounting entry has been created.",
+      "Proforma Invoices"
+    ]
+  ],
+  "features": [
+    [
+      "One button on a quotation or a draft invoice",
+      "Copies the customer, lines, quantities, unit prices, discounts, taxes and currency onto a proforma document of its own. The source stays exactly as it was."
+    ],
+    [
+      "Its own sequence, never the invoice sequence",
+      "Proforma numbers come from a dedicated PRO/ sequence. Issuing a proforma cannot consume, reserve or skip an invoice number, so the invoice series stays unbroken and auditable."
+    ],
+    [
+      "No accounting entry, structurally",
+      "A proforma is not an account.move. It owns no journal, no account and no accounting line, so there is no code path that could post it. Taxes are computed for display only, and no tax liability or receivable is recognised."
+    ],
+    [
+      "A PDF nobody can mistake for an invoice",
+      "Headed Proforma Invoice, with a prominent statement that it is not a tax invoice and confers no input tax credit. The wording is a company setting you can match to local practice."
+    ],
+    [
+      "A visible trail through to the real invoice",
+      "Draft, issued, cancelled and converted. When the source document is finally invoiced, the proforma is marked converted and linked to the invoice that replaced it."
+    ],
+    [
+      "Portal and email",
+      "A customer who can already see the quotation on the portal can view and download its proforma there. A mail template sends the document with the PDF attached."
+    ]
+  ],
+  "notes": [
+    "Works on Odoo 19 Community. The only dependency is Sales.",
+    "Proforma amounts are always in the currency of the source document; nothing is converted.",
+    "A proforma drawn from a draft invoice leaves that invoice draft and unnumbered.",
+    "Cancelled proformas are never auto-converted, so a withdrawn offer keeps its own history.",
+    "A converted proforma cannot be deleted; it stays part of the trail."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds Accounting Pro app adds payment approvals, ageing analysis and cash-flow reporting."
+}
