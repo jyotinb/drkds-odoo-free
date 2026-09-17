@@ -39,7 +39,7 @@ class TestInvoicePrintExtras(AccountTestInvoicingCommon):
         cls.company = cls.company_data["company"]
         cls.company.write({
             "state_id": cls.state_gj.id,
-            "vat": "24AAGCC7144L6ZE",
+            "vat": "24AAGCC7144L6ZD",
             "street": "Khodiyar Chowk",
             "city": "Amreli",
             "zip": "365220",
@@ -52,7 +52,7 @@ class TestInvoicePrintExtras(AccountTestInvoicingCommon):
 
         cls.partner = cls.env["res.partner"].create({
             "name": "Rajkot Buyer",
-            "vat": "24ABCPM8965E1ZE",
+            "vat": "24ABCPM8965E1ZJ",
             "country_id": cls.country_in.id,
             "state_id": cls.state_gj.id,
             "street": "Karansinhji Rd",
@@ -61,7 +61,7 @@ class TestInvoicePrintExtras(AccountTestInvoicingCommon):
         })
         cls.partner_mh = cls.env["res.partner"].create({
             "name": "Mumbai Buyer",
-            "vat": "27DJMPM8965E1ZE",
+            "vat": "27DJMPM8965E1ZJ",
             "country_id": cls.country_in.id,
             "state_id": cls.state_mh.id,
             "city": "Mumbai",

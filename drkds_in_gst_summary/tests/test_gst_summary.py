@@ -24,7 +24,7 @@ class TestDrkdsGstSummary(AccountTestInvoicingCommon):
         cls.country_in = cls.env.ref("base.in")
         cls.company.write({
             "state_id": cls.state_gj.id,
-            "vat": "24AAGCC7144L6ZE",
+            "vat": "24AAGCC7144L6ZD",
             "l10n_in_is_gst_registered": True,
         })
 
@@ -36,14 +36,14 @@ class TestDrkdsGstSummary(AccountTestInvoicingCommon):
         # Same state as the company: an intra-state supply.
         cls.partner_intra = cls.env["res.partner"].create({
             "name": "Intra State Customer",
-            "vat": "24ABCPM8965E1ZE",
+            "vat": "24ABCPM8965E1ZJ",
             "country_id": cls.country_in.id,
             "state_id": cls.state_gj.id,
         })
         # Another state: an inter-state supply.
         cls.partner_inter = cls.env["res.partner"].create({
             "name": "Inter State Customer",
-            "vat": "27DJMPM8965E1ZE",
+            "vat": "27DJMPM8965E1ZJ",
             "country_id": cls.country_in.id,
             "state_id": cls.state_mh.id,
         })

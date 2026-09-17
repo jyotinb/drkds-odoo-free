@@ -66,3 +66,16 @@ LGPL-3.
 The drkds Accounting India app adds GSTR-1 and GSTR-3B preparation, GSTR-2A reconciliation, TDS and TCS with Form 26Q and an E-Way Bill register.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
+
+## Good to know
+
+The check digit is enforced on save, which is stricter than Odoo itself: core
+only checks the format. Two consequences worth knowing before you install:
+
+- Odoo's own `l10n_in` demo and test data carry GSTINs whose check digits are
+  invalid (for example `24AAGCC7144L6ZE`). With this module installed those
+  records cannot be saved as they are, and Odoo's `l10n_in` test suite will
+  not pass on that database.
+- Existing contacts holding a mistyped GSTIN will be refused the next time
+  they are edited, until the number is corrected. That is the point of the
+  module, but it is worth a pass over your contacts first.

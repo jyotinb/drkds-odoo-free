@@ -1,13 +1,42 @@
 from odoo import Command
-from odoo.addons.l10n_in.tests.common import L10nInTestInvoicingCommon
+from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 
 
-class DrkdsTdsCommon(L10nInTestInvoicingCommon):
+class DrkdsTdsCommon(AccountTestInvoicingCommon):
     """A company on the Indian chart with two sections tagged and mapped."""
 
     @classmethod
+    @AccountTestInvoicingCommon.setup_country("in")
     def setUpClass(cls):
         super().setUpClass()
+        cls.country_in = cls.env.ref("base.in")
+        cls.state_in_gj = cls.env.ref("base.state_in_gj")
+        cls.state_in_mh = cls.env.ref("base.state_in_mh")
+        # The same Indian company Odoo's own l10n_in test common builds, but
+        # with GSTINs whose check digits are valid. Odoo's fixtures carry
+        # invalid ones, which stock base_vat never notices because it only
+        # checks the format; drkds_in_partner_validate does check them, so a
+        # database holding both would refuse Odoo's numbers.
+        cls.default_company = cls.company_data["company"]
+        cls.default_company.write({
+            "name": "Default Company",
+            "state_id": cls.state_in_gj.id,
+            "vat": "24AAGCC7144L6ZD",
+            "street": "Khodiyar Chowk", "city": "Amreli", "zip": "365220",
+            "l10n_in_is_gst_registered": True,
+            "l10n_in_tds_feature": True,
+            "l10n_in_tcs_feature": True,
+        })
+        cls.partner_a.write({
+            "name": "Partner Intra State", "vat": "24ABCPM8965E1ZJ",
+            "state_id": cls.state_in_gj.id, "country_id": cls.country_in.id,
+            "street": "Karansinhji Rd", "city": "Rajkot", "zip": "360001",
+        })
+        cls.partner_b.write({
+            "vat": "27DJMPM8965E1ZJ",
+            "state_id": cls.state_in_mh.id, "country_id": cls.country_in.id,
+            "street": "Sangeet Samrat Naushad Ali Rd", "city": "Mumbai", "zip": "400052",
+        })
         ChartTemplate = cls.env["account.chart.template"]
         cls.section_194c = cls.env.ref("l10n_in.tds_section_194c")
         cls.section_194j = cls.env.ref("l10n_in.tds_section_194j")

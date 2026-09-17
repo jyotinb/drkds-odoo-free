@@ -54,7 +54,7 @@ The drkds Accounting India app adds GSTR-1 and GSTR-3B preparation, GSTR-2A reco
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
 """,
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Accounting/Localizations",
     "author": "drkds",
     "website": "https://drkdsinfo.com",
