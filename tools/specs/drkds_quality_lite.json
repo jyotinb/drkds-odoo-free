@@ -15,11 +15,11 @@
     ],
     [
       "Raised automatically",
-      "Confirming a transfer creates one check per matching move. Confirming again or adding a move raises only what is missing, and a cancelled move drops its open checks."
+      "Confirming a transfer creates one check per matching move, whoever confirms it. Confirming again or adding a move raises only what is missing, a cancelled move drops its open checks, and a check follows its move into a backorder."
     ],
     [
       "A gate on validation",
-      "A transfer cannot be validated while a blocking check is still to do or has failed. The error lists the checks. Mark a point non-blocking to record without holding the goods."
+      "A transfer cannot be validated while a blocking check on the goods being validated is still to do or has failed. The error lists the checks. Mark a point non-blocking to record without holding the goods."
     ],
     [
       "Numbered, traceable",

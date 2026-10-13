@@ -19,9 +19,11 @@ class QualityCheck(models.Model):
         "res.company", string="Company", required=True, index=True,
         default=lambda self: self.env.company,
     )
+    # restrict: a check is the inspection record of a transfer; deleting its
+    # point must not delete it (the point refuses deletion, see its ondelete).
     point_id = fields.Many2one(
         "drkds.quality.point", string="Control Point", required=True,
-        ondelete="cascade", check_company=True, index=True, tracking=True,
+        ondelete="restrict", check_company=True, index=True, tracking=True,
     )
     check_type = fields.Selection(related="point_id.check_type")
     blocking = fields.Boolean(related="point_id.blocking")
@@ -32,6 +34,7 @@ class QualityCheck(models.Model):
     picking_id = fields.Many2one(
         "stock.picking", string="Transfer", ondelete="cascade",
         check_company=True, index=True,
+        compute="_compute_picking_id", store=True, readonly=False,
     )
     picking_type_id = fields.Many2one(related="picking_id.picking_type_id", store=True)
     move_id = fields.Many2one(
@@ -69,14 +72,42 @@ class QualityCheck(models.Model):
                 ).next_by_code("drkds.quality.check") or self.env._("New")
         return super().create(vals_list)
 
+    @api.depends("move_id.picking_id")
+    def _compute_picking_id(self):
+        """A check follows its move.
+
+        Stock moves the rest of a partly validated move, and the moves left
+        untouched, to a backorder or a split-off transfer by rewriting the
+        move's transfer. The check has to go along: otherwise the backorder
+        carries no check and validates uninspected, while the original keeps
+        a check for goods it no longer holds. A check entered by hand without
+        a move keeps the transfer it was given.
+        """
+        for check in self:
+            check.picking_id = check.move_id.picking_id if check.move_id else check.picking_id
+
     @api.onchange("move_id")
     def _onchange_move_id(self):
         for check in self:
             if check.move_id:
                 check.product_id = check.move_id.product_id
-                check.picking_id = check.move_id.picking_id
 
     # -- decisions -----------------------------------------------------
+    def _check_still_todo(self):
+        """A decision is taken once. A second Pass or Fail, from a form left
+        open by another inspector for instance, must not silently replace
+        the first; changing a result goes through Reset to To Do, which the
+        chatter records."""
+        states = dict(self._fields["state"]._description_selection(self.env))
+        for check in self:
+            if check.state != "todo":
+                raise UserError(self.env._(
+                    "%(check)s is already decided (%(state)s by %(user)s). "
+                    "Reset it to To Do to change the result.",
+                    check=check.name, state=states[check.state],
+                    user=check.user_id.name or "-",
+                ))
+
     def _set_result(self, state):
         self.write({
             "state": state,
@@ -86,6 +117,7 @@ class QualityCheck(models.Model):
         return True
 
     def action_pass(self):
+        self._check_still_todo()
         if any(c.check_type == "measure" for c in self):
             raise UserError(self.env._(
                 "A measured check is decided by its measure. Enter the value "
@@ -94,6 +126,7 @@ class QualityCheck(models.Model):
         return self._set_result("pass")
 
     def action_fail(self):
+        self._check_still_todo()
         if any(c.check_type == "measure" for c in self):
             raise UserError(self.env._(
                 "A measured check is decided by its measure. Enter the value "
@@ -103,6 +136,7 @@ class QualityCheck(models.Model):
 
     def action_measure(self):
         """Decide a measured check from its value and the point's range."""
+        self._check_still_todo()
         for check in self:
             if check.check_type != "measure":
                 raise UserError(self.env._(
@@ -121,20 +155,29 @@ class QualityCheck(models.Model):
     @api.model
     def _create_for_moves(self, moves):
         """Raise one check per (point, move) pair that matches and does not
-        exist yet. Returns the checks created."""
-        moves = moves.filtered(
+        exist yet. Returns the checks created, in the caller's environment.
+
+        Runs as superuser: raising checks is a consequence of confirming a
+        move, not a decision of whoever confirmed it, who may be a buyer or a
+        salesperson with no right on quality records at all. The company is
+        matched by the point itself (``_matches_move``), not through the
+        current user's record rules, and the confirming user is not made a
+        follower of checks they may be unable to open.
+        """
+        Check = self.sudo().with_context(mail_create_nosubscribe=True)
+        moves = moves.sudo().filtered(
             lambda m: m.picking_id and m.state not in ("draft", "cancel", "done")
         )
         if not moves:
             return self.browse()
-        points = self.env["drkds.quality.point"].search(
+        points = self.env["drkds.quality.point"].sudo().search(
             [("company_id", "in", moves.company_id.ids)]
         )
         if not points:
             return self.browse()
         existing = {
             (row["move_id"][0], row["point_id"][0])
-            for row in self.search_read(
+            for row in Check.search_read(
                 [("move_id", "in", moves.ids), ("point_id", "in", points.ids)],
                 ["move_id", "point_id"],
             )
@@ -151,4 +194,4 @@ class QualityCheck(models.Model):
                     "product_id": move.product_id.id,
                     "company_id": move.company_id.id,
                 })
-        return self.create(vals_list)
+        return Check.create(vals_list).with_env(self.env)

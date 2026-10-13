@@ -20,3 +20,31 @@ First release.
   record rules.
 - Unit tests and an end-to-end scenario (receipt of three products against
   two points).
+
+Fixed during review, before release:
+
+- A check now follows its stock move. Checks of moves sent to a backorder or
+  a split-off transfer used to stay on the original transfer, so the
+  backorder validated without inspection and the done original kept an open
+  check.
+- The validation gate only weighs the checks of the goods being validated
+  (moves with a quantity, picked ones when lines are picked) plus checks
+  entered on the transfer without a move. A partial receipt was refused
+  because of a check on goods that had not arrived, and a failed check on a
+  cancelled line blocked the rest of the transfer for good.
+- Validate on a draft transfer that a blocking point applies to is refused
+  before the transfer is confirmed, with a message saying to Mark as To Do
+  first. The refusal used to roll back the checks it had just raised while
+  naming them, and burnt their QC numbers.
+- Checks are raised whoever confirms the move. A purchase user without
+  Inventory rights could not confirm a purchase order for a product with a
+  control point (access error on control points); that user is no longer
+  made a follower of the checks.
+- Buyers and salespeople can open transfers again: the quality fields, smart
+  button and search filter on transfers are limited to Inventory users. The
+  transfer form failed to load for them with an access error.
+- Pass, Fail and Record Measure are refused on a check that is already
+  decided; the result is changed through Reset to To Do. A second click used
+  to overwrite the first inspector's decision silently.
+- A control point that has raised checks cannot be deleted (archive it).
+  Deleting it used to delete its checks with it.

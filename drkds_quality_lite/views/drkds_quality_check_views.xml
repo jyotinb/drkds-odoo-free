@@ -80,7 +80,7 @@
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                         <group string="Where">
-                            <field name="picking_id" readonly="state != 'todo'"/>
+                            <field name="picking_id" readonly="state != 'todo' or move_id"/>
                             <field name="move_id" readonly="state != 'todo'"/>
                             <field name="partner_id"/>
                             <field name="user_id"/>

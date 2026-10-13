@@ -1,5 +1,5 @@
 from odoo import api, fields, models
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 
 class QualityPoint(models.Model):
@@ -92,6 +92,19 @@ class QualityPoint(models.Model):
                 raise ValidationError(
                     self.env._("The minimum of a measured check cannot exceed its maximum.")
                 )
+
+    @api.ondelete(at_uninstall=False)
+    def _unlink_except_with_checks(self):
+        """The checks a point raised are the inspection record of past
+        transfers; deleting the point must not take them with it."""
+        used = self.sudo().filtered("check_ids")
+        if used:
+            raise UserError(self.env._(
+                "%(points)s already raised quality checks and cannot be "
+                "deleted. Archive it instead: it stops raising checks and "
+                "its history is kept.",
+                points=", ".join(used.mapped("name")),
+            ))
 
     def _matches_move(self, move):
         """Whether this point applies to ``move``.

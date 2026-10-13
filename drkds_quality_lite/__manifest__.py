@@ -19,10 +19,13 @@ What it does
   with a minimum, a maximum and a unit. A measure outside the range fails on
   its own; nobody has to remember the tolerance.
 * **Checks raised automatically** - when a transfer is confirmed, one check
-  is created for every move that matches a point. Nothing is raised twice.
+  is created for every move that matches a point, whoever confirms it.
+  Nothing is raised twice, and a check follows its move into a backorder or
+  a split-off transfer.
 * **A gate on validation** - a transfer cannot be validated while a blocking
-  check is still to do or has failed. A point can be marked non-blocking so
-  it records the result without holding up the goods.
+  check on the goods being validated is still to do or has failed. Goods
+  that did not arrive go to the backorder with their checks. A point can be
+  marked non-blocking so it records the result without holding up the goods.
 * **Numbered, traceable records** - each check is numbered QC/00001 onward,
   linked to its transfer, move, product and lot, and carries who decided,
   when, a note and any photo attached through the chatter.

@@ -19,12 +19,19 @@ a transfer with an open or failed blocking check cannot be validated.
   a minimum, a maximum and a unit. A measure outside the range fails on its
   own; inside the range (boundaries included) it passes.
 - **Checks are raised automatically** when a transfer is confirmed: one check
-  per stock move that matches a point. Confirming again, or adding a move to
-  an already confirmed transfer, raises only what is missing. A cancelled move
-  drops its open checks and keeps decided ones as history.
-- **The gate**: validation is refused while any blocking check on the
-  transfer is still to do or has failed. The error names the checks. A point
-  marked non-blocking records the result without holding up the goods.
+  per stock move that matches a point, whoever confirms it (an Inventory
+  user, or a buyer confirming a purchase order). Confirming again, or adding
+  a move to an already confirmed transfer, raises only what is missing. A
+  cancelled move drops its open checks and keeps decided ones as history.
+- **Checks follow their moves**: when part of a transfer is validated, the
+  remaining quantity goes to the backorder with a new check to do, and moves
+  sent to a backorder or a split-off transfer take their checks with them.
+- **The gate**: validation is refused while a blocking check on the goods
+  being validated is still to do or has failed. The error names the checks.
+  Goods that did not arrive (no quantity) do not hold up the rest: they go to
+  the backorder with their checks, or are cancelled with them when no
+  backorder is made. A point marked non-blocking records the result without
+  holding up the goods.
 - **Numbered records**: `QC/00001` onward, each linked to its transfer, move,
   product and optional lot, with who decided, when, a note and a chatter for
   photos and discussion.
@@ -46,16 +53,24 @@ Quality > Points (Inventory manager rights):
    turn it off for an advisory check.
 5. Write the instructions on the Instructions tab.
 
+A point that has raised checks cannot be deleted, because its checks are the
+inspection record of past transfers. Archive it instead.
+
 ## Use
 
-1. Confirm a receipt or delivery as usual. Matching checks appear under
+1. Confirm a receipt or delivery as usual (**Mark as To Do**, or by
+   confirming the purchase or sale order). Matching checks appear under
    Quality > Checks and on the transfer's **Quality Open** button.
 2. Open a check. For pass/fail, press **Pass** or **Fail**. For a measure,
    enter the value and press **Record Measure**; the result follows the
    range. Add a note or attach a photo in the chatter.
-3. Validate the transfer. If a blocking check is still open or failed, the
-   validation is refused and the message lists the checks. Fix the goods or
-   the record, then validate again.
+3. Validate the transfer. If a blocking check on the goods being validated
+   is still open or failed, the validation is refused and the message lists
+   the checks. Fix the goods or the record, then validate again.
+
+**Validate** pressed on a draft transfer that a blocking point applies to is
+refused with a message naming the points: press **Mark as To Do** first so
+the checks are raised, record them, then validate.
 
 ## Access
 
@@ -66,10 +81,23 @@ Quality > Points (Inventory manager rights):
 
 Both models carry a company and a multi-company record rule.
 
+Users of other apps who can open transfers without Inventory rights (buyers
+through Purchase, salespeople through Sales) do not see the quality button or
+filter on the transfer, and can still confirm orders: the checks are raised
+for the Inventory team, and those users are not made followers of them.
+
 ## Notes
 
-- A check is decided by the user who presses the button; `Checked By` and
-  `Checked On` are set then and cleared by **Reset to To Do**.
+- A check is decided once, by the user who presses the button; `Checked By`
+  and `Checked On` are set then. A second Pass, Fail or Record Measure on a
+  decided check is refused. To change a result, press **Reset to To Do**
+  (recorded in the chatter, clears who and when), then decide again.
+- The measure field starts at 0. Pressing **Record Measure** without typing a
+  value records 0, which passes if 0 lies within the range.
+- A check shows its point's current minimum, maximum and unit. Changing them
+  on the point changes what older checks display; their result stays as
+  decided. Create a new point when a tolerance changes and the old figures
+  must stay visible.
 - If both a product and a category are set on a point, the product is what
   is matched; the category is ignored.
 - No checks on manufacturing orders, no sampling plans, no worksheets, no

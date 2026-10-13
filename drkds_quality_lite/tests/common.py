@@ -70,6 +70,17 @@ class QualityCase(TransactionCase):
             skip_backorder=True, picking_ids_not_to_backorder=picking.ids
         ).button_validate()
 
+    def _validate_as_is(self, picking, backorder=True):
+        """Validate with the quantities and picked flags already set, the
+        way the backorder dialog's two buttons do."""
+        return picking.with_context(
+            skip_backorder=True,
+            picking_ids_not_to_backorder=[] if backorder else picking.ids,
+        ).button_validate()
+
+    def _move(self, picking, product):
+        return picking.move_ids.filtered(lambda m: m.product_id == product)
+
     def _put_in_stock(self, product, qty):
         self.env["stock.quant"].with_context(inventory_mode=True).create({
             "product_id": product.id,
