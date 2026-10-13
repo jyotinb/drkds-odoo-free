@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Reference of the template itself. The invoices it produces take
+             their numbers from the sale journal as any invoice does. -->
+        <record id="seq_drkds_recurring_invoice" model="ir.sequence">
+            <field name="name">Recurring Invoice Template</field>
+            <field name="code">drkds.recurring.invoice</field>
+            <field name="prefix">REC/</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_recurring_invoice_list" model="ir.ui.view">
+        <field name="name">drkds.recurring.invoice.list</field>
+        <field name="model">drkds.recurring.invoice</field>
+        <field name="arch" type="xml">
+            <list string="Recurring Invoices"
+                  decoration-muted="state == 'done'"
+                  decoration-warning="state == 'paused'">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="interval_number" string="Every"/>
+                <field name="interval_unit"/>
+                <field name="next_date"/>
+                <field name="end_date" optional="hide"/>
+                <field name="last_invoice_date" optional="show"/>
+                <field name="invoice_count" string="Invoices" optional="show"/>
+                <field name="auto_post" optional="hide"/>
+                <field name="amount_total" sum="Total"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'running'"
+                       decoration-warning="state == 'paused'"
+                       decoration-muted="state == 'done'"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_recurring_invoice_kanban" model="ir.ui.view">
+        <field name="name">drkds.recurring.invoice.kanban</field>
+        <field name="model">drkds.recurring.invoice</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false">
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex">
+                            <field name="reference" class="fw-bold"/>
+                            <field name="state" widget="badge" class="ms-auto"
+                                   decoration-success="state == 'running'"
+                                   decoration-warning="state == 'paused'"/>
+                        </div>
+                        <field name="name" class="fs-5"/>
+                        <field name="partner_id" class="text-muted"/>
+                        <div class="d-flex mt-2 align-items-center">
+                            <span>Every <field name="interval_number"/> <field name="interval_unit"/></span>
+                            <field name="amount_total" widget="monetary" class="ms-auto fw-bold"/>
+                        </div>
+                        <div class="text-muted">Next: <field name="next_date"/></div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_drkds_recurring_invoice_form" model="ir.ui.view">
+        <field name="name">drkds.recurring.invoice.form</field>
+        <field name="model">drkds.recurring.invoice</field>
+        <field name="arch" type="xml">
+            <form string="Recurring Invoice">
+                <header>
+                    <button name="action_start" string="Start" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_start" string="Resume" type="object"
+                            class="btn-primary" invisible="state != 'paused'"/>
+                    <button name="action_generate_now" string="Generate Now" type="object"
+                            invisible="state not in ('running', 'paused')"/>
+                    <button name="action_pause" string="Pause" type="object"
+                            invisible="state != 'running'"/>
+                    <button name="action_done" string="Mark as Done" type="object"
+                            invisible="state not in ('running', 'paused')"
+                            confirm="No further invoices will be issued from this template. Continue?"/>
+                    <button name="action_draft" string="Reset to Draft" type="object"
+                            invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,running,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoices" type="object"
+                                class="oe_stat_button" icon="fa-file-text-o"
+                                invisible="invoice_count == 0">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="reference" readonly="1"/></h1>
+                        <h2><field name="name" placeholder="e.g. Monthly retainer, Acme Ltd"/></h2>
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="not last_error">
+                        <strong>The scheduler could not issue the last invoice:</strong>
+                        <field name="last_error" nolabel="1" class="d-block"/>
+                    </div>
+                    <group>
+                        <group string="Customer">
+                            <field name="active" invisible="1"/>
+                            <field name="partner_id" readonly="state == 'done'"/>
+                            <field name="journal_id" readonly="state == 'done'"/>
+                            <field name="currency_id" groups="base.group_multi_currency"/>
+                            <field name="payment_term_id"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Schedule">
+                            <label for="interval_number"/>
+                            <div class="o_row">
+                                <field name="interval_number" class="oe_inline"/>
+                                <field name="interval_unit" class="oe_inline"/>
+                            </div>
+                            <field name="next_date"/>
+                            <field name="end_date"/>
+                            <field name="auto_post"/>
+                            <field name="last_invoice_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Invoice Lines" name="lines">
+                            <field name="line_ids" readonly="state == 'done'">
+                                <list editable="bottom">
+                                    <control>
+                                        <create name="add_line" string="Add a line"/>
+                                        <create name="add_section" string="Add a section"
+                                                context="{'default_display_type': 'line_section'}"/>
+                                        <create name="add_note" string="Add a note"
+                                                context="{'default_display_type': 'line_note'}"/>
+                                    </control>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="display_type" column_invisible="True"/>
+                                    <field name="company_id" column_invisible="True"/>
+                                    <field name="product_id"/>
+                                    <field name="name" widget="text"/>
+                                    <field name="quantity"/>
+                                    <field name="product_uom_id" groups="uom.group_uom"/>
+                                    <field name="price_unit"/>
+                                    <field name="tax_ids" widget="many2many_tags"
+                                           options="{'no_create': True}"/>
+                                    <field name="price_subtotal"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="amount_untaxed"/>
+                                <field name="amount_tax"/>
+                                <div class="oe_subtotal_footer_separator">
+                                    <label for="amount_total"/>
+                                </div>
+                                <field name="amount_total" nolabel="1"
+                                       class="oe_subtotal_footer_separator"/>
+                            </group>
+                            <div class="clearfix"/>
+                        </page>
+                        <page string="Terms and Conditions" name="narration">
+                            <field name="narration" placeholder="Printed on every generated invoice..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_recurring_invoice_search" model="ir.ui.view">
+        <field name="name">drkds.recurring.invoice.search</field>
+        <field name="model">drkds.recurring.invoice</field>
+        <field name="arch" type="xml">
+            <search string="Recurring Invoices">
+                <field name="name" string="Template"
+                       filter_domain="['|', ('reference', 'ilike', self), ('name', 'ilike', self)]"/>
+                <field name="partner_id"/>
+                <filter name="state_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="state_running" string="Running" domain="[('state', '=', 'running')]"/>
+                <filter name="state_paused" string="Paused" domain="[('state', '=', 'paused')]"/>
+                <filter name="state_done" string="Done" domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <filter name="due" string="Due Today or Earlier"
+                        domain="[('state', '=', 'running'), ('next_date', '&lt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="auto_post" string="Auto-posted" domain="[('auto_post', '=', True)]"/>
+                <filter name="with_error" string="Scheduler Error" domain="[('last_error', '!=', False)]"/>
+                <separator/>
+                <filter name="my" string="My Templates" domain="[('user_id', '=', uid)]"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_unit" string="Interval Unit" context="{'group_by': 'interval_unit'}"/>
+                    <filter name="group_next" string="Next Invoice Month" context="{'group_by': 'next_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_recurring_invoice" model="ir.actions.act_window">
+        <field name="name">Recurring Invoices</field>
+        <field name="res_model">drkds.recurring.invoice</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_drkds_recurring_invoice_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a recurring invoice template</p>
+            <p>
+                Describe the invoice once, set how often it repeats and start it.
+                The scheduler issues a customer invoice on every due date.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_drkds_recurring_invoice"
+              name="Recurring Invoices"
+              parent="account.menu_finance_receivables"
+              action="action_drkds_recurring_invoice"
+              sequence="15"/>
+
+</odoo>
