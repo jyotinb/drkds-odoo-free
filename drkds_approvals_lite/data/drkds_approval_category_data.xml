@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="category_expense_claim" model="drkds.approval.category">
+        <field name="name">Expense claim</field>
+        <field name="sequence">10</field>
+        <field name="require_description">True</field>
+        <field name="require_amount">True</field>
+        <field name="require_partner">False</field>
+        <field name="description">Money spent on the company's behalf that should be paid back.</field>
+    </record>
+
+    <record id="category_leave_of_absence" model="drkds.approval.category">
+        <field name="name">Leave of absence (informal)</field>
+        <field name="sequence">20</field>
+        <field name="require_description">True</field>
+        <field name="require_amount">False</field>
+        <field name="require_partner">False</field>
+        <field name="description">Time away from work agreed with a manager, outside any formal leave system.</field>
+    </record>
+
+    <record id="category_purchase_need" model="drkds.approval.category">
+        <field name="name">Purchase need</field>
+        <field name="sequence">30</field>
+        <field name="require_description">True</field>
+        <field name="require_amount">True</field>
+        <field name="require_partner">True</field>
+        <field name="description">Something to buy from a supplier, with the expected cost.</field>
+    </record>
+
+</odoo>

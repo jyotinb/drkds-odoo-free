@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_drkds_approval_category_user,drkds.approval.category user,model_drkds_approval_category,drkds_approvals_lite.group_approval_user,1,0,0,0
+access_drkds_approval_category_manager,drkds.approval.category manager,model_drkds_approval_category,drkds_approvals_lite.group_approval_manager,1,1,1,1
+access_drkds_approval_request_user,drkds.approval.request user,model_drkds_approval_request,drkds_approvals_lite.group_approval_user,1,1,1,0
+access_drkds_approval_request_manager,drkds.approval.request manager,model_drkds_approval_request,drkds_approvals_lite.group_approval_manager,1,1,1,1
+access_drkds_approval_refuse_wizard_user,drkds.approval.refuse.wizard user,model_drkds_approval_refuse_wizard,drkds_approvals_lite.group_approval_user,1,1,1,1

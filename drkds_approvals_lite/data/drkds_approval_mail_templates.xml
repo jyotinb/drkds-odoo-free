@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="mail_template_approval_approved" model="mail.template">
+        <field name="name">Approval Request: Approved</field>
+        <field name="model_id" ref="model_drkds_approval_request"/>
+        <field name="subject">{{ object.name }} approved: {{ object.title }}</field>
+        <field name="partner_to">{{ object.requester_id.partner_id.id }}</field>
+        <field name="description">Sent to the requester when a request is approved.</field>
+        <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-size: 13px;">
+    <p>Hello <t t-out="object.requester_id.name or ''"/>,</p>
+    <p>
+        Your request <strong t-out="object.name or ''"/>
+        (<t t-out="object.title or ''"/>) in the category
+        <t t-out="object.category_id.name or ''"/> has been
+        <strong>approved</strong> by <t t-out="object.approver_id.name or ''"/>
+        on <t t-out="format_datetime(object.decision_date, tz=user.tz, dt_format='medium') if object.decision_date else ''"/>.
+    </p>
+    <t t-if="object.amount">
+        <p>Amount: <t t-out="format_amount(object.amount, object.currency_id)"/></p>
+    </t>
+    <p>Regards,<br/><t t-out="object.company_id.name or ''"/></p>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <record id="mail_template_approval_refused" model="mail.template">
+        <field name="name">Approval Request: Refused</field>
+        <field name="model_id" ref="model_drkds_approval_request"/>
+        <field name="subject">{{ object.name }} refused: {{ object.title }}</field>
+        <field name="partner_to">{{ object.requester_id.partner_id.id }}</field>
+        <field name="description">Sent to the requester when a request is refused.</field>
+        <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-size: 13px;">
+    <p>Hello <t t-out="object.requester_id.name or ''"/>,</p>
+    <p>
+        Your request <strong t-out="object.name or ''"/>
+        (<t t-out="object.title or ''"/>) in the category
+        <t t-out="object.category_id.name or ''"/> has been
+        <strong>refused</strong> by <t t-out="object.approver_id.name or ''"/>
+        on <t t-out="format_datetime(object.decision_date, tz=user.tz, dt_format='medium') if object.decision_date else ''"/>.
+    </p>
+    <p>Reason given:</p>
+    <blockquote style="border-left: 3px solid #ccc; padding-left: 10px;">
+        <t t-out="object.refusal_reason or ''"/>
+    </blockquote>
+    <p>Regards,<br/><t t-out="object.company_id.name or ''"/></p>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

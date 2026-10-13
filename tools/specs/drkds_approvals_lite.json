@@ -1,0 +1,43 @@
+{
+  "module": "drkds_approvals_lite",
+  "title": "Approval Requests (Lite)",
+  "summary": "One-level approval requests with categories, approvers and a decision trail, on Odoo 19 Community",
+  "intro": "Someone needs a yes or a no: an expense to be paid back, a day away, something to buy. They raise a numbered request in a category, every approver of that category gets a to-do, one of them approves or refuses, and the requester gets the decision by email. Chatter and field tracking keep the whole exchange on the record, and nobody can approve their own request.",
+  "shots": [],
+  "features": [
+    [
+      "Categories with their own approvers",
+      "Each category names who may decide and what a request must carry before it can be submitted: a description, an amount, a contact. Expense claim, Leave of absence and Purchase need ship ready to use."
+    ],
+    [
+      "Numbered requests",
+      "Every request takes a reference such as APR/00001 from a sequence, with a title, date, amount and currency, contact and a rich-text description."
+    ],
+    [
+      "One level, any approver",
+      "Any approver of the category may decide; the first decision closes the request and records who decided and when. A refusal always carries a reason, which the requester sees."
+    ],
+    [
+      "To-dos and email",
+      "Submitting schedules an activity for every approver. A decision clears those activities and posts an email to the requester from a template you can edit."
+    ],
+    [
+      "Kanban, list and form",
+      "A Kanban by state, a list with amount totals, a To Approve menu, and a form with a status bar and Submit, Approve, Refuse, Cancel and Reset to Draft buttons."
+    ],
+    [
+      "Search that answers questions",
+      "My requests, to approve by me, decided by me, each state and this month, with group by state, category, requester, decider or month."
+    ]
+  ],
+  "notes": [
+    "Two access groups: a user sees the requests they raised and the requests of the categories they approve; an administrator sees everything and maintains categories.",
+    "Record rules enforce the visibility, so it holds in the API and in exports, not only in the interface.",
+    "The requester can never approve or refuse their own request, even as an approver or administrator.",
+    "A refused or cancelled request can be reset to draft, corrected and submitted again; its reference is kept.",
+    "Depends only on base and mail. Nothing else is dragged into your database.",
+    "The lite edition decides in one step. There is no approval chain, no amount-based routing and no delegation."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds Approvals app adds multi-level and sequential approval chains, amount-based routing, delegation and approval reporting."
+}

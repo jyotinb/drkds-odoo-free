@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_drkds_approvals_root" name="Approvals"
+              web_icon="drkds_approvals_lite,static/description/icon.png"
+              groups="drkds_approvals_lite.group_approval_user" sequence="96"/>
+
+    <menuitem id="menu_drkds_approval_request" name="Requests"
+              parent="menu_drkds_approvals_root"
+              action="action_drkds_approval_request" sequence="10"/>
+    <menuitem id="menu_drkds_approval_to_approve" name="To Approve"
+              parent="menu_drkds_approvals_root"
+              action="action_drkds_approval_request_to_approve" sequence="20"/>
+
+    <menuitem id="menu_drkds_approval_config_root" name="Configuration"
+              parent="menu_drkds_approvals_root" sequence="90"
+              groups="drkds_approvals_lite.group_approval_manager"/>
+    <menuitem id="menu_drkds_approval_category" name="Categories"
+              parent="menu_drkds_approval_config_root"
+              action="action_drkds_approval_category" sequence="10"/>
+
+</odoo>

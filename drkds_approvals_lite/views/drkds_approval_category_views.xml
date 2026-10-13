@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_approval_category_list" model="ir.ui.view">
+        <field name="name">drkds.approval.category.list</field>
+        <field name="model">drkds.approval.category</field>
+        <field name="arch" type="xml">
+            <list string="Approval Categories">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="approver_ids" widget="many2many_tags"/>
+                <field name="require_description"/>
+                <field name="require_amount"/>
+                <field name="require_partner"/>
+                <field name="request_count"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_approval_category_form" model="ir.ui.view">
+        <field name="name">drkds.approval.category.form</field>
+        <field name="model">drkds.approval.category</field>
+        <field name="arch" type="xml">
+            <form string="Approval Category">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_requests" type="object" class="oe_stat_button"
+                                icon="fa-check-square-o">
+                            <field name="request_count" widget="statinfo" string="Requests"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Travel request"/></h1>
+                    </div>
+                    <group>
+                        <group string="Approvers">
+                            <field name="approver_ids" widget="many2many_tags" nolabel="1" colspan="2"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group string="A request must carry">
+                            <field name="require_description"/>
+                            <field name="require_amount"/>
+                            <field name="require_partner"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="When to use this category."/>
+                        <field name="sequence"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="active" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_approval_category_search" model="ir.ui.view">
+        <field name="name">drkds.approval.category.search</field>
+        <field name="model">drkds.approval.category</field>
+        <field name="arch" type="xml">
+            <search string="Approval Categories">
+                <field name="name"/>
+                <field name="approver_ids"/>
+                <filter name="mine" string="I Approve" domain="[('approver_ids', 'in', uid)]"/>
+                <filter name="no_approver" string="Without Approver" domain="[('approver_ids', '=', False)]"/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_approval_category" model="ir.actions.act_window">
+        <field name="name">Categories</field>
+        <field name="res_model">drkds.approval.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_drkds_approval_category_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create an approval category</p>
+            <p>
+                A category names the approvers and says what a request must carry
+                before it can be submitted.
+            </p>
+        </field>
+    </record>
+
+</odoo>
