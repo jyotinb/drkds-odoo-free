@@ -1,0 +1,21 @@
+{
+  "module": "drkds_login_history",
+  "title": "Login History",
+  "summary": "Who signed in, from where, and which attempts failed",
+  "intro": "Odoo Community keeps the devices behind sessions that succeeded. It does not keep the attempts that failed, the login name somebody typed, or the moment a session ended. Login History records all of it in one table a Settings administrator can read, filter and chart.\n\nEvery row is written through its own database connection, so a failed attempt is kept even though Odoo rolls the failed request back. Recording never blocks a login, and no data ever leaves your server.",
+  "features": [
+    ["Every attempt, not only the good ones", "One row per success, failure or logout, with the login name exactly as typed, the matched user, the time, the IP address and the browser string."],
+    ["Browser and operating system", "Read from the browser string by a small parser of our own. No external library, no signature database to update."],
+    ["Filters and a chart", "Today, Last 7 Days, Failed, Success, Logout and Unknown Login Name, grouped by user, result, day or IP address, plus a bar chart of events per day stacked by result."],
+    ["On the user form", "A Login History button shows the failed attempts of today and the last successful login, and opens that user's rows."],
+    ["Automatic housekeeping", "A daily scheduled action deletes rows older than the number of days you set in General Settings (default 180, 0 keeps everything)."],
+    ["Administrators only", "The menu, the action and the model are limited to Settings administrators. Rows cannot be created or edited from the interface."]
+  ],
+  "notes": [
+    "Depends on base, web and base_setup only. Odoo 19 Community.",
+    "Recording starts with the first login after installation; nothing is back-filled.",
+    "The session identifier is never stored, only a SHA-256 hash of it.",
+    "The Country field stays empty by design: no geolocation lookup, no outbound call, no telemetry.",
+    "Behind a reverse proxy, enable Odoo's proxy mode so the IP address is the real client address."
+  ]
+}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_drkds_login_history" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.drkds.login.history</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <block name="users_setting_container" position="after">
+                <block title="Login History" name="drkds_login_history_setting_container">
+                    <setting id="drkds_login_history_purge_setting"
+                             string="Keep Login History"
+                             help="Login records older than this many days are deleted by the daily scheduled action. 0 keeps everything.">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="drkds_login_history_purge_days" class="col-lg-4 o_light_label"/>
+                                <field name="drkds_login_history_purge_days" class="col-lg-2"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </block>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_users_form_drkds_login_history" model="ir.ui.view">
+        <field name="name">res.users.form.drkds.login.history</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_drkds_open_login_history" type="object"
+                        class="oe_stat_button" icon="fa-sign-in"
+                        groups="base.group_system"
+                        help="Open this user's login history">
+                    <div class="o_stat_info">
+                        <span class="o_stat_value"><field name="drkds_failed_today"/></span>
+                        <span class="o_stat_text">Failed Today</span>
+                    </div>
+                    <div class="o_stat_info">
+                        <span class="o_stat_value"><field name="drkds_last_login_date"/></span>
+                        <span class="o_stat_text">Last Login</span>
+                    </div>
+                </button>
+            </div>
+        </field>
+    </record>
+
+</odoo>
