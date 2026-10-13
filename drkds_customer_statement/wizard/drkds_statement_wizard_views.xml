@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_statement_wizard_form" model="ir.ui.view">
+        <field name="name">drkds.statement.wizard.form</field>
+        <field name="model">drkds.statement.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Statement of Account">
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group>
+                        <field name="statement_type"/>
+                        <field name="include_vendor"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="partner_ids" widget="many2many_tags" nolabel="1" colspan="2"/>
+                </group>
+                <footer>
+                    <button name="action_print" type="object" string="Print" class="btn-primary" data-hotkey="q"/>
+                    <button name="action_send" type="object" string="Send by Email" class="btn-secondary"/>
+                    <button string="Cancel" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_drkds_statement_wizard" model="ir.actions.act_window">
+        <field name="name">Statement of Account</field>
+        <field name="res_model">drkds.statement.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list,form,kanban</field>
+        <field name="group_ids" eval="[(4, ref('account.group_account_invoice')), (4, ref('account.group_account_readonly'))]"/>
+    </record>
+
+</odoo>

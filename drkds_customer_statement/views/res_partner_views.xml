@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_drkds_statement" model="ir.ui.view">
+        <field name="name">res.partner.form.drkds.statement</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.partner_view_buttons"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button type="object" class="oe_stat_button" icon="fa-file-text-o"
+                        name="action_drkds_open_statement"
+                        groups="account.group_account_invoice,account.group_account_readonly">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="drkds_stmt_total_due" widget="monetary" options="{'currency_field': 'drkds_stmt_currency_id'}"/>
+                        </span>
+                        <span class="o_stat_text">Statement</span>
+                    </div>
+                </button>
+            </div>
+        </field>
+    </record>
+
+    <record id="view_partner_property_form_drkds_statement" model="ir.ui.view">
+        <field name="name">res.partner.property.form.drkds.statement</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <page name="accounting" position="inside">
+                <group string="Receivable Ageing (today, company currency)" name="drkds_statement_ageing"
+                       groups="account.group_account_invoice,account.group_account_readonly">
+                    <!-- The currency field feeds the monetary widget and is hidden on purpose. -->
+                    <field name="drkds_stmt_currency_id" invisible="1"/>
+                    <field name="drkds_stmt_0_30"/>
+                    <field name="drkds_stmt_31_60"/>
+                    <field name="drkds_stmt_61_90"/>
+                    <field name="drkds_stmt_90_plus"/>
+                    <field name="drkds_stmt_total_due"/>
+                </group>
+            </page>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_drkds_statement_document">
+        <t t-set="doc" t-value="stmt['partner']"/>
+        <t t-set="currency" t-value="stmt['currency']"/>
+        <t t-set="company" t-value="stmt['company']"/>
+        <t t-set="money" t-value="{'widget': 'monetary', 'display_currency': currency}"/>
+        <t t-call="web.external_layout">
+            <div class="page">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h2 class="mb-0" style="letter-spacing:1px;">STATEMENT OF ACCOUNT</h2>
+                        <div class="text-muted">
+                            <t t-if="stmt['statement_type'] == 'outstanding'">Outstanding items as at <t t-out="stmt['date_to']"/></t>
+                            <t t-else="">Activity from <t t-out="stmt['date_from']"/> to <t t-out="stmt['date_to']"/></t>
+                            <t t-if="stmt['include_vendor']"> (customer and vendor)</t>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div>Statement date: <strong t-out="stmt['date_to']"/></div>
+                        <div>Currency: <t t-out="currency.name"/></div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <strong>Statement for</strong>
+                        <div t-field="doc.commercial_partner_id"
+                             t-options='{"widget": "contact", "fields": ["address", "name", "phone", "email", "vat"], "no_marker": true}'/>
+                    </div>
+                    <div class="col-6 text-end">
+                        <table class="table table-sm table-borderless ms-auto" style="width:auto;">
+                            <tr t-if="stmt['statement_type'] == 'activity'">
+                                <td class="text-muted pe-3">Opening balance</td>
+                                <td class="text-end"><t t-out="stmt['opening_balance']" t-options="money"/></td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted pe-3">Closing balance</td>
+                                <td class="text-end"><strong t-out="stmt['closing_balance']" t-options="money"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <table class="table table-sm o_main_table" name="statement_lines">
+                    <thead>
+                        <tr>
+                            <th class="text-start">Date</th>
+                            <th class="text-start">Document</th>
+                            <th class="text-start">Reference</th>
+                            <th class="text-start">Due Date</th>
+                            <th class="text-end">Debit</th>
+                            <th class="text-end">Credit</th>
+                            <th class="text-end">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-if="stmt['statement_type'] == 'activity'" class="fst-italic">
+                            <td><t t-out="stmt['date_from']"/></td>
+                            <td colspan="5">Opening balance</td>
+                            <td class="text-end"><t t-out="stmt['opening_balance']" t-options="money"/></td>
+                        </tr>
+                        <tr t-foreach="stmt['lines']" t-as="row">
+                            <td><t t-out="row['date']"/></td>
+                            <td><t t-out="row['document']"/></td>
+                            <td>
+                                <t t-out="row['reference']"/>
+                                <t t-if="row['currency']">
+                                    <small class="text-muted"> (<t t-out="row['amount_currency']" t-options="{'widget': 'monetary', 'display_currency': row['currency']}"/>)</small>
+                                </t>
+                            </td>
+                            <td><t t-out="row['due_date'] or ''"/></td>
+                            <td class="text-end"><t t-if="row['debit']" t-out="row['debit']" t-options="money"/></td>
+                            <td class="text-end"><t t-if="row['credit']" t-out="row['credit']" t-options="money"/></td>
+                            <td class="text-end"><t t-out="row['balance']" t-options="money"/></td>
+                        </tr>
+                        <tr t-if="not stmt['lines']">
+                            <td colspan="7" class="text-center text-muted">No movement in this period.</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="border-black o_total">
+                            <td colspan="4"><strong>Closing balance</strong></td>
+                            <td class="text-end"><t t-out="stmt['total_debit']" t-options="money"/></td>
+                            <td class="text-end"><t t-out="stmt['total_credit']" t-options="money"/></td>
+                            <td class="text-end"><strong t-out="stmt['closing_balance']" t-options="money"/></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <h5 class="mt-4">Ageing as at <t t-out="stmt['date_to']"/></h5>
+                <table class="table table-sm" name="ageing">
+                    <thead>
+                        <tr>
+                            <th class="text-end">0-30 Days</th>
+                            <th class="text-end">31-60 Days</th>
+                            <th class="text-end">61-90 Days</th>
+                            <th class="text-end">Over 90 Days</th>
+                            <th class="text-end">Total Due</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-end"><t t-out="stmt['ageing']['b0_30']" t-options="money"/></td>
+                            <td class="text-end"><t t-out="stmt['ageing']['b31_60']" t-options="money"/></td>
+                            <td class="text-end"><t t-out="stmt['ageing']['b61_90']" t-options="money"/></td>
+                            <td class="text-end"><t t-out="stmt['ageing']['b90_plus']" t-options="money"/></td>
+                            <td class="text-end"><strong t-out="stmt['ageing']['total']" t-options="money"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="text-muted small">Days are counted from the due date; items not yet due are shown in the first bucket.</p>
+
+                <div t-if="stmt['bank']" class="mt-3" name="bank_details">
+                    <strong>Please remit to</strong>
+                    <div>
+                        <t t-out="company.name"/>,
+                        account <t t-out="stmt['bank'].acc_number"/>
+                        <t t-if="stmt['bank'].bank_id">, <t t-out="stmt['bank'].bank_id.name"/></t>
+                        <t t-if="stmt['bank'].bank_id and stmt['bank'].bank_id.bic"> (<t t-out="stmt['bank'].bank_id.bic"/>)</t>
+                    </div>
+                </div>
+                <p t-if="stmt['note']" class="mt-3" name="footer_note" t-out="stmt['note']"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_drkds_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="statements" t-as="stmt">
+                <t t-call="drkds_customer_statement.report_drkds_statement_document"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

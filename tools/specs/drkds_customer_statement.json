@@ -1,0 +1,43 @@
+{
+  "module": "drkds_customer_statement",
+  "title": "Customer and Vendor Statements",
+  "summary": "Statement of account PDF per partner: opening balance, running balance, ageing buckets, sent from the contact",
+  "intro": "A statement of account is what a customer asks for when they want to agree what they owe you, and what you send at month end to prompt payment. Odoo 19 Community shows a partner ledger on screen but has no printable, mailable statement. This module adds one: pick contacts and a period, print one PDF per partner with opening balance, every movement with a running balance, closing balance and ageing buckets, or send it straight from the contact with the PDF attached to the chatter.",
+  "shots": [],
+  "features": [
+    [
+      "Wizard from Contacts, one or many",
+      "Select the contacts, choose the date range, pick Activity or Outstanding only, and tick Include Vendor Side when a partner is both customer and supplier. Print, or send by email."
+    ],
+    [
+      "One PDF per partner",
+      "Opening balance, then one line per posted document with date, document number, reference, due date, debit, credit and the running balance, then the closing balance and the ageing table."
+    ],
+    [
+      "Ageing as at the statement date",
+      "0-30, 31-60, 61-90 and over 90 days, counted from the due date. Open amounts are replayed from the reconciliations dated on or before the end date, so a statement reprinted for last quarter shows what was open then."
+    ],
+    [
+      "Company currency throughout",
+      "A foreign-currency invoice is listed at the company-currency value of its journal item, with the original amount noted beside the reference, so the running balance stays one ledger figure."
+    ],
+    [
+      "Send with the PDF on the chatter",
+      "Send by Email renders the PDF, posts it on the contact's chatter as a message with the PDF attached, and emails it with a mail template you can edit under Email Templates."
+    ],
+    [
+      "Partner form and settings",
+      "A Statement smart button on every contact, four ageing fields with the total due on the Invoicing tab, and a company bank account and footer note chosen under Invoicing settings."
+    ]
+  ],
+  "notes": [
+    "Works on Odoo 19 Community. The only dependency is Invoicing (account).",
+    "Reads posted receivable and payable journal items only; drafts never appear.",
+    "A contact person's invoices roll up to the statement of their company.",
+    "Items not yet due are shown in the 0-30 bucket, so the four buckets always add up to the total due.",
+    "The ageing fields on the contact are computed when read and never stored, so they are always current.",
+    "No follow-up levels, reminders or scheduled jobs; it prints and sends what you ask for."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds Accounting Pro app adds payment follow-up levels, automated reminders and collection dashboards."
+}
