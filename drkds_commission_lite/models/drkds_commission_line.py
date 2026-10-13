@@ -1,9 +1,25 @@
+from collections import defaultdict
+
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 
+# A paid line and the unpaid lines that adjust it share these values.
+_KEY_FIELDS = (
+    "move_line_id", "user_id", "partner_id", "date", "product_id", "categ_id",
+    "rate", "currency_id", "company_id",
+)
+
+
+def _line_key(vals):
+    return tuple(vals[name] for name in _KEY_FIELDS)
+
 
 class DrkdsCommissionLine(models.Model):
-    """One commission entry, written per invoice line when the invoice posts."""
+    """One commission entry, written per invoice line when the invoice posts.
+
+    Also the difference from a paid line when its invoice changes afterwards
+    (see ``_generate_for_moves``).
+    """
     _name = "drkds.commission.line"
     _description = "Commission Line"
     _order = "date desc, id desc"
@@ -14,7 +30,7 @@ class DrkdsCommissionLine(models.Model):
         readonly=True,
     )
     move_line_id = fields.Many2one(
-        "account.move.line", string="Invoice Line", index=True, ondelete="cascade",
+        "account.move.line", string="Invoice Line", index=True, ondelete="set null",
         readonly=True,
     )
     move_type = fields.Selection(related="move_id.move_type", store=True)
@@ -34,7 +50,7 @@ class DrkdsCommissionLine(models.Model):
     )
     base_amount = fields.Monetary(
         string="Base", currency_field="currency_id", readonly=True,
-        help="Untaxed amount of the invoice line in company currency; negative on a credit note.",
+        help="Untaxed amount of the invoice line in company currency, as booked; negative on a credit note.",
     )
     rate = fields.Float(string="Rate (%)", digits=(5, 2), readonly=True)
     amount = fields.Monetary(
@@ -52,34 +68,41 @@ class DrkdsCommissionLine(models.Model):
 
     # -- computation ------------------------------------------------------
     @api.model
-    def _prepare_values(self, line):
-        """Values for the commission line of invoice line ``line``, or None."""
+    def _prepare_values(self, line, earned=None):
+        """Values for the commission line of invoice line ``line``, or None.
+
+        ``earned`` is given for a document that reverses another one (a credit
+        note made from an invoice): ``{product_id: (user_id, rate)}`` of what that
+        invoice earned. The reversal takes back at that rate, from that
+        salesperson, and only for products the invoice earned commission on.
+        """
         move = line.move_id
-        user = move.invoice_user_id
-        if not user:
-            return None
         product = line.product_id
-        categ = product.categ_id
-        rate = self.env["drkds.commission.rate"]._get_rate(user, categ, move.company_id)
+        if earned is not None:
+            if product.id not in earned:
+                return None
+            user_id, rate = earned[product.id]
+            user = self.env["res.users"].browse(user_id)
+        else:
+            user = move.invoice_user_id
+            if not user:
+                return None
+            rate = self.env["drkds.commission.rate"]._get_rate(user, product.categ_id, move.company_id)
         if not rate:
             return None
         company_currency = move.company_id.currency_id
-        base = line.price_subtotal
-        if move.currency_id != company_currency:
-            base = move.currency_id._convert(
-                base, company_currency, move.company_id,
-                move.invoice_date or fields.Date.context_today(move),
-            )
-        sign = -1 if move.move_type == "out_refund" else 1
-        base = company_currency.round(sign * base)
+        # The amount as booked, in company currency at the document's own rate
+        # (which may be typed in, and which a credit note copies from its invoice).
+        # Revenue is a credit, so this is positive on an invoice, negative on a refund.
+        base = company_currency.round(-line.balance)
         return {
             "move_id": move.id,
             "move_line_id": line.id,
             "user_id": user.id,
             "partner_id": move.commercial_partner_id.id,
-            "date": move.invoice_date or fields.Date.context_today(move),
+            "date": move.invoice_date or move.date,
             "product_id": product.id,
-            "categ_id": categ.id,
+            "categ_id": product.categ_id.id,
             "base_amount": base,
             "rate": rate,
             "amount": company_currency.round(base * rate / 100.0),
@@ -88,28 +111,70 @@ class DrkdsCommissionLine(models.Model):
         }
 
     @api.model
-    def _generate_for_moves(self, moves):
-        """(Re)compute the commission lines of ``moves``, which must be posted.
+    def _earned_by_product(self, move):
+        """``{product_id: (user_id, rate)}`` of the commission ``move`` carries now.
 
-        Existing unpaid lines are dropped first, so posting twice never
-        duplicates. A move carrying paid lines is left alone: that commission
-        has already been settled.
+        Lines that offset each other (a paid line and its take-back) cancel out,
+        so only what the document currently earns remains.
+        """
+        currency = move.company_id.currency_id
+        net = defaultdict(float)
+        for line in self.sudo().search([("move_id", "=", move.id)]):
+            net[line.product_id.id, line.user_id.id, line.rate] += line.base_amount
+        earned = {}
+        for (product_id, user_id, rate), base in sorted(net.items(), key=lambda item: abs(item[1])):
+            if not currency.is_zero(base):
+                earned[product_id] = (user_id, rate)  # the largest base wins
+        return earned
+
+    @api.model
+    def _generate_for_moves(self, moves):
+        """Bring the commission lines of ``moves`` in line with their current state.
+
+        Called on posting, on reset to draft (which cancel goes through) and when
+        the salesperson of a posted invoice changes. Unpaid lines are rewritten.
+        Paid lines are a record of money paid out and are never touched: when the
+        commission a document earns now (nothing in draft or cancelled) differs
+        from what was paid, the difference is written as new unpaid lines,
+        negative where commission is taken back. Calling it twice changes nothing.
         """
         Line = self.sudo()
-        moves = moves.filtered(
-            lambda m: m.state == "posted" and m.move_type in ("out_invoice", "out_refund")
-        )
+        moves = moves.filtered(lambda m: m.move_type in ("out_invoice", "out_refund"))
         if not moves:
             return Line
         existing = Line.search([("move_id", "in", moves.ids)])
-        locked = existing.filtered(lambda l: l.state == "paid").mapped("move_id")
-        (existing - existing.filtered(lambda l: l.move_id in locked)).unlink()
+        paid = existing.filtered(lambda l: l.state == "paid")
+        (existing - paid).unlink()
+        paid_by_move = defaultdict(lambda: Line)
+        for line in paid:
+            paid_by_move[line.move_id] |= line
+
         vals_list = []
-        for move in moves - locked:
-            for line in move.invoice_line_ids.filtered(lambda l: l.display_type == "product"):
-                vals = self._prepare_values(line)
-                if vals:
-                    vals_list.append(vals)
+        for move in moves:
+            # key -> [values, base, amount]; target first, then minus what was paid.
+            delta = {}
+            if move.state == "posted":
+                origin = move.reversed_entry_id
+                earned = (
+                    self._earned_by_product(origin)
+                    if origin.move_type in ("out_invoice", "out_refund") else None
+                )
+                for inv_line in move.invoice_line_ids.filtered(lambda l: l.display_type == "product"):
+                    vals = self._prepare_values(inv_line, earned)
+                    if vals:
+                        delta[_line_key(vals)] = [vals, vals["base_amount"], vals["amount"]]
+            for line in paid_by_move[move]:
+                vals = {name: line[name] for name in _KEY_FIELDS}
+                vals = {k: v.id if isinstance(v, models.BaseModel) else v for k, v in vals.items()}
+                entry = delta.setdefault(_line_key(vals), [vals, 0.0, 0.0])
+                entry[1] -= line.base_amount
+                entry[2] -= line.amount
+            for vals, base, amount in delta.values():
+                currency = self.env["res.currency"].browse(vals["currency_id"])
+                base, amount = currency.round(base), currency.round(amount)
+                if currency.is_zero(base) and currency.is_zero(amount):
+                    continue
+                vals_list.append(dict(vals, move_id=move.id, base_amount=base, amount=amount))
         return Line.create(vals_list)
 
     # -- paid / unpaid ------------------------------------------------------
@@ -119,10 +184,13 @@ class DrkdsCommissionLine(models.Model):
             raise UserError(self.env._(
                 "Only a sales or accounting manager can mark commission lines as paid or unpaid."
             ))
+        # Lines are read-only for everyone: the buttons are the only way to settle
+        # them, so check what the manager may see, then write as the system.
+        self.check_access("read")
 
     def action_mark_paid(self):
         self._check_can_settle()
-        self.filtered(lambda l: l.state == "unpaid").write({
+        self.sudo().filtered(lambda l: l.state == "unpaid").write({
             "state": "paid",
             "paid_date": fields.Date.context_today(self),
         })
@@ -130,7 +198,7 @@ class DrkdsCommissionLine(models.Model):
 
     def action_mark_unpaid(self):
         self._check_can_settle()
-        self.filtered(lambda l: l.state == "paid").write({"state": "unpaid", "paid_date": False})
+        self.sudo().filtered(lambda l: l.state == "paid").write({"state": "unpaid", "paid_date": False})
         return True
 
     @api.ondelete(at_uninstall=False)

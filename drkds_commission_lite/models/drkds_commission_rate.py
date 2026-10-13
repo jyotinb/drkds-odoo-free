@@ -44,21 +44,28 @@ class DrkdsCommissionRate(models.Model):
 
     @api.model
     def _get_rate(self, user, categ, company):
-        """Rate in percent for ``user`` on a product in ``categ``.
+        """Rate in percent for ``user`` on a product in ``categ``, sold by ``company``.
 
         The category's own rate, else the nearest ancestor's, else the user's
-        default. Returns 0.0 when nothing is configured.
+        default. Rates of the company's parents apply to a branch; for the same
+        category the nearest company wins. Returns 0.0 when nothing is configured.
         """
         if not user:
             return 0.0
         if categ:
+            companies = company.parent_ids  # root first, ``company`` last
             rates = self.sudo().search([
                 ("user_id", "=", user.id),
-                ("company_id", "=", company.id),
+                ("company_id", "in", companies.ids),
                 ("categ_id", "parent_of", categ.id),
             ])
             if rates:
-                by_categ = {r.categ_id: r for r in rates}
+                depth = {c: i for i, c in enumerate(companies)}
+                by_categ = {}
+                for rate in rates:
+                    best = by_categ.get(rate.categ_id)
+                    if not best or depth[rate.company_id] > depth[best.company_id]:
+                        by_categ[rate.categ_id] = rate
                 node = categ
                 while node:
                     if node in by_categ:

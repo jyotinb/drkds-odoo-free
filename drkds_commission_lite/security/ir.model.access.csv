@@ -4,5 +4,5 @@ access_drkds_commission_rate_sale_manager,drkds.commission.rate sales manager,mo
 access_drkds_commission_rate_account_manager,drkds.commission.rate accounting manager,model_drkds_commission_rate,account.group_account_manager,1,1,1,1
 access_drkds_commission_line_salesman,drkds.commission.line salesperson read,model_drkds_commission_line,sales_team.group_sale_salesman,1,0,0,0
 access_drkds_commission_line_invoice,drkds.commission.line billing read,model_drkds_commission_line,account.group_account_invoice,1,0,0,0
-access_drkds_commission_line_sale_manager,drkds.commission.line sales manager,model_drkds_commission_line,sales_team.group_sale_manager,1,1,0,1
-access_drkds_commission_line_account_manager,drkds.commission.line accounting manager,model_drkds_commission_line,account.group_account_manager,1,1,0,1
+access_drkds_commission_line_sale_manager,drkds.commission.line sales manager,model_drkds_commission_line,sales_team.group_sale_manager,1,0,0,1
+access_drkds_commission_line_account_manager,drkds.commission.line accounting manager,model_drkds_commission_line,account.group_account_manager,1,0,0,1

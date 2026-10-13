@@ -2,38 +2,38 @@
   "module": "drkds_commission_lite",
   "title": "Sales Commission (Lite)",
   "summary": "A flat commission per salesperson, with per-category overrides, computed when customer invoices are posted, on Odoo 19 Community",
-  "intro": "Give each salesperson a percentage, override it where a product category deserves a different one, and let the invoice do the rest. The moment a customer invoice is posted, a commission line is written for every product line: who earned it, on what, the untaxed base, the rate and the amount. Credit notes write negative lines, so refunds take back what they reverse. A report shows the lines by salesperson and month, and a manager marks them paid when the money goes out.",
+  "intro": "Give each salesperson a percentage, override it where a product category deserves a different one, and let the invoice do the rest. The moment a customer invoice is posted, a commission line is written for every product line: who earned it, on what, the untaxed base, the rate and the amount. Credit notes write negative lines that take back exactly what the invoice earned. A report shows the lines by salesperson and month, and a manager marks them paid when the money goes out.",
   "shots": [],
   "features": [
     [
       "A rate per salesperson, a rate per category",
-      "Set a default percentage on the user. Add a rate for any product category to override it; a rate on a parent category covers its children unless a child has its own. Zero means no commission."
+      "Set a default percentage on the user. Add a rate for any product category to override it; a rate on a parent category covers its children unless a child has its own. Zero means no commission. Branches use their parent company's rates too."
     ],
     [
       "Written on posting",
-      "One commission line per product line when a customer invoice is posted: salesperson, customer, date, product, category, base in company currency, rate and amount. Vendor bills and journal entries never produce one."
+      "One commission line per product line when a customer invoice is posted: salesperson, customer, date, product, category, base in company currency as booked, rate and amount. Vendor bills and journal entries never produce one."
     ],
     [
-      "Credit notes count against",
-      "A posted credit note writes negative lines with the same rules. A partial refund takes back only the commission on the returned part."
+      "Credit notes take back what was earned",
+      "A credit note made from an invoice takes back at that invoice's rate, from the salesperson who earned it, and nothing where the invoice earned nothing. A partial refund takes back only the returned part."
     ],
     [
       "Never twice",
-      "Resetting or cancelling an invoice removes its unpaid lines; posting it again recomputes them once, with the rates in force at that moment. No duplicates, whatever the sequence of events."
+      "Resetting or cancelling an invoice removes its unpaid lines; posting it again recomputes them once, with the rates in force at that moment. Changing the salesperson moves the commission. No duplicates, whatever the sequence of events."
     ],
     [
       "By salesperson and month",
       "List with totals, a salesperson-by-month pivot and a stacked graph. Filter paid, unpaid, invoices or credit notes, and any date range."
     ],
     [
-      "Mark as paid, and keep it that way",
-      "Select the settled lines and stamp them paid with today's date. An invoice whose commission is paid cannot be reset or cancelled until a manager marks the lines unpaid again."
+      "Paid stays paid",
+      "Select the settled lines and stamp them paid with today's date. Paid lines never change. If their invoice is later reset, cancelled or given to someone else, the paid amount is taken back with a negative unpaid line, and accounting is never blocked."
     ]
   ],
   "notes": [
     "Depends on Sales and Accounting (sale, account). Nothing else.",
-    "Salespeople see their own commission lines and rates. Sales managers and accounting managers see everyone's, manage rates and settle lines. Multi-company record rules are in place.",
-    "The base is the invoice line's untaxed amount after discount, converted to company currency at the invoice date.",
+    "Salespeople see their own commission lines and rates. Sales managers and accounting managers see everyone's, manage rates and settle lines; nobody edits a line by hand. Multi-company record rules are in place.",
+    "The base is the invoice line's untaxed amount after discount, in company currency at the invoice's own currency rate, exactly as booked.",
     "Invoices posted before the module was installed have no commission lines; reset and re-post them if their commission is needed.",
     "No commission on sales orders, payments or margins, no tiered or target-based schemes, and no payout document: this module writes the lines and the report, settlement happens outside it."
   ],

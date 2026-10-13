@@ -15,21 +15,27 @@ What it does
 * **A default rate per salesperson** on the user form, and a **rate table**
   (salesperson, product category, percentage) that overrides it. The nearest
   matching category wins, so a rate on a parent category covers its children.
+  A branch also uses its parent company's rates.
 * **Commission lines on posting.** When a customer invoice is posted, one line
   per product line: salesperson, customer, date, product, category, base
-  (the line's untaxed amount in company currency), rate and amount.
-* **Credit notes count against.** A posted credit note writes negative lines,
-  so a refund takes back the commission it reverses.
-* **Reset or cancel removes.** Resetting an invoice to draft, or cancelling
+  (the line's untaxed amount in company currency, as booked), rate and amount.
+* **Credit notes take back what was earned.** A posted credit note writes
+  negative lines. One made from an invoice takes back at the rate that
+  invoice earned, from the salesperson who earned it, and nothing where the
+  invoice earned nothing.
+* **Reset or cancel withdraws.** Resetting an invoice to draft, or cancelling
   it, removes its unpaid commission lines; posting it again recomputes them
-  once. There is never a duplicate.
+  once. There is never a duplicate. Changing the salesperson of a posted
+  invoice moves its commission.
 * **Report.** Commission lines in list, pivot and graph views, grouped by
   salesperson and month, with a paid/unpaid filter.
 * **Mark as paid.** Select the lines settled with the salesperson and stamp
-  them with a paid date. Paid lines are protected: an invoice whose commission
-  was paid cannot be reset to draft until a manager marks it unpaid.
-* **Security.** Salespeople see their own commission lines; sales and
-  accounting managers see everyone's and can mark lines paid.
+  them with a paid date. Paid lines are history and never change: if their
+  invoice is later reset, cancelled or re-assigned, the paid amount is taken
+  back with negative unpaid lines, and accounting is never blocked.
+* **Security.** Salespeople see their own commission lines and rates; sales
+  and accounting managers see everyone's and can mark lines paid. Nobody edits
+  a line by hand.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
 """,

@@ -1,15 +1,21 @@
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 
+# Whoever may read commission lines (see ir.model.access.csv). Anyone else opening
+# an invoice (a purchase user, a read-only accountant) must not get these fields.
+_COMMISSION_READERS = "sales_team.group_sale_salesman,account.group_account_invoice"
+
 
 class AccountMove(models.Model):
     _inherit = "account.move"
 
     drkds_commission_line_ids = fields.One2many(
         "drkds.commission.line", "move_id", string="Commission Lines", readonly=True,
+        groups=_COMMISSION_READERS,
     )
     drkds_commission_count = fields.Integer(
         string="Commission Line Count", compute="_compute_drkds_commission_count",
+        groups=_COMMISSION_READERS,
     )
 
     @api.depends("drkds_commission_line_ids")
@@ -25,20 +31,35 @@ class AccountMove(models.Model):
     def button_draft(self):
         """Resetting to draft (which cancel goes through) withdraws the commission.
 
-        Paid lines are not silently dropped: the money has left, so the manager
-        must first mark them unpaid, consciously.
+        Unpaid lines go. Paid lines stay as the record of money paid out, and
+        what they paid is taken back with negative unpaid lines.
         """
-        lines = self.env["drkds.commission.line"].sudo().search([("move_id", "in", self.ids)])
-        paid = lines.filtered(lambda l: l.state == "paid")
+        res = super().button_draft()
+        self.env["drkds.commission.line"]._generate_for_moves(self)
+        return res
+
+    def write(self, vals):
+        if "invoice_user_id" not in vals:
+            return super().write(vals)
+        before = {move: move.invoice_user_id for move in self}
+        res = super().write(vals)
+        # The salesperson of a posted invoice can still be corrected.
+        changed = self.filtered(lambda m: m.state == "posted" and m.invoice_user_id != before[m])
+        if changed:
+            self.env["drkds.commission.line"]._generate_for_moves(changed)
+        return res
+
+    @api.ondelete(at_uninstall=False)
+    def _unlink_except_paid_commission(self):
+        paid = self.env["drkds.commission.line"].sudo().search(
+            [("move_id", "in", self.ids), ("state", "=", "paid")],
+        )
         if paid:
             raise UserError(self.env._(
-                "%s has commission lines already marked as paid. Mark them unpaid "
-                "before resetting or cancelling the invoice.",
-                ", ".join(paid.mapped("move_id.display_name")),
+                "Commission has already been paid out on %s. Cancel the invoice instead of "
+                "deleting it, so that the payment stays on record.",
+                ", ".join(paid.move_id.mapped("display_name")),
             ))
-        res = super().button_draft()
-        lines.unlink()
-        return res
 
     def action_view_drkds_commission_lines(self):
         self.ensure_one()
