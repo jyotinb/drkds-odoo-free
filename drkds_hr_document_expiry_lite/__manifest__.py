@@ -15,13 +15,15 @@ What it gives you
   expiry HR should be reminded, and whether every employee must have one.
 * **Employee documents** - type, number, issue and expiry date, the scanned
   file, a note, and a state of Valid, Expiring or Expired worked out from the
-  dates and the type's reminder window. Chatter and tracking on every record.
+  dates and the type's reminder window, dated in the employee's timezone.
+  Chatter and tracking on every record.
 * **On the employee form** - a Documents tab and a smart button that counts
   the documents and turns red when any has expired.
 * **Daily reminder** - a scheduled action refreshes the states and schedules
   exactly one activity per expiring document for the employee's HR
-  responsible, or a fallback user chosen in Settings. Renewing the document
-  clears the reminder.
+  responsible, or a fallback HR officer chosen in Settings; only someone who
+  can open the document is ever assigned, and departed employees raise none.
+  Renewing the document clears the reminder.
 * **Missing mandatory documents** - a filter on the employee list showing who
   still has no document of a mandatory type, plus an Expired documents filter.
 * **Lists and searches** - documents by state, type, employee or expiry month;

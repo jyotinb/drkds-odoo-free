@@ -10,7 +10,7 @@
                 <block title="Employee Documents" name="drkds_hr_document_setting_container">
                     <setting id="drkds_hr_document_responsible_setting" company_dependent="1"
                              string="Document Reminder Fallback"
-                             help="Who gets document expiry reminders when the employee has no HR responsible.">
+                             help="The HR officer who gets document expiry reminders when the employee's HR responsible cannot take them.">
                         <field name="drkds_hr_document_responsible_id" widget="many2one_avatar_user"/>
                     </setting>
                 </block>

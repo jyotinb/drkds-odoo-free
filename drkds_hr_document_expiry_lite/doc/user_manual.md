@@ -23,7 +23,8 @@ For each type:
 
 - **Has Expiry Date** — tick for anything that lapses. A document of such a
   type cannot be saved without an expiry date. Untick for certificates and
-  the like; their documents are always *Valid*.
+  the like: no date is asked for, and a document without one is always
+  *Valid*. If you enter an expiry date anyway, the status follows it.
 - **Remind Days Before** — how many days before the expiry date the document
   turns *Expiring* and the reminder is raised. Zero means on the expiry day
   itself.
@@ -38,10 +39,17 @@ has documents; deletion is refused while documents refer to it.
 ## 3. Choose the fallback reminder user
 
 **Settings > Employees > Employee Documents > Document Reminder Fallback**,
-per company. Reminders normally go to the employee's **HR Responsible**
-(employee form, *Settings* tab). An employee whose HR Responsible is empty or whose user has been archived
-falls back to this user. With neither, the job skips that
-document and notes the fact in the server log, with the document id only.
+per company. Only HR officers (Employees / Officer) of that company are
+offered.
+
+Reminders normally go to the employee's **HR Responsible** (employee form,
+*Settings* tab). A reminder is only ever given to someone who can open the
+document: an active user with HR officer rights and access to the
+employee's company. When the HR Responsible is not such a user (archived,
+no longer an HR officer, or not allowed in that company), the reminder goes
+to this fallback, provided it qualifies itself. With neither, the job skips
+that document and notes the fact in the server log, with the document id
+only.
 
 ## 4. Add a document
 
@@ -68,20 +76,29 @@ it goes negative once expired.
 | Expiring | Today is within *Remind Days Before* of the expiry date, up to and including the expiry day |
 | Expired | The day after the expiry date, onwards |
 
+"Today" is the date in the employee's timezone (employee form, *Work
+Information > Timezone*): a document turns *Expired* at the employee's
+midnight, not at midnight UTC or in the timezone of whoever looks at it.
+**Days Left** counts the same way.
+
 The status is stored and recomputed by the nightly job, so lists, filters and
-group-bys use it directly. Changing a type's reminder window recomputes the
-status of its documents at once.
+group-bys use it directly. Changing a type's reminder window, or the
+employee's timezone, recomputes the status of the documents concerned at
+once. The status cannot be set by hand, by an import or through the API; it
+always follows the dates.
 
 ## 6. The daily job and the reminders
 
 **Settings > Technical > Scheduled Actions > Employee Documents: refresh
 states and remind** runs once a day. It:
 
-1. recomputes the status of every document that has an expiry date;
-2. for each document now *Expiring* that has no open *Document Expiry*
-   activity, schedules one for the HR responsible (or the fallback), with
-   the expiry date as its deadline and a summary naming the type, the
-   employee and the date.
+1. recomputes the status of every document that has an expiry date,
+   archived ones included;
+2. for each document now *Expiring* that is not archived, belongs to an
+   employee who is not archived, and has no open *Document Expiry* activity,
+   schedules one for the HR responsible (or the fallback, see section 3),
+   with the expiry date as its deadline and a summary naming the type, the
+   employee and the date. The document number is never part of it.
 
 It never creates a second reminder for a document that already carries one,
 no matter how often it runs. If the activity is marked done while the
@@ -120,7 +137,17 @@ A document belongs to the company of its employee and is hidden from users
 working in other companies. A type bound to a company applies only there; a
 type without a company applies everywhere.
 
-## 10. Uninstall
+## 10. Archiving and deleting
+
+- **Archive a document** that is no longer in use: it stays on record, its
+  status keeps being refreshed, and it raises no more reminders.
+- **Archive an employee** who has left: their documents stay, with an
+  up-to-date status, and raise no more reminders.
+- **Delete an employee** only when their data must go: their documents are
+  deleted with them, together with the scans, the open reminders and the
+  chatter.
+
+## 11. Uninstall
 
 Removing the module deletes its tables, the document records and their
 attached files, the activity type, the scheduled action and the setting.

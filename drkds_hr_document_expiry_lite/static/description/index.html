@@ -39,13 +39,13 @@
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">Valid, expiring, expired</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The status follows the dates: Expiring once today is within the type&#x27;s reminder window, Expired the day after the expiry date. A document that expires today is still valid today.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The status follows the dates: Expiring once today is within the type&#x27;s reminder window, Expired the day after the expiry date. Today is counted in the employee&#x27;s timezone, so a document that expires today shows Expiring, not Expired, until the employee&#x27;s midnight.</p>
       </div>
     </div>
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">One reminder, to the right person</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A daily scheduled action refreshes every status and schedules exactly one activity per expiring document for the employee&#x27;s HR responsible, or for a fallback user chosen in Settings. Running it again never duplicates a reminder.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A daily scheduled action refreshes every status and schedules exactly one activity per expiring document for the employee&#x27;s HR responsible, or for a fallback HR officer chosen in Settings. Only someone who can open the document is ever assigned, departed employees raise none, and running the job again never duplicates a reminder.</p>
       </div>
     </div>
     <div class="oe_span6">

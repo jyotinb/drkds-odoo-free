@@ -1,9 +1,11 @@
 from datetime import date, timedelta
 
 from freezegun import freeze_time
+from psycopg2.errors import CheckViolation, ForeignKeyViolation
 
+from odoo import SUPERUSER_ID
 from odoo.exceptions import AccessError, ValidationError
-from odoo.tests import tagged
+from odoo.tests import new_test_user, tagged
 from odoo.tools import mute_logger
 
 from .common import TODAY, DocumentExpiryCommon
@@ -73,13 +75,31 @@ class TestDocumentState(DocumentExpiryCommon):
 
     @mute_logger("odoo.sql_db")
     def test_negative_remind_days_refused(self):
-        with self.assertRaises(Exception):
+        with self.assertRaises(CheckViolation):
             self.DocType.create({"name": "Bad", "remind_days": -1})
+            self.env.flush_all()
 
     def test_type_in_use_cannot_be_deleted(self):
         self._document(self.emp_asha, self.type_passport, date(2030, 1, 1))
-        with mute_logger("odoo.sql_db"), self.assertRaises(Exception):
+        with mute_logger("odoo.sql_db"), self.assertRaises(ForeignKeyViolation):
             self.type_passport.unlink()
+
+    @freeze_time(TODAY)
+    def test_state_cannot_be_written(self):
+        """An RPC write or an import cannot mark an expired document valid."""
+        doc = self._document(self.emp_asha, self.type_contract, date(2026, 10, 1))
+        self.assertEqual(doc.state, "expired")
+        doc.with_user(self.hr_officer).write({"state": "valid", "note": "Checked"})
+        self.env.invalidate_all()
+        self.assertEqual(doc.state, "expired")
+        self.assertEqual(doc.note, "Checked")
+
+    def test_date_on_type_without_expiry_is_honoured(self):
+        """A type without expiry does not demand a date, but one entered
+        anyway still drives the status: a lapsed date never reads Valid."""
+        with freeze_time(TODAY):
+            doc = self._document(self.emp_asha, self.type_certificate, date(2026, 10, 1))
+            self.assertEqual(doc.state, "expired")
 
 
 @tagged("post_install", "-at_install")
@@ -173,6 +193,86 @@ class TestCron(DocumentExpiryCommon):
             self.Document._cron_refresh_states()
             self.assertFalse(self._reminders(doc))
 
+    def _run_cron_as_scheduler(self):
+        """The job as ir.cron runs it: OdooBot, a context without timezone."""
+        self.Document.with_env(self.env(user=SUPERUSER_ID, context={}))._cron_refresh_states()
+
+    def test_cron_dates_the_status_in_the_employee_timezone(self):
+        """20:51 UTC on 13 Oct is 02:21 on 14 Oct in India and 16:51 on 13 Oct
+        in New York; 02:00 UTC on 14 Oct is 07:30 on 14 Oct in India and
+        22:00 on 13 Oct in New York. A contract ending on 13 Oct is expired
+        for the Indian employee at both instants and still expiring for the
+        New York one, whatever the UTC date says."""
+        self.emp_ravi.tz = "America/New_York"
+        with freeze_time("2026-10-13 06:00:00"):
+            india = self._document(self.emp_asha, self.type_contract, date(2026, 10, 13))
+            new_york = self._document(self.emp_ravi, self.type_contract, date(2026, 10, 13))
+        for instant in ("2026-10-13 20:51:10", "2026-10-14 02:00:00"):
+            with freeze_time(instant):
+                self._run_cron_as_scheduler()
+                self.env.invalidate_all()
+                self.assertEqual((india.state, india.days_to_expiry), ("expired", -1), instant)
+                self.assertEqual((new_york.state, new_york.days_to_expiry), ("expiring", 0), instant)
+
+    def test_responsible_without_hr_rights_falls_back(self):
+        """An activity for someone who cannot open the document is no
+        reminder: the fallback HR officer gets it instead."""
+        self.company.drkds_hr_document_responsible_id = self.fallback_user
+        self.emp_ravi.hr_responsible_id = self.plain_user
+        with freeze_time(TODAY):
+            doc = self._document(self.emp_ravi, self.type_contract, date(2026, 10, 20))
+            self._run_cron_as_scheduler()
+        reminder = self._reminders(doc)
+        self.assertEqual(reminder.user_id, self.fallback_user)
+        doc.with_user(reminder.user_id).check_access("read")
+
+    def test_responsible_outside_the_company_falls_back(self):
+        other = self.env["res.company"].create({"name": "Other Co"})
+        other_hr = new_test_user(
+            self.env, login="drkds_hdl_other_hr", name="Other Co HR",
+            groups="base.group_user,hr.group_hr_user",
+            company_id=other.id, company_ids=[(6, 0, other.ids)],
+        )
+        self.company.drkds_hr_document_responsible_id = self.fallback_user
+        self.emp_ravi.hr_responsible_id = other_hr
+        with freeze_time(TODAY):
+            doc = self._document(self.emp_ravi, self.type_contract, date(2026, 10, 20))
+            self._run_cron_as_scheduler()
+        self.assertEqual(self._reminders(doc).user_id, self.fallback_user)
+
+    @mute_logger("odoo.addons.drkds_hr_document_expiry_lite.models.drkds_hr_document")
+    def test_unfit_fallback_is_not_assigned(self):
+        """A fallback without HR rights is skipped like a missing one."""
+        self.company.drkds_hr_document_responsible_id = self.plain_user
+        self.emp_ravi.hr_responsible_id = self.plain_user
+        with freeze_time(TODAY):
+            doc = self._document(self.emp_ravi, self.type_contract, date(2026, 10, 20))
+            self._run_cron_as_scheduler()
+        self.assertEqual(doc.state, "expiring")
+        self.assertFalse(self._reminders(doc))
+
+    def test_departed_employee_gets_no_reminder(self):
+        with freeze_time(TODAY):
+            doc = self._document(self.emp_priya, self.type_contract, date(2026, 10, 20))
+            self.emp_priya.action_archive()
+            self.assertFalse(self.emp_priya.active)
+            self._run_cron_as_scheduler()
+        self.assertEqual(doc.state, "expiring")
+        self.assertFalse(self._reminders(doc))
+
+    def test_cron_refreshes_archived_documents_without_reminding(self):
+        with freeze_time(TODAY):
+            doc = self._document(self.emp_asha, self.type_contract, date(2026, 12, 13))
+            self.assertEqual(doc.state, "valid")  # computed and stored now, as in production
+            doc.action_archive()
+        with freeze_time(date(2026, 11, 20)):  # inside the 30-day window
+            self._run_cron_as_scheduler()
+            self.assertEqual(doc.state, "expiring")
+            self.assertFalse(self._reminders(doc))
+        with freeze_time(date(2026, 12, 14)):
+            self._run_cron_as_scheduler()
+            self.assertEqual(doc.state, "expired")
+
     def test_cron_record_exists_and_is_daily(self):
         cron = self.env.ref("drkds_hr_document_expiry_lite.ir_cron_drkds_hr_document_refresh")
         self.assertTrue(cron.active)
@@ -237,9 +337,36 @@ class TestEmployee(DocumentExpiryCommon):
         self.assertEqual(action["context"]["default_employee_id"], self.emp_asha.id)
 
     def test_deleting_employee_deletes_documents(self):
+        """The scans, the reminder, the chatter and the followers go with the
+        documents, archived ones included; nothing is left keyed to them."""
+        with freeze_time(TODAY):
+            doc = self._document(self.emp_priya, self.type_passport, date(2026, 12, 1))
+            archived = self._document(self.emp_priya, self.type_contract, date(2030, 1, 1))
+            archived.action_archive()
+            self.Document._cron_refresh_states()
+        self.assertTrue(self._reminders(doc))
+        doc_ids = (doc | archived).ids
+        self.emp_priya.with_user(self.hr_officer).unlink()
+        self.assertFalse((doc | archived).exists())
+        for table, model_column in (
+            ("ir_attachment", "res_model"),
+            ("mail_activity", "res_model"),
+            ("mail_message", "model"),
+            ("mail_followers", "res_model"),
+        ):
+            self.env.cr.execute(
+                f"SELECT count(*) FROM {table} WHERE {model_column} = %s AND res_id = ANY(%s)",  # noqa: S608
+                ["drkds.hr.document", doc_ids],
+            )
+            self.assertEqual(self.env.cr.fetchone()[0], 0, table)
+
+    def test_plain_user_cannot_delete_employee_documents(self):
+        """The ORM clean-up runs in sudo, but only after the caller's own
+        right to delete the employee is checked."""
         doc = self._document(self.emp_priya, self.type_passport, date(2030, 1, 1))
-        self.emp_priya.unlink()
-        self.assertFalse(doc.exists())
+        with self.assertRaises(AccessError):
+            self.emp_priya.with_user(self.plain_user).unlink()
+        self.assertTrue(doc.exists())
 
 
 @tagged("post_install", "-at_install")

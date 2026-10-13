@@ -60,6 +60,24 @@ class DrkdsHrDocument(models.Model):
     )
 
     # -- computes -------------------------------------------------------
+    def _today_by_document(self):
+        """{document: today's date in its employee's timezone}.
+
+        An expiry date is a calendar date where the employee works. The daily
+        job runs as OdooBot, which has no timezone, so ``context_today`` alone
+        gives the UTC date: an Indian site's job, run in the early IST hours,
+        would leave a document that lapsed at midnight IST reading Expiring
+        for another whole day. Every employee carries a timezone, and it gives
+        the same answer whoever, or whatever, triggers the computation.
+        """
+        todays, result = {}, {}
+        for doc in self:
+            tz = doc.employee_id.tz
+            if tz not in todays:
+                todays[tz] = fields.Date.context_today(self.with_context(tz=tz) if tz else self)
+            result[doc] = todays[tz]
+        return result
+
     @api.depends("employee_id.name", "type_id.name")
     def _compute_name(self):
         for doc in self:
@@ -83,17 +101,17 @@ class DrkdsHrDocument(models.Model):
             return "expiring"
         return "valid"
 
-    @api.depends("expiry_date", "type_id.remind_days", "type_id.requires_expiry")
+    @api.depends("expiry_date", "employee_id.tz", "type_id.remind_days", "type_id.requires_expiry")
     def _compute_state(self):
-        today = fields.Date.context_today(self)
+        todays = self._today_by_document()
         for doc in self:
-            doc.state = doc._state_at(today)
+            doc.state = doc._state_at(todays[doc])
 
-    @api.depends("expiry_date")
+    @api.depends("expiry_date", "employee_id.tz")
     def _compute_days_to_expiry(self):
-        today = fields.Date.context_today(self)
+        todays = self._today_by_document()
         for doc in self:
-            doc.days_to_expiry = (doc.expiry_date - today).days if doc.expiry_date else 0
+            doc.days_to_expiry = (doc.expiry_date - todays[doc]).days if doc.expiry_date else 0
 
     # -- constraints ----------------------------------------------------
     @api.constrains("expiry_date", "issue_date", "type_id")
@@ -109,6 +127,11 @@ class DrkdsHrDocument(models.Model):
 
     # -- orm ------------------------------------------------------------
     def write(self, vals):
+        if "state" in vals:
+            # The status is worked out from the dates and is never taken from
+            # a client: readonly in the views stops neither an RPC write nor
+            # an import that updates existing documents.
+            vals = {key: value for key, value in vals.items() if key != "state"}
         res = super().write(vals)
         if "expiry_date" in vals or "file" in vals:
             # A renewal: the old reminder no longer applies. If the new date
@@ -117,19 +140,36 @@ class DrkdsHrDocument(models.Model):
         return res
 
     # -- reminders ------------------------------------------------------
-    def _reminder_user(self):
-        """The HR responsible of the employee, else the company fallback.
+    def _can_take_reminder(self, user):
+        """Whether ``user`` can act on this document's reminder: an active
+        internal user with HR officer rights in the document's company.
 
-        A responsible who has left (archived user) counts as absent: an
-        activity nobody will ever see is no reminder.
+        Anyone else would get an activity, and its notification mail, for a
+        document they cannot open. Core only steers the HR Responsible picker
+        to such users; nothing keeps the value valid once a user loses the
+        rights or the company, or when it is set by import or RPC.
         """
         self.ensure_one()
-        responsible = self.employee_id.sudo().hr_responsible_id
-        if not responsible or not responsible.active:
-            responsible = self.company_id.drkds_hr_document_responsible_id
-        if responsible and not responsible.active:
-            return self.env["res.users"]
-        return responsible
+        user = user.sudo()
+        return bool(
+            user
+            and user.active
+            and not user.share
+            and user._has_group("hr.group_hr_user")
+            and self.company_id in user.company_ids
+        )
+
+    def _reminder_user(self):
+        """The employee's HR responsible, else the company fallback: the first
+        of the two who can open the document. Empty when neither can."""
+        self.ensure_one()
+        for user in (
+            self.employee_id.sudo().hr_responsible_id,
+            self.company_id.sudo().drkds_hr_document_responsible_id,
+        ):
+            if self._can_take_reminder(user):
+                return user
+        return self.env["res.users"]
 
     def _schedule_expiry_activity(self):
         """Schedule one reminder per document that has none yet. Returns the
@@ -141,8 +181,9 @@ class DrkdsHrDocument(models.Model):
             user = doc._reminder_user()
             if not user:
                 _logger.warning(
-                    "Employee document %s: no HR responsible and no fallback "
-                    "user in settings, reminder skipped.", doc.id,
+                    "Employee document %s: neither the HR responsible nor the "
+                    "fallback user is an active HR officer of its company, "
+                    "reminder skipped.", doc.id,
                 )
                 continue
             doc.activity_schedule(
@@ -165,11 +206,16 @@ class DrkdsHrDocument(models.Model):
 
         ``modified`` both marks the stored state for recomputation and drops
         the stale cached value, which ``add_to_compute`` alone would not.
+        Archived documents are refreshed too, so one restored later does not
+        show a status from the day it was archived. Reminders go only to
+        documents still in use, held by people still employed.
         """
-        docs = self.search([("expiry_date", "!=", False)])
+        docs = self.search([("expiry_date", "!=", False), ("active", "in", [True, False])])
         docs.modified(["expiry_date"])
         docs.flush_recordset(["state"])
-        expiring = docs.filtered(lambda d: d.state == "expiring")
+        expiring = docs.filtered(
+            lambda d: d.state == "expiring" and d.active and d.employee_id.active
+        )
         scheduled = expiring._schedule_expiry_activity()
         _logger.info(
             "Employee documents refreshed: %d checked, %d expiring, %d new reminders.",

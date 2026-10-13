@@ -27,6 +27,22 @@ class HrEmployee(models.Model):
         compute="_compute_drkds_hr_missing_mandatory", groups="hr.group_hr_user",
     )
 
+    def unlink(self):
+        """Delete the employees' documents through the ORM first.
+
+        ``employee_id`` cascades in SQL, which drops the document rows but not
+        what refers to them by model and id: the scanned file, the open
+        reminder, the chatter and the followers would outlive the employee,
+        the passport scan included. Done in sudo, after the caller's own
+        access check, because deleting the employee deletes the documents
+        anyway; archived documents go too.
+        """
+        self.check_access("unlink")
+        self.env["drkds.hr.document"].sudo().search([
+            ("employee_id", "in", self.ids), ("active", "in", [True, False]),
+        ]).unlink()
+        return super().unlink()
+
     @api.depends("drkds_hr_document_ids.state", "drkds_hr_document_ids.active")
     def _compute_drkds_hr_document_counts(self):
         groups = self.env["drkds.hr.document"]._read_group(

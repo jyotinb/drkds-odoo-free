@@ -63,9 +63,13 @@ class DocumentExpiryCommon(TransactionCase):
 
     @classmethod
     def _employee(cls, name, **values):
+        # The status is dated in the employee's timezone. Pin it, so that the
+        # figures do not depend on the timezone of the database's admin or
+        # working-hours calendar, which new employees inherit.
         return cls.Employee.create(dict({
             "name": name,
             "company_id": cls.company.id,
+            "tz": "Asia/Kolkata",
         }, **values))
 
     @classmethod
