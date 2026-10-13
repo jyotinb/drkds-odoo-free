@@ -1,0 +1,43 @@
+{
+  "module": "drkds_hr_document_expiry_lite",
+  "title": "Employee Document Expiry (Lite)",
+  "summary": "Employee documents with expiry dates, reminders to HR and a missing-documents check, on Odoo 19 Community",
+  "intro": "Passports, employment contracts, work permits, licences: every employee holds a handful of papers that run out, and the day one lapses is usually the day someone notices. This module keeps each document on the employee record with its scan, works out whether it is valid, expiring or expired from the dates, and sends the HR responsible an activity before it is too late. A filter on the employee list shows who still has not handed in a mandatory document.",
+  "shots": [],
+  "features": [
+    [
+      "Document types with their own rules",
+      "Each type says whether it carries an expiry date, how many days ahead HR should be reminded, and whether every employee must hold one. Passport, Employment Contract, Work Permit and Educational Certificate are installed as a starting point."
+    ],
+    [
+      "Documents on the employee",
+      "Type, number, issue and expiry dates, the attached scan and a note, on a Documents tab of the employee form and behind a smart button that counts them and flags how many have expired."
+    ],
+    [
+      "Valid, expiring, expired",
+      "The status follows the dates: Expiring once today is within the type's reminder window, Expired the day after the expiry date. A document that expires today is still valid today."
+    ],
+    [
+      "One reminder, to the right person",
+      "A daily scheduled action refreshes every status and schedules exactly one activity per expiring document for the employee's HR responsible, or for a fallback user chosen in Settings. Running it again never duplicates a reminder."
+    ],
+    [
+      "Renewal in place",
+      "Enter the new dates and upload the new scan on the same record. The old file is replaced, the status returns to Valid and the open reminder is cleared."
+    ],
+    [
+      "Who is missing what",
+      "The employee list gains Missing Mandatory Documents and Expired Documents filters, and the employee form names the mandatory types the person still lacks."
+    ]
+  ],
+  "notes": [
+    "Documents are visible to HR officers only; HR administrators maintain the types. Employees do not see their own documents in the lite edition.",
+    "Files are ordinary Odoo attachments in your own database. Nothing is sent to any outside server and the document number is never written to the log.",
+    "Odoo Community already warns about a work permit through the employee's own Work Permit Expiration Date; this module is for every other document, and for keeping the scan with the dates.",
+    "Multi-company: a document belongs to the employee's company and is hidden from other companies; a type can be shared or bound to one company.",
+    "Depends on hr and mail only.",
+    "The lite edition has no document categories beyond the type, no employee self-service and no bulk reminder email."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds HR Documents app adds employee self-service upload, approval of submitted documents, reminder emails to the employee and a compliance dashboard."
+}

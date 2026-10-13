@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mail_activity_data_document_expiry" model="mail.activity.type">
+        <field name="name">Document Expiry</field>
+        <field name="icon">fa-id-card-o</field>
+        <field name="summary">Renew an employee document</field>
+        <field name="res_model">drkds.hr.document</field>
+        <field name="category">default</field>
+        <field name="delay_count">0</field>
+    </record>
+
+    <record id="ir_cron_drkds_hr_document_refresh" model="ir.cron">
+        <field name="name">Employee Documents: refresh states and remind</field>
+        <field name="model_id" ref="model_drkds_hr_document"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_refresh_states()</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <data noupdate="1">
+        <record id="document_type_passport" model="drkds.hr.document.type">
+            <field name="name">Passport</field>
+            <field name="sequence">10</field>
+            <field name="requires_expiry" eval="True"/>
+            <field name="remind_days">90</field>
+            <field name="mandatory" eval="False"/>
+        </record>
+        <record id="document_type_contract" model="drkds.hr.document.type">
+            <field name="name">Employment Contract</field>
+            <field name="sequence">20</field>
+            <field name="requires_expiry" eval="True"/>
+            <field name="remind_days">30</field>
+            <field name="mandatory" eval="False"/>
+        </record>
+        <record id="document_type_work_permit" model="drkds.hr.document.type">
+            <field name="name">Work Permit</field>
+            <field name="sequence">30</field>
+            <field name="requires_expiry" eval="True"/>
+            <field name="remind_days">60</field>
+            <field name="mandatory" eval="False"/>
+        </record>
+        <record id="document_type_certificate" model="drkds.hr.document.type">
+            <field name="name">Educational Certificate</field>
+            <field name="sequence">40</field>
+            <field name="requires_expiry" eval="False"/>
+            <field name="remind_days">0</field>
+            <field name="mandatory" eval="False"/>
+        </record>
+    </data>
+
+</odoo>

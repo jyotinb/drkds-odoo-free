@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_employee_form_drkds_hr_document" model="ir.ui.view">
+        <field name="name">hr.employee.form.drkds.hr.document</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_view_drkds_hr_documents" type="object"
+                        class="oe_stat_button" icon="fa-id-card-o"
+                        groups="hr.group_hr_user" invisible="not id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="drkds_hr_document_count"/>
+                        </span>
+                        <span class="o_stat_text">Documents</span>
+                        <span class="o_stat_text text-danger"
+                              invisible="not drkds_hr_expired_document_count">
+                            <field name="drkds_hr_expired_document_count" class="me-1"/>expired
+                        </span>
+                    </div>
+                </button>
+            </div>
+            <xpath expr="//page[@name='hr_settings']" position="before">
+                <page name="drkds_hr_documents" string="Documents" groups="hr.group_hr_user">
+                    <div class="alert alert-warning mb-3" role="alert"
+                         invisible="not drkds_hr_missing_mandatory">
+                        <strong>Missing mandatory documents:</strong>
+                        <field name="drkds_hr_missing_type_ids" widget="many2many_tags" class="d-inline"/>
+                    </div>
+                    <!-- the alert above reads it; hidden because the tags say it already -->
+                    <field name="drkds_hr_missing_mandatory" invisible="1"/>
+                    <field name="drkds_hr_document_ids" context="{'default_employee_id': id}">
+                        <list decoration-warning="state == 'expiring'"
+                              decoration-danger="state == 'expired'" editable="bottom">
+                            <field name="type_id" options="{'no_create': True}"/>
+                            <field name="number"/>
+                            <field name="issue_date"/>
+                            <field name="expiry_date" required="requires_expiry"/>
+                            <field name="requires_expiry" column_invisible="1"/>
+                            <field name="file" filename="file_name" widget="binary"/>
+                            <field name="file_name" column_invisible="1"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'valid'"
+                                   decoration-warning="state == 'expiring'"
+                                   decoration-danger="state == 'expired'"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_employee_filter_drkds_hr_document" model="ir.ui.view">
+        <field name="name">hr.employee.search.drkds.hr.document</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>
+        <field name="arch" type="xml">
+            <filter name="inactive" position="before">
+                <filter name="drkds_hr_missing_mandatory" string="Missing Mandatory Documents"
+                        domain="[('drkds_hr_missing_mandatory', '=', True)]"
+                        groups="hr.group_hr_user"/>
+                <filter name="drkds_hr_expired_documents" string="Expired Documents"
+                        domain="[('drkds_hr_document_ids.state', '=', 'expired')]"
+                        groups="hr.group_hr_user"/>
+                <separator/>
+            </filter>
+        </field>
+    </record>
+
+</odoo>

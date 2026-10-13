@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_drkds_hr_document" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.drkds.hr.document</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="hr.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <block id="contract_work_permit_expiration_notify" position="after">
+                <block title="Employee Documents" name="drkds_hr_document_setting_container">
+                    <setting id="drkds_hr_document_responsible_setting" company_dependent="1"
+                             string="Document Reminder Fallback"
+                             help="Who gets document expiry reminders when the employee has no HR responsible.">
+                        <field name="drkds_hr_document_responsible_id" widget="many2one_avatar_user"/>
+                    </setting>
+                </block>
+            </block>
+        </field>
+    </record>
+
+</odoo>

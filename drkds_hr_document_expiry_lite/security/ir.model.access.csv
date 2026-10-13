@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_drkds_hr_document_type_user,drkds.hr.document.type hr user,model_drkds_hr_document_type,hr.group_hr_user,1,0,0,0
+access_drkds_hr_document_type_manager,drkds.hr.document.type hr manager,model_drkds_hr_document_type,hr.group_hr_manager,1,1,1,1
+access_drkds_hr_document_user,drkds.hr.document hr user,model_drkds_hr_document,hr.group_hr_user,1,1,1,1

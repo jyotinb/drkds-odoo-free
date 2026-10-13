@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_drkds_hr_document" name="Documents"
+              parent="hr.menu_hr_root" action="action_drkds_hr_document"
+              groups="hr.group_hr_user" sequence="25"/>
+
+    <menuitem id="menu_drkds_hr_document_type" name="Document Types"
+              parent="hr.menu_human_resources_configuration"
+              action="action_drkds_hr_document_type"
+              groups="hr.group_hr_manager" sequence="60"/>
+
+</odoo>
