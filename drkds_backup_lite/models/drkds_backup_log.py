@@ -3,6 +3,7 @@ import os
 from odoo import api, fields, models
 
 STATUSES = [
+    ("running", "Running"),
     ("done", "Done"),
     ("failed", "Failed"),
     ("deleted", "Done (file removed)"),
@@ -12,9 +13,11 @@ STATUSES = [
 class DrkdsBackupLog(models.Model):
     """One line per backup run: what was written, where, how big, how long.
 
-    Written by :meth:`drkds.backup.config._backup_once` and never edited by
-    hand; the only later change is ``status`` moving to ``deleted`` when
-    retention removes the file.
+    Written by :meth:`drkds.backup.config._backup_once`, in sudo, and never
+    edited by hand (nobody has write access). A line opens as ``running`` and
+    ends as ``done`` or ``failed``; a scheduled run killed on the way is
+    closed as ``failed`` by the next run. The only later change is ``status``
+    moving to ``deleted`` when retention removes the file.
     """
 
     _name = "drkds.backup.log"
@@ -34,7 +37,8 @@ class DrkdsBackupLog(models.Model):
     )
     date_start = fields.Datetime(string="Started", required=True, readonly=True)
     duration = fields.Float(string="Duration (s)", readonly=True, digits=(16, 1))
-    size = fields.Integer(string="Size (bytes)", readonly=True)
+    # Float, not Integer: an integer column overflows past 2 GiB.
+    size = fields.Float(string="Size (bytes)", readonly=True, digits=(20, 0))
     size_display = fields.Char(compute="_compute_size_display", string="Size")
     status = fields.Selection(STATUSES, required=True, readonly=True, index=True)
     message = fields.Text(readonly=True)

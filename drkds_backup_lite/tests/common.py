@@ -10,9 +10,10 @@ CONFIG_LOGGER = "odoo.addons.drkds_backup_lite.models.drkds_backup_config"
 
 
 class BackupCommon(TransactionCase):
-    """A writable temporary folder per test, an administrator and a second
-    user to be told about failures. The folder is removed after each test,
-    whatever its permissions were left at."""
+    """A writable temporary folder per test, an administrator, a second
+    administrator to be told about failures, and a plain employee who must
+    not reach any of it. The folder is removed after each test, whatever its
+    permissions were left at."""
 
     @classmethod
     def setUpClass(cls):
@@ -25,6 +26,10 @@ class BackupCommon(TransactionCase):
         )
         cls.watcher = new_test_user(
             cls.env, login="drkds_bkl_watcher", name="Backup Watcher",
+            groups="base.group_user,base.group_system",
+        )
+        cls.employee = new_test_user(
+            cls.env, login="drkds_bkl_employee", name="Plain Employee",
             groups="base.group_user",
         )
 

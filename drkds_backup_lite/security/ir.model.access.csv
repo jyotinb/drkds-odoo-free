@@ -1,3 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_drkds_backup_config_system,drkds.backup.config system,model_drkds_backup_config,base.group_system,1,1,1,1
-access_drkds_backup_log_system,drkds.backup.log system,model_drkds_backup_log,base.group_system,1,1,0,1
+access_drkds_backup_log_system,drkds.backup.log system,model_drkds_backup_log,base.group_system,1,0,0,1

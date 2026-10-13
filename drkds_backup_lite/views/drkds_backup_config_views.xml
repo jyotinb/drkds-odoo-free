@@ -15,6 +15,7 @@
                 <field name="nextcall"/>
                 <field name="last_run"/>
                 <field name="last_status" widget="badge"
+                       decoration-info="last_status == 'running'"
                        decoration-success="last_status in ('done', 'deleted')"
                        decoration-danger="last_status == 'failed'"/>
                 <field name="active" column_invisible="1"/>
@@ -62,6 +63,7 @@
                             <field name="nextcall"/>
                             <field name="last_run"/>
                             <field name="last_status" widget="badge"
+                                   decoration-info="last_status == 'running'"
                                    decoration-success="last_status in ('done', 'deleted')"
                                    decoration-danger="last_status == 'failed'"/>
                         </group>
@@ -69,7 +71,7 @@
                     <group string="On failure">
                         <field name="notify_user_ids" widget="many2many_tags" nolabel="1" colspan="2"
                                options="{'no_create': True}"
-                               placeholder="Users who get a to-do when a run fails"/>
+                               placeholder="Administrators who get a to-do when a run fails"/>
                     </group>
                     <group>
                         <field name="active" invisible="1"/>

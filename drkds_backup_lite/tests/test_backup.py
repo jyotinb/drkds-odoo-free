@@ -282,11 +282,22 @@ class TestBackupSecurity(BackupCommon):
         self.assertFalse(self.env["ir.cron"].browse(cron_id).exists())
 
     def test_copy_gets_its_own_cron(self):
+        """The copy shares the folder, which two active configurations may
+        not, so it starts archived with a paused schedule; given its own
+        folder, it can be unarchived."""
         config = self._config()
         copy = config.copy()
         self.assertTrue(copy.cron_id)
         self.assertNotEqual(copy.cron_id, config.cron_id)
         self.assertEqual(copy.name, "Nightly (copy)")
+        self.assertFalse(copy.active)
+        self.assertFalse(copy.cron_id.active)
+        with self.assertRaises(ValidationError):
+            copy.active = True
+        weekly = os.path.join(self.folder, "weekly")
+        os.makedirs(weekly)
+        copy.write({"folder": weekly, "active": True})
+        self.assertTrue(copy.cron_id.active)
 
     def test_cron_run_writes_a_log(self):
         """What the scheduler executes: the server action code, as root."""

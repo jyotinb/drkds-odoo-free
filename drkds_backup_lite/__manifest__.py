@@ -8,32 +8,34 @@ Scheduled Database Backup (Lite)
 A scheduled dump of the current database to a folder on the server, for
 Odoo 19 Community. Set a folder, pick a format, say how many copies to keep,
 and the cron does the rest. Every run, good or bad, is written to a log,
-and a failed run raises a to-do for the people you name.
+and a failed run raises a to-do for the administrators you name.
 
 What it gives you
 -----------------
 * **Backup configurations** - a name, the target folder, the format, how
   many files to keep, who to tell when it fails, and the schedule. Each
-  configuration owns its own scheduled action.
+  configuration owns its own scheduled action and its own folder.
 * **Two formats** - a zip holding ``dump.sql``, ``manifest.json`` and the
   filestore, which the database manager can restore as it is; or a plain
   PostgreSQL custom-format dump for ``pg_restore``.
 * **Retention** - after each run the oldest files beyond the last N are
   removed from the folder, and their log lines are marked as such.
 * **A log per run** - file, size, duration, status and message. Nothing
-  disappears silently.
+  disappears silently: a run stopped half-way by a time limit or a restart
+  is closed as failed by the next run, which removes its partial files.
 * **Backup now** - run a configuration on demand and land on its log.
 * **Test folder** - check that the Odoo system user can write to the
   folder before the night comes.
 * **Failure alerts** - a failed run posts a to-do activity to the notified
-  users and a note in the configuration's chatter.
+  administrators and a note in the configuration's chatter.
 
 Notes
 -----
 The dump is produced by ``pg_dump`` with the connection settings Odoo is
 already running with. No master password is asked for, none is stored, and
-nothing is sent anywhere. The folder must be writable by the system user
-that runs Odoo.
+nothing is sent anywhere. It works with database listing turned off. The
+folder must be writable by the system user that runs Odoo, and may not be
+inside the filestore or an addons path.
 
 The drkds Backup app adds remote targets (SFTP, S3), encryption,
 restore from the interface and multi-database schedules.

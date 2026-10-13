@@ -6,6 +6,7 @@
         <field name="model">drkds.backup.log</field>
         <field name="arch" type="xml">
             <list string="Backup Runs" create="0" edit="0"
+                  decoration-info="status == 'running'"
                   decoration-danger="status == 'failed'" decoration-muted="status == 'deleted'">
                 <field name="date_start"/>
                 <field name="config_id"/>
@@ -14,6 +15,7 @@
                 <field name="size_display"/>
                 <field name="duration" optional="show"/>
                 <field name="status" widget="badge"
+                       decoration-info="status == 'running'"
                        decoration-success="status == 'done'"
                        decoration-danger="status == 'failed'"
                        decoration-muted="status == 'deleted'"/>
@@ -35,6 +37,7 @@
                         <group>
                             <field name="config_id"/>
                             <field name="status" widget="badge"
+                                   decoration-info="status == 'running'"
                                    decoration-success="status == 'done'"
                                    decoration-danger="status == 'failed'"
                                    decoration-muted="status == 'deleted'"/>
@@ -64,6 +67,7 @@
                 <field name="name"/>
                 <field name="config_id"/>
                 <field name="message"/>
+                <filter name="running" string="Running" domain="[('status', '=', 'running')]"/>
                 <filter name="done" string="Done" domain="[('status', '=', 'done')]"/>
                 <filter name="failed" string="Failed" domain="[('status', '=', 'failed')]"/>
                 <filter name="deleted" string="File Removed" domain="[('status', '=', 'deleted')]"/>
