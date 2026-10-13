@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_mass_update_wizard_form" model="ir.ui.view">
+        <field name="name">drkds.mass.update.wizard.form</field>
+        <field name="model">drkds.mass.update.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Mass Update">
+                <field name="state" invisible="1"/>
+                <field name="model_name" invisible="1"/>
+                <field name="relation_model" invisible="1"/>
+                <field name="field_type" invisible="1"/>
+                <field name="res_ids" invisible="1"/>
+                <!-- Step 1: which field -->
+                <div invisible="state != 'field'">
+                    <group>
+                        <group>
+                            <field name="model_description"/>
+                            <field name="record_count"/>
+                        </group>
+                        <group>
+                            <field name="field_name"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        Only fields you can write are listed: stored, editable fields of a
+                        supported type. Press Next to enter the value.
+                    </div>
+                </div>
+                <!-- Step 2: which value -->
+                <div invisible="state != 'value'">
+                    <group>
+                        <group>
+                            <field name="model_description"/>
+                            <field name="record_count"/>
+                        </group>
+                        <group>
+                            <field name="field_label"/>
+                            <field name="set_empty"/>
+                        </group>
+                    </group>
+                    <group string="New Value" invisible="set_empty">
+                        <field name="value_char" invisible="field_type != 'char'"/>
+                        <field name="value_text" invisible="field_type != 'text'"/>
+                        <field name="value_html" invisible="field_type != 'html'"/>
+                        <field name="value_integer" invisible="field_type != 'integer'"/>
+                        <field name="value_float" invisible="field_type not in ('float', 'monetary')"/>
+                        <field name="value_boolean" invisible="field_type != 'boolean'"/>
+                        <field name="value_date" invisible="field_type != 'date'"/>
+                        <field name="value_datetime" invisible="field_type != 'datetime'"/>
+                        <field name="value_selection" invisible="field_type != 'selection'"/>
+                        <field name="value_record_id" widget="many2one_reference"
+                               invisible="field_type not in ('many2one', 'many2many')"
+                               options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                    <div class="alert alert-info" role="alert" invisible="field_type != 'many2many' or set_empty">
+                        The chosen record is added to the existing tags of every selected
+                        record. Tick Set Empty to remove all tags instead.
+                    </div>
+                    <div class="alert alert-warning" role="alert">
+                        The change is applied as you, with your access rights, and cannot
+                        be undone in one step. Records you are not allowed to change are
+                        reported and left as they are.
+                    </div>
+                </div>
+                <!-- Step 3: the result -->
+                <div invisible="state != 'done'">
+                    <group>
+                        <group>
+                            <field name="model_description"/>
+                            <field name="field_label"/>
+                        </group>
+                        <group>
+                            <field name="updated_count"/>
+                            <field name="failed_count"/>
+                        </group>
+                    </group>
+                    <field name="result_summary" nolabel="1" readonly="1"/>
+                </div>
+                <footer>
+                    <button name="action_next" type="object" string="Next"
+                            class="btn-primary" invisible="state != 'field'"/>
+                    <button name="action_apply" type="object" string="Apply"
+                            class="btn-primary" invisible="state != 'value'"
+                            confirm="Apply this value to every selected record?"/>
+                    <button name="action_back" type="object" string="Back"
+                            class="btn-secondary" invisible="state != 'value'"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"
+                            invisible="state == 'done'"/>
+                    <button string="Close" special="cancel" class="btn-primary"
+                            invisible="state != 'done'"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

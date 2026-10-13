@@ -1,0 +1,43 @@
+{
+  "module": "drkds_mass_update",
+  "title": "Mass Update",
+  "summary": "Update one field on many selected records from the list view, as the current user, with a clear report of what could not be changed",
+  "intro": "Two hundred contacts need the same tag. Forty products move to a new category. A whole page of orders gets a different salesperson. Select them in the list, open Mass update from the Actions menu, pick the field, press Next, give it a value, apply.\n\nThe write runs as you, with your own access rights, in batches of 500. A record you are not allowed to change is reported by name, not silently skipped, and never turns into an error that undoes the rest.",
+  "shots": [],
+  "features": [
+    [
+      "The administrator chooses where it appears",
+      "Settings, Technical, Mass Update lists the models on which the action is allowed. Enabling a model puts a Mass update entry in the Actions menu of its list view; disabling takes it away again. Nothing is bound to a model you did not choose."
+    ],
+    [
+      "Only fields that can be written",
+      "The field picker offers the stored, writable fields of the model and nothing else: no identifier, no creation or modification stamps, no binary, no readonly field, no computed field the ORM would refuse or overwrite, no field reserved to a group you are not in."
+    ],
+    [
+      "A value input that fits the field",
+      "Text, long text, formatted text, whole number, number, yes or no, date, date and time, a choice from the selection, a record picker for a link field, a record to add for a tag field."
+    ],
+    [
+      "Set empty",
+      "One tick clears the field on every selected record instead of setting a value. Numbers go to zero, a tag field loses all its tags, everything else becomes empty."
+    ],
+    [
+      "As you, in batches, never as superuser",
+      "Records are written 500 at a time under your own rights. When an access rule refuses a batch, each record of that batch is retried alone, so one locked record never blocks the other 499."
+    ],
+    [
+      "A result you can act on",
+      "The wizard ends with the number of records updated, the number not updated, and the list of the records it could not change with the reason given by Odoo."
+    ]
+  ],
+  "notes": [
+    "Depends on base only. Works on any regular model, from contacts to your own custom models.",
+    "The wizard never uses superuser rights. The model's access rights and record rules decide what each user may change, exactly as if they edited each record by hand.",
+    "A tag (many-to-many) value is added to the existing tags; it does not replace them. Use Set empty to remove all tags.",
+    "There is no undo. Check the selection and the value before applying; the wizard asks for confirmation.",
+    "Uninstalling removes every Mass update action the module created, so no dead entry is left in any Actions menu.",
+    "One field per run. Run the wizard again on the same selection to change a second field."
+  ],
+  "disclaimer": false,
+  "paid_sentence": null
+}
