@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_picking_form_drkds_quality" model="ir.ui.view">
+        <field name="name">stock.picking.form.drkds.quality</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_drkds_quality_checks" type="object"
+                        class="oe_stat_button" icon="fa-check-square-o"
+                        invisible="drkds_quality_check_count == 0">
+                    <div class="o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="drkds_quality_open_count"/>/<field name="drkds_quality_check_count"/>
+                        </span>
+                        <span class="o_stat_text">Quality Open</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_picking_search_drkds_quality" model="ir.ui.view">
+        <field name="name">stock.picking.search.drkds.quality</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+            <filter name="late" position="after">
+                <filter name="drkds_quality_open" string="Quality Checks Open"
+                        domain="[('drkds_quality_check_ids.state', '!=', 'pass')]"/>
+            </filter>
+        </field>
+    </record>
+
+</odoo>

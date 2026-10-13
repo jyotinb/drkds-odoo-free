@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_quality_check_list" model="ir.ui.view">
+        <field name="name">drkds.quality.check.list</field>
+        <field name="model">drkds.quality.check</field>
+        <field name="arch" type="xml">
+            <list string="Quality Checks" decoration-success="state == 'pass'"
+                  decoration-danger="state == 'fail'" decoration-info="state == 'todo'">
+                <field name="name"/>
+                <field name="point_id"/>
+                <field name="picking_id"/>
+                <field name="product_id"/>
+                <field name="lot_id" optional="show" groups="stock.group_production_lot"/>
+                <field name="check_type" optional="hide"/>
+                <field name="measure" optional="show"/>
+                <field name="measure_unit" optional="hide"/>
+                <field name="blocking" optional="hide"/>
+                <field name="user_id" optional="show"/>
+                <field name="date" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'pass'"
+                       decoration-danger="state == 'fail'"
+                       decoration-info="state == 'todo'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_quality_check_kanban" model="ir.ui.view">
+        <field name="name">drkds.quality.check.kanban</field>
+        <field name="model">drkds.quality.check</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" group_create="false" quick_create="false">
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_record_top mb-2">
+                            <strong class="o_kanban_record_title"><field name="name"/></strong>
+                        </div>
+                        <div><field name="point_id"/></div>
+                        <div><i class="fa fa-cube me-1" title="Product"/><field name="product_id"/></div>
+                        <div t-if="record.picking_id.raw_value"><i class="fa fa-truck me-1" title="Transfer"/><field name="picking_id"/></div>
+                        <div t-if="record.check_type.raw_value == 'measure'" class="text-muted">
+                            <field name="measure"/> <field name="measure_unit"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_drkds_quality_check_form" model="ir.ui.view">
+        <field name="name">drkds.quality.check.form</field>
+        <field name="model">drkds.quality.check</field>
+        <field name="arch" type="xml">
+            <form string="Quality Check">
+                <header>
+                    <button name="action_pass" string="Pass" type="object" class="oe_highlight"
+                            invisible="state != 'todo' or check_type != 'pass_fail'"/>
+                    <button name="action_fail" string="Fail" type="object"
+                            invisible="state != 'todo' or check_type != 'pass_fail'"/>
+                    <button name="action_measure" string="Record Measure" type="object" class="oe_highlight"
+                            invisible="state != 'todo' or check_type != 'measure'"/>
+                    <button name="action_reset_todo" string="Reset to To Do" type="object"
+                            invisible="state == 'todo'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="todo,pass,fail"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="What">
+                            <field name="point_id" readonly="state != 'todo'"/>
+                            <field name="check_type"/>
+                            <field name="blocking"/>
+                            <field name="product_id" readonly="state != 'todo'"/>
+                            <field name="lot_id" groups="stock.group_production_lot" readonly="state != 'todo'"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Where">
+                            <field name="picking_id" readonly="state != 'todo'"/>
+                            <field name="move_id" readonly="state != 'todo'"/>
+                            <field name="partner_id"/>
+                            <field name="user_id"/>
+                            <field name="date"/>
+                        </group>
+                    </group>
+                    <group string="Measure" invisible="check_type != 'measure'">
+                        <group>
+                            <label for="measure"/>
+                            <div class="o_row">
+                                <field name="measure" readonly="state != 'todo'"/>
+                                <field name="measure_unit"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="norm_min"/>
+                            <field name="norm_max"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Instructions" name="instructions">
+                            <field name="instructions"/>
+                        </page>
+                        <page string="Note" name="note">
+                            <field name="note" placeholder="What was found. Attach a photo through the chatter."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_quality_check_search" model="ir.ui.view">
+        <field name="name">drkds.quality.check.search</field>
+        <field name="model">drkds.quality.check</field>
+        <field name="arch" type="xml">
+            <search string="Quality Checks">
+                <field name="name"/>
+                <field name="point_id"/>
+                <field name="picking_id"/>
+                <field name="product_id"/>
+                <field name="lot_id"/>
+                <field name="user_id"/>
+                <filter name="todo" string="To Do" domain="[('state', '=', 'todo')]"/>
+                <filter name="passed" string="Passed" domain="[('state', '=', 'pass')]"/>
+                <filter name="failed" string="Failed" domain="[('state', '=', 'fail')]"/>
+                <separator/>
+                <filter name="blocking" string="Blocking" domain="[('blocking', '=', True)]"/>
+                <filter name="mine" string="Checked by Me" domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter name="date" string="Checked On" date="date"/>
+                <group name="group_by">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_point" string="Control Point" context="{'group_by': 'point_id'}"/>
+                    <filter name="group_picking" string="Transfer" context="{'group_by': 'picking_id'}"/>
+                    <filter name="group_picking_type" string="Operation Type" context="{'group_by': 'picking_type_id'}"/>
+                    <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_user" string="Checked By" context="{'group_by': 'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_quality_check" model="ir.actions.act_window">
+        <field name="name">Quality Checks</field>
+        <field name="res_model">drkds.quality.check</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_drkds_quality_check_search"/>
+        <field name="context">{'search_default_todo': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No quality checks yet</p>
+            <p>Checks are raised on their own when a transfer matching a control point is confirmed. You can also create one by hand.</p>
+        </field>
+    </record>
+
+</odoo>

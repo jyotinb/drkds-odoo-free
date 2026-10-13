@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_drkds_quality_root" name="Quality"
+              web_icon="drkds_quality_lite,static/description/icon.png"
+              groups="stock.group_stock_user" sequence="145"/>
+
+    <menuitem id="menu_drkds_quality_check" name="Checks"
+              parent="menu_drkds_quality_root"
+              action="action_drkds_quality_check" sequence="10"/>
+
+    <menuitem id="menu_drkds_quality_point" name="Points"
+              parent="menu_drkds_quality_root"
+              action="action_drkds_quality_point" sequence="20"/>
+
+</odoo>

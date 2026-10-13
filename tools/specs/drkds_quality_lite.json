@@ -1,0 +1,42 @@
+{
+  "module": "drkds_quality_lite",
+  "title": "Quality Checks on Transfers (Lite)",
+  "summary": "Pass/fail and measured quality checks on receipts and deliveries, on Odoo 19 Community",
+  "intro": "Odoo 19 Community receives and ships goods, but it has no place to record whether the goods were actually inspected before they went on the shelf or out of the door. This module adds that one record, and the rule that goes with it: a transfer with an open or failed blocking check cannot be validated.",
+  "shots": [],
+  "features": [
+    [
+      "Control points",
+      "Say what must be checked: a product or a whole product category, on chosen operation types or on all of them, with written instructions the inspector reads on the spot."
+    ],
+    [
+      "Pass/fail or measured",
+      "A plain decision, or a measured value with minimum, maximum and unit. A measure outside the range fails on its own; nobody has to remember the tolerance."
+    ],
+    [
+      "Raised automatically",
+      "Confirming a transfer creates one check per matching move. Confirming again or adding a move raises only what is missing, and a cancelled move drops its open checks."
+    ],
+    [
+      "A gate on validation",
+      "A transfer cannot be validated while a blocking check is still to do or has failed. The error lists the checks. Mark a point non-blocking to record without holding the goods."
+    ],
+    [
+      "Numbered, traceable",
+      "QC/00001 onward, each linked to its transfer, move, product and lot, with who decided, when, a note and a chatter for photos."
+    ],
+    [
+      "On the transfer itself",
+      "A smart button shows open / total checks, and a transfer filter lists everything that still has something to inspect."
+    ]
+  ],
+  "notes": [
+    "Depends on Inventory only, Odoo 19 Community. Nothing from Enterprise.",
+    "Uses the Inventory User and Administrator groups: users decide checks, administrators define points.",
+    "Quality menu with Checks and Points; list, kanban, form and search views.",
+    "Transfers only. No checks on manufacturing orders, no sampling plans, no worksheets, no quality alerts.",
+    "No outbound calls of any kind. Everything stays in your database."
+  ],
+  "disclaimer": false,
+  "paid_sentence": null
+}

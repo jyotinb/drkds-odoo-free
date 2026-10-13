@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_quality_point_list" model="ir.ui.view">
+        <field name="name">drkds.quality.point.list</field>
+        <field name="model">drkds.quality.point</field>
+        <field name="arch" type="xml">
+            <list string="Control Points">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="product_category_id"/>
+                <field name="picking_type_ids" widget="many2many_tags"/>
+                <field name="check_type"/>
+                <field name="blocking" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_quality_point_kanban" model="ir.ui.view">
+        <field name="name">drkds.quality.point.kanban</field>
+        <field name="model">drkds.quality.point</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_record_top mb-2">
+                            <strong class="o_kanban_record_title"><field name="name"/></strong>
+                        </div>
+                        <div t-if="record.product_id.raw_value"><i class="fa fa-cube me-1" title="Product"/><field name="product_id"/></div>
+                        <div t-if="!record.product_id.raw_value"><i class="fa fa-folder-o me-1" title="Category"/><field name="product_category_id"/></div>
+                        <div><field name="check_type"/> <span t-if="record.blocking.raw_value" class="badge text-bg-warning">Blocking</span></div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_drkds_quality_point_form" model="ir.ui.view">
+        <field name="name">drkds.quality.point.form</field>
+        <field name="model">drkds.quality.point</field>
+        <field name="arch" type="xml">
+            <form string="Control Point">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_checks" type="object" class="oe_stat_button"
+                                icon="fa-check-square-o" invisible="check_count == 0">
+                            <field name="check_count" widget="statinfo" string="Checks"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Visual inspection on receipt"/></h1>
+                    </div>
+                    <group>
+                        <group string="Applies To">
+                            <field name="product_id"/>
+                            <field name="product_category_id"/>
+                            <field name="picking_type_ids" widget="many2many_tags"
+                                   placeholder="All operation types"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Check">
+                            <field name="check_type" widget="radio"/>
+                            <field name="norm_min" invisible="check_type != 'measure'" required="check_type == 'measure'"/>
+                            <field name="norm_max" invisible="check_type != 'measure'" required="check_type == 'measure'"/>
+                            <field name="measure_unit" invisible="check_type != 'measure'"/>
+                            <field name="blocking"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Instructions" name="instructions">
+                            <field name="instructions" placeholder="What the inspector must look at, and what counts as a fail."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_quality_point_search" model="ir.ui.view">
+        <field name="name">drkds.quality.point.search</field>
+        <field name="model">drkds.quality.point</field>
+        <field name="arch" type="xml">
+            <search string="Control Points">
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="product_category_id"/>
+                <field name="picking_type_ids"/>
+                <filter name="pass_fail" string="Pass / Fail" domain="[('check_type', '=', 'pass_fail')]"/>
+                <filter name="measure" string="Measure" domain="[('check_type', '=', 'measure')]"/>
+                <separator/>
+                <filter name="blocking" string="Blocking" domain="[('blocking', '=', True)]"/>
+                <filter name="non_blocking" string="Non-blocking" domain="[('blocking', '=', False)]"/>
+                <separator/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_type" string="Type" context="{'group_by': 'check_type'}"/>
+                    <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_category" string="Product Category" context="{'group_by': 'product_category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_quality_point" model="ir.actions.act_window">
+        <field name="name">Control Points</field>
+        <field name="res_model">drkds.quality.point</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_drkds_quality_point_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Define your first control point</p>
+            <p>A control point says which product or category must be checked, on which operation types, and whether the result holds up validation of the transfer.</p>
+        </field>
+    </record>
+
+</odoo>
