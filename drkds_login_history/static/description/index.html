@@ -29,7 +29,13 @@
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">Every attempt, not only the good ones</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">One row per success, failure or logout, with the login name exactly as typed, the matched user, the time, the IP address and the browser string.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">One row per success, failure or logout, with the login name exactly as typed, the matched user (archived accounts included), the time, the IP address and the browser string. Browser form, JSON-RPC, XML-RPC and passkey logins are all covered.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Honest about two-factor logins</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A right password that still waits for its 2FA code is recorded as 2FA Pending, not as a success. The code step then adds its own Success or Failed row, so a stolen password stopped by 2FA stands out.</p>
       </div>
     </div>
     <div class="oe_span6">
@@ -41,7 +47,7 @@
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">Filters and a chart</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Today, Last 7 Days, Failed, Success, Logout and Unknown Login Name, grouped by user, result, day or IP address, plus a bar chart of events per day stacked by result.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Today, Last 7 Days (both in your timezone), Failed, Success, 2FA Pending, Logout and Unknown Login Name, grouped by user, result, day or IP address, plus a bar chart of events per day stacked by result.</p>
       </div>
     </div>
     <div class="oe_span6">
@@ -59,7 +65,7 @@
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">Administrators only</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The menu, the action and the model are limited to Settings administrators. Rows cannot be created or edited from the interface.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The menu, the action, the model and the figures on the user form are limited to Settings administrators. Rows cannot be created or edited from the interface.</p>
       </div>
     </div>
   </div>
@@ -120,8 +126,10 @@
         <li>Depends on base, web and base_setup only. Odoo 19 Community.</li>
         <li>Recording starts with the first login after installation; nothing is back-filled.</li>
         <li>The session identifier is never stored, only a SHA-256 hash of it.</li>
+        <li>API-key calls are not logins: only the authenticate call of an integration is recorded, never each request it makes.</li>
+        <li>Values sent by the client are cut to a fixed length (login 255, browser string 1024, address 64 characters).</li>
         <li>The Country field stays empty by design: no geolocation lookup, no outbound call, no telemetry.</li>
-        <li>Behind a reverse proxy, enable Odoo&#x27;s proxy mode so the IP address is the real client address.</li>
+        <li>Behind a reverse proxy, enable Odoo&#x27;s proxy mode so the IP address is the real client address. Without proxy mode, X-Forwarded-For is ignored.</li>
       </ul>
     </div>
   </div>

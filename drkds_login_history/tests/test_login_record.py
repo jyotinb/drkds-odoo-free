@@ -5,17 +5,29 @@ Every figure asserted here is computed by hand from the records the test
 itself creates, so a wrong count or a wrong cutoff cannot pass by accident.
 """
 
-from datetime import timedelta
+import ast
+from datetime import datetime, time, timedelta
+from types import SimpleNamespace
+from unittest.mock import patch
+
+import pytz
+from lxml import etree
 
 from odoo import fields
 from odoo.exceptions import AccessDenied, AccessError
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase, new_test_user
 
+from odoo.addons.base.models.res_users import ResUsersPatchedInTest
 from odoo.addons.drkds_login_history.models.drkds_login_record import (
+    IP_SIZE,
+    LOGIN_SIZE,
     PURGE_DAYS_PARAM,
+    USER_AGENT_SIZE,
     parse_user_agent,
 )
+
+RECORD_MODULE = "odoo.addons.drkds_login_history.models.drkds_login_record"
 
 PASSWORD = "drkds-LH-pass-2026"
 
@@ -36,6 +48,10 @@ class TestLoginRecord(TransactionCase):
         cls.admin = new_test_user(
             cls.env, login="drkds_lh_admin", groups="base.group_user,base.group_system"
         )
+        cls.archived = new_test_user(
+            cls.env, login="drkds_lh_gone", password=PASSWORD, groups="base.group_user"
+        )
+        cls.archived.active = False
         # The detached writer runs in its own environment; the users must be
         # in the table before it links rows to them.
         cls.env.flush_all()
@@ -96,6 +112,72 @@ class TestLoginRecord(TransactionCase):
         self.assertEqual(rows.result, "failed")
         self.assertFalse(rows.user_id)
 
+    def test_archived_user_attempt_is_linked_to_the_user(self):
+        """Odoo refuses an archived user's login; the row still names the user.
+
+        A departed employee trying an old account must show up against that
+        account, not under "Unknown Login Name".
+        """
+        self._authenticate_denied("drkds_lh_gone", PASSWORD)
+        rows = self._rows("drkds_lh_gone")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows.result, "failed")
+        self.assertEqual(rows.user_id, self.archived)
+
+    def test_login_matched_like_odoo_matches_it(self):
+        """Case and spaces are kept as typed; Odoo does not match them either."""
+        for typed in ("DRKDS_LH_USER", " drkds_lh_user "):
+            self._authenticate_denied(typed, PASSWORD)
+            rows = self._rows(typed)
+            self.assertEqual(len(rows), 1, typed)
+            self.assertEqual(rows.result, "failed")
+            self.assertFalse(rows.user_id, "core matched no user for %r" % typed)
+
+    def test_non_string_login_is_recorded_and_denied(self):
+        """A JSON-RPC client may send a number as the login.
+
+        Core answers AccessDenied; the module must neither turn that into a
+        TypeError nor lose the row.
+        """
+        self._authenticate_denied(12345, "whatever")
+        rows = self._rows("12345")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows.result, "failed")
+
+    def test_login_filled_in_by_a_lower_override_is_recorded(self):
+        """auth_passkey learns the login from the passkey and writes it into
+        the credential before calling super(). The row must carry it."""
+        user = self.user
+
+        def fake_core_login(self, credential, user_agent_env):
+            credential["login"] = "drkds_lh_user"
+            return {"uid": user.id, "auth_method": "passkey", "mfa": "skip"}
+
+        with patch.object(ResUsersPatchedInTest, "_login", fake_core_login):
+            self.Users.authenticate({"type": "drkds_fake_passkey"}, {"interactive": False})
+        rows = self._rows("drkds_lh_user")
+        self.assertEqual(rows.mapped("result"), ["success"])
+        self.assertEqual(rows.user_id, self.user)
+
+    def test_client_supplied_values_are_clipped(self):
+        """Login, User-Agent and (behind a proxy) the address come from the
+        client unauthenticated; each is cut to its documented size."""
+        fake_request = SimpleNamespace(
+            httprequest=SimpleNamespace(
+                environ={"HTTP_USER_AGENT": "Mozilla/5.0 Firefox/128.0 " + "A" * 60000},
+                remote_addr="<script>" + "9" * 3000,
+            ),
+            session=SimpleNamespace(sid="s" * 84),
+        )
+        with patch(RECORD_MODULE + ".request", fake_request):
+            new_id = self.Record._drkds_log_event("failed", login="L" * 5000)
+        row = self.Record.browse(new_id)
+        self.assertEqual(len(row.login), LOGIN_SIZE)
+        self.assertEqual(len(row.user_agent), USER_AGENT_SIZE)
+        self.assertEqual(len(row.ip_address), IP_SIZE)
+        self.assertEqual(row.browser, "Firefox")
+        self.assertRegex(row.session_hash, r"^[0-9a-f]{64}$")
+
     def test_logout_event_writes_logout_row(self):
         new_id = self.Record._drkds_log_event("logout", login="drkds_lh_user", uid=self.user.id)
         self.assertTrue(new_id)
@@ -139,6 +221,62 @@ class TestLoginRecord(TransactionCase):
             self.Record.with_user(self.admin).create({"result": "success"})
         admin_rows.unlink()
         self.assertFalse(self._rows("drkds_lh_user"))
+
+    def test_user_form_figures_are_admin_only(self):
+        """The figures are computed in sudo, so the fields carry the group.
+
+        Without it any internal user could read every account's failed
+        attempts of today over RPC.
+        """
+        self._make(0, "failed")
+        self.env.invalidate_all()
+        with self.assertRaises(AccessError):
+            self.user.with_user(self.plain).read(["drkds_failed_today"])
+        with self.assertRaises(AccessError):
+            self.user.with_user(self.plain).read(["drkds_last_login_date"])
+        self.env.invalidate_all()
+        figures = self.user.with_user(self.admin).read(["drkds_failed_today"])
+        self.assertEqual(figures[0]["drkds_failed_today"], 1)
+
+    # ------------------------------------------------------------- filters
+
+    def _filter_domain(self, name):
+        arch = self.env.ref("drkds_login_history.view_drkds_login_record_search").arch
+        node = etree.fromstring(arch).find(".//filter[@name='%s']" % name)
+        # A literal domain: evaluated by the server in the user's timezone,
+        # not by the browser in the browser's.
+        return ast.literal_eval(node.get("domain"))
+
+    def test_date_filters_follow_the_user_timezone(self):
+        """Today and Last 7 Days start at midnight in the user's timezone.
+
+        Kolkata is UTC+05:30: an event at 00:10 local time is still the
+        previous day in UTC, and must be inside "Today" all the same.
+        """
+        tz = pytz.timezone("Asia/Kolkata")
+        local_today = fields.Datetime.now().replace(tzinfo=pytz.utc).astimezone(tz).date()
+
+        def utc_of(local_day, hour, minute):
+            local = tz.localize(datetime.combine(local_day, time(hour, minute)))
+            return local.astimezone(pytz.utc).replace(tzinfo=None)
+
+        def make_at(when):
+            return self.Record.sudo().create(
+                {"result": "failed", "login": "drkds_tz", "event_date": when}
+            )
+
+        today_early = make_at(utc_of(local_today, 0, 10))
+        yesterday_late = make_at(utc_of(local_today - timedelta(days=1), 23, 50))
+        six_days_early = make_at(utc_of(local_today - timedelta(days=6), 0, 10))
+        seven_days_late = make_at(utc_of(local_today - timedelta(days=7), 23, 50))
+        Record = self.Record.with_context(tz="Asia/Kolkata")
+        base = [("login", "=", "drkds_tz")]
+
+        today = Record.search(base + self._filter_domain("today"))
+        self.assertEqual(today, today_early)
+        week = Record.search(base + self._filter_domain("last_7_days"))
+        self.assertEqual(week, today_early | yesterday_late | six_days_early)
+        self.assertNotIn(seven_days_late, week)
 
     # --------------------------------------------------------------- purge
 

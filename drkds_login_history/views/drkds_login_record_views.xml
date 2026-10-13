@@ -11,6 +11,7 @@
                 <field name="login"/>
                 <field name="result" widget="badge"
                        decoration-success="result == 'success'"
+                       decoration-warning="result == 'mfa_pending'"
                        decoration-danger="result == 'failed'"
                        decoration-info="result == 'logout'"/>
                 <field name="ip_address"/>
@@ -34,6 +35,7 @@
                             <field name="login"/>
                             <field name="result" widget="badge"
                                    decoration-success="result == 'success'"
+                                   decoration-warning="result == 'mfa_pending'"
                                    decoration-danger="result == 'failed'"
                                    decoration-info="result == 'logout'"/>
                             <field name="event_date"/>
@@ -63,14 +65,16 @@
                 <field name="user_id"/>
                 <field name="ip_address"/>
                 <field name="browser"/>
+                <!-- 'today' is resolved by the server in the user's timezone,
+                     the same day the user form's "Failed Today" counts. -->
                 <filter name="today" string="Today"
-                        domain="[('event_date', '>=', datetime.datetime.combine(context_today(), datetime.time(0, 0, 0)).to_utc()),
-                                 ('event_date', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23, 59, 59)).to_utc())]"/>
+                        domain="[('event_date', '>=', 'today'), ('event_date', '&lt;', 'today +1d')]"/>
                 <filter name="last_7_days" string="Last 7 Days"
-                        domain="[('event_date', '>=', (context_today() - datetime.timedelta(days=6)).strftime('%Y-%m-%d 00:00:00'))]"/>
+                        domain="[('event_date', '>=', 'today -6d')]"/>
                 <separator/>
                 <filter name="failed" string="Failed" domain="[('result', '=', 'failed')]"/>
                 <filter name="success" string="Success" domain="[('result', '=', 'success')]"/>
+                <filter name="mfa_pending" string="2FA Pending" domain="[('result', '=', 'mfa_pending')]"/>
                 <filter name="logout" string="Logout" domain="[('result', '=', 'logout')]"/>
                 <separator/>
                 <filter name="unknown_login" string="Unknown Login Name" domain="[('user_id', '=', False)]"/>

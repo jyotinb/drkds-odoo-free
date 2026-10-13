@@ -27,6 +27,27 @@ _logger = logging.getLogger(__name__)
 PURGE_DAYS_PARAM = "drkds_login_history.purge_days"
 PURGE_DAYS_DEFAULT = 180
 
+#: Longest text kept per column. Every value below comes from the client
+#: (the typed login, the User-Agent header, and with proxy mode the
+#: X-Forwarded-For header), unauthenticated, so an attacker could otherwise
+#: write tens of kilobytes per failed attempt. Real values are far shorter.
+LOGIN_SIZE = 255
+USER_AGENT_SIZE = 1024
+IP_SIZE = 64
+
+
+def _clip(value, size):
+    """``value`` as text, cut to ``size`` characters; ``False`` when empty.
+
+    RPC callers can send any JSON or XML-RPC type as the login, so a value is
+    turned into text rather than assumed to be a string.
+    """
+    if value is None or value is False:
+        return False
+    text = value if isinstance(value, str) else str(value)
+    return text[:size] or False
+
+
 #: Ordered (needle, label) pairs. The first match wins, so the specific
 #: tokens come before the generic ones: Edge and Opera both announce Chrome,
 #: and nearly every browser announces Safari.
@@ -109,12 +130,17 @@ class DrkdsLoginRecord(models.Model):
     result = fields.Selection(
         selection=[
             ("success", "Success"),
+            ("mfa_pending", "2FA Pending"),
             ("failed", "Failed"),
             ("logout", "Logout"),
         ],
         string="Result",
         required=True,
         index=True,
+        help="Success: the user is signed in. 2FA Pending: the password was "
+        "right and Odoo asked for the second factor; the outcome of that step "
+        "follows as its own Success or Failed row. Failed: wrong login, "
+        "password or code, or a refused attempt. Logout: the session was ended.",
     )
     ip_address = fields.Char(string="IP Address")
     user_agent = fields.Text(string="User Agent")
@@ -142,13 +168,13 @@ class DrkdsLoginRecord(models.Model):
         if not request:
             return {}
         httprequest = request.httprequest
-        user_agent = httprequest.environ.get("HTTP_USER_AGENT") or ""
+        user_agent = _clip(httprequest.environ.get("HTTP_USER_AGENT"), USER_AGENT_SIZE)
         browser, os_name = parse_user_agent(user_agent)
         session = getattr(request, "session", None)
         sid = getattr(session, "sid", None) if session is not None else None
         return {
-            "ip_address": httprequest.remote_addr or False,
-            "user_agent": user_agent or False,
+            "ip_address": _clip(httprequest.remote_addr, IP_SIZE),
+            "user_agent": user_agent,
             "browser": browser,
             "os_name": os_name,
             "session_hash": hashlib.sha256(sid.encode()).hexdigest() if sid else False,
@@ -156,14 +182,24 @@ class DrkdsLoginRecord(models.Model):
 
     @api.model
     def _drkds_log_event(self, result, login=None, uid=None):
-        """Record one event. Never raises; see :meth:`_drkds_write_detached`."""
-        values = {
-            "result": result,
-            "login": (login or "")[:255] or False,
-            "user_id": uid or False,
-            "event_date": fields.Datetime.now(),
-        }
-        values.update(self._drkds_request_values())
+        """Record one event. Never raises; see :meth:`_drkds_write_detached`.
+
+        The values are gathered inside the guard too: they come from the
+        client, and a malformed one must cost the audit row, not the login.
+        """
+        try:
+            values = {
+                "result": result,
+                "login": _clip(login, LOGIN_SIZE),
+                "user_id": uid or False,
+                "event_date": fields.Datetime.now(),
+                **self._drkds_request_values(),
+            }
+        except Exception:  # noqa: BLE001 - deliberately broad, see docstring
+            _logger.warning(
+                "drkds_login_history: could not prepare %s event", result, exc_info=True
+            )
+            return False
         return self._drkds_write_detached(values)
 
     @api.model
@@ -173,6 +209,9 @@ class DrkdsLoginRecord(models.Model):
         The caller's transaction is left untouched, so the row survives the
         rollback that follows a failed login. The user is resolved here, from
         the typed login, when the caller could not provide it (a failure).
+        Archived users are included: Odoo refuses their login, but an attempt
+        on a deactivated account is exactly what an administrator must see
+        against that account rather than as an unknown name.
 
         Returns the new record id, or ``False`` when nothing could be written.
         Every failure is logged and swallowed: an audit row is never worth a
@@ -186,10 +225,10 @@ class DrkdsLoginRecord(models.Model):
             with registry.cursor() as cr:
                 env = api.Environment(cr, SUPERUSER_ID, {})
                 if not values.get("user_id") and values.get("login"):
-                    Users = env["res.users"]
+                    Users = env["res.users"].with_context(active_test=False)
                     user = Users.search(
                         Users._get_login_domain(values["login"]),
-                        order=Users._get_login_order(),
+                        order="active desc, %s" % Users._get_login_order(),
                         limit=1,
                     )
                     values["user_id"] = user.id or False
