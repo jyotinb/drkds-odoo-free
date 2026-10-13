@@ -19,11 +19,11 @@
     ],
     [
       "Company currency throughout",
-      "A foreign-currency invoice is listed at the company-currency value of its journal item, with the original amount noted beside the reference, so the running balance stays one ledger figure."
+      "A foreign-currency item is listed at the company-currency value of its journal item, with its amount in the original currency noted beside the reference (on an Outstanding only statement, the amount still open in that currency), so the running balance stays one ledger figure."
     ],
     [
       "Send with the PDF on the chatter",
-      "Send by Email renders the PDF, posts it on the contact's chatter as a message with the PDF attached, and emails it with a mail template you can edit under Email Templates."
+      "Send by Email renders the statements together rather than one PDF run per partner, emails each one to the contacts you selected (a person at a company receives the company's statement) and logs it as a note with the PDF on the company's chatter. Followers of the contact are not mailed. The mail template is editable under Email Templates."
     ],
     [
       "Partner form and settings",
@@ -32,9 +32,11 @@
   ],
   "notes": [
     "Works on Odoo 19 Community. The only dependency is Invoicing (account).",
-    "Reads posted receivable and payable journal items only; drafts never appear.",
+    "Reads posted receivable and payable journal items of the chosen company and its branches; drafts never appear.",
     "A contact person's invoices roll up to the statement of their company.",
     "Items not yet due are shown in the 0-30 bucket, so the four buckets always add up to the total due.",
+    "Billing and Accounting read-only users can print; sending by email needs the Invoicing (Billing) right.",
+    "Large selections are rendered 50 statements at a time, about 15 seconds per 50; a run of several hundred needs the server's limit_time_real above Odoo's 120-second default.",
     "The ageing fields on the contact are computed when read and never stored, so they are always current.",
     "No follow-up levels, reminders or scheduled jobs; it prints and sends what you ask for."
   ],

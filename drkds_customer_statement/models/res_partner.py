@@ -15,41 +15,47 @@ BUCKETS = (
 RECEIVABLE = ("asset_receivable",)
 PAYABLE = ("liability_payable",)
 
+#: Who may read the ageing fields: the same groups core uses for the
+#: partner's ``credit`` and ``total_invoiced``. Anyone else either cannot
+#: read journal items or reads only part of them through record rules.
+ACCOUNTING_GROUPS = "account.group_account_invoice,account.group_account_readonly"
+
 
 class ResPartner(models.Model):
     """Statement of account engine, plus ageing figures on the partner form.
 
     Every figure is in the company currency and is read from posted
     receivable (and optionally payable) journal items of the partner and its
-    contacts. Nothing here is stored: the ageing fields are recomputed on
-    every read, for the current company, as at today.
+    contacts, in the company and its branches. Nothing here is stored: the
+    ageing fields are recomputed on every read, for the current company, as
+    at today.
     """
 
     _inherit = "res.partner"
 
     drkds_stmt_currency_id = fields.Many2one(
         "res.currency", compute="_compute_drkds_statement_ageing",
-        string="Statement Currency",
+        string="Statement Currency", groups=ACCOUNTING_GROUPS,
     )
     drkds_stmt_0_30 = fields.Monetary(
         string="0-30 Days", compute="_compute_drkds_statement_ageing",
-        currency_field="drkds_stmt_currency_id",
+        currency_field="drkds_stmt_currency_id", groups=ACCOUNTING_GROUPS,
     )
     drkds_stmt_31_60 = fields.Monetary(
         string="31-60 Days", compute="_compute_drkds_statement_ageing",
-        currency_field="drkds_stmt_currency_id",
+        currency_field="drkds_stmt_currency_id", groups=ACCOUNTING_GROUPS,
     )
     drkds_stmt_61_90 = fields.Monetary(
         string="61-90 Days", compute="_compute_drkds_statement_ageing",
-        currency_field="drkds_stmt_currency_id",
+        currency_field="drkds_stmt_currency_id", groups=ACCOUNTING_GROUPS,
     )
     drkds_stmt_90_plus = fields.Monetary(
         string="Over 90 Days", compute="_compute_drkds_statement_ageing",
-        currency_field="drkds_stmt_currency_id",
+        currency_field="drkds_stmt_currency_id", groups=ACCOUNTING_GROUPS,
     )
     drkds_stmt_total_due = fields.Monetary(
         string="Total Due", compute="_compute_drkds_statement_ageing",
-        currency_field="drkds_stmt_currency_id",
+        currency_field="drkds_stmt_currency_id", groups=ACCOUNTING_GROUPS,
     )
 
     @api.depends_context("company")
@@ -70,10 +76,16 @@ class ResPartner(models.Model):
         return RECEIVABLE + (PAYABLE if include_vendor else ())
 
     def _drkds_statement_domain(self, company, include_vendor=False):
-        """Posted receivable (and payable) items of this partner and its contacts."""
+        """Posted receivable (and payable) items of this partner and its contacts.
+
+        A branch is part of the same legal entity and posts to the same
+        receivable account, so the company's statement includes its branches
+        (core's partner ``credit`` counts them too). A branch's own statement
+        shows only what that branch posted.
+        """
         self.ensure_one()
         return [
-            ("company_id", "=", company.id),
+            ("company_id", "child_of", company.id),
             ("parent_state", "=", "posted"),
             ("partner_id", "child_of", self.commercial_partner_id.id),
             ("account_id.account_type", "in",
@@ -83,17 +95,21 @@ class ResPartner(models.Model):
 
     @api.model
     def _drkds_residual_at(self, lines, date_to):
-        """Company-currency residual of each line as it stood on ``date_to``.
+        """Residual of each line as it stood on ``date_to``.
 
         A partial reconciliation only counts once both sides exist, which is
         its ``max_date``. Replaying the partials dated on or before the
         statement date gives the amount that was open then, so a statement
         reprinted for a past month shows what the customer owed at the time,
         not what they owe today.
+
+        :return: ``{line id: (company-currency residual, residual in the
+            line's own currency)}``. The second figure is what a customer
+            invoiced in a foreign currency still has to pay in it.
         """
-        residual = {line.id: line.balance for line in lines}
+        residual = {line.id: [line.balance, line.amount_currency] for line in lines}
         if not lines:
-            return residual
+            return {}
         partials = self.env["account.partial.reconcile"].search([
             "|",
             ("debit_move_id", "in", lines.ids),
@@ -102,10 +118,12 @@ class ResPartner(models.Model):
         ])
         for partial in partials:
             if partial.debit_move_id.id in residual:
-                residual[partial.debit_move_id.id] -= partial.amount
+                residual[partial.debit_move_id.id][0] -= partial.amount
+                residual[partial.debit_move_id.id][1] -= partial.debit_amount_currency
             if partial.credit_move_id.id in residual:
-                residual[partial.credit_move_id.id] += partial.amount
-        return residual
+                residual[partial.credit_move_id.id][0] += partial.amount
+                residual[partial.credit_move_id.id][1] += partial.credit_amount_currency
+        return {line_id: tuple(amounts) for line_id, amounts in residual.items()}
 
     def _drkds_statement_ageing(self, date_to, company=None, include_vendor=False):
         """Outstanding amounts as at ``date_to`` split into ageing buckets."""
@@ -120,7 +138,7 @@ class ResPartner(models.Model):
         result = {key: 0.0 for key, _lo, _hi in BUCKETS}
         result["total"] = 0.0
         for line in lines:
-            amount = residual[line.id]
+            amount = residual[line.id][0]
             if currency.is_zero(amount):
                 continue
             days = (date_to - (line.date_maturity or line.date)).days
@@ -143,6 +161,10 @@ class ResPartner(models.Model):
         the balance brought forward as the opening line. ``outstanding``
         lists only the items still open at ``date_to``, each at the amount
         that was open then, with no opening balance.
+
+        A line in a foreign currency carries its amount in that currency
+        (the open amount for ``outstanding``). Lines with no foreign amount,
+        such as exchange differences, carry none.
         """
         self.ensure_one()
         company = company or self.env.company
@@ -155,13 +177,13 @@ class ResPartner(models.Model):
                                      order="date, id")
             residual = self._drkds_residual_at(candidates, date_to)
             opening = 0.0
-            lines = [(line, residual[line.id]) for line in candidates
-                     if not currency.is_zero(residual[line.id])]
+            lines = [(line, *residual[line.id]) for line in candidates
+                     if not currency.is_zero(residual[line.id][0])]
         else:
             opening = sum(Line.search(domain + [("date", "<", date_from)])
                           .mapped("balance"))
             lines = [
-                (line, line.balance) for line in Line.search(
+                (line, line.balance, line.amount_currency) for line in Line.search(
                     domain + [("date", ">=", date_from), ("date", "<=", date_to)],
                     order="date, id",
                 )
@@ -169,8 +191,10 @@ class ResPartner(models.Model):
 
         running = currency.round(opening)
         rows = []
-        for line, amount in lines:
+        for line, amount, amount_currency in lines:
             running = currency.round(running + amount)
+            foreign = (line.currency_id != currency
+                       and not line.currency_id.is_zero(amount_currency))
             rows.append({
                 "date": line.date,
                 "document": line.move_id.name,
@@ -179,8 +203,8 @@ class ResPartner(models.Model):
                 "debit": amount if amount > 0 else 0.0,
                 "credit": -amount if amount < 0 else 0.0,
                 "balance": running,
-                "currency": line.currency_id if line.currency_id != currency else False,
-                "amount_currency": line.amount_currency,
+                "currency": line.currency_id if foreign else False,
+                "amount_currency": amount_currency if foreign else 0.0,
                 "line": line,
             })
 
@@ -199,7 +223,9 @@ class ResPartner(models.Model):
             "total_credit": currency.round(sum(r["credit"] for r in rows)),
             "ageing": self._drkds_statement_ageing(
                 date_to, company=company, include_vendor=include_vendor),
-            "bank": company.drkds_statement_bank_id,
+            # Deleting a bank account only archives it in Odoo 19, so the
+            # setting can still point at an account the company closed.
+            "bank": company.drkds_statement_bank_id.filtered("active"),
             "note": company.drkds_statement_note,
         }
 

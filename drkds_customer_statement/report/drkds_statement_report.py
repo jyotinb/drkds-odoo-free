@@ -5,8 +5,13 @@ from odoo.exceptions import UserError
 class DrkdsStatementReport(models.AbstractModel):
     """Builds the values for one statement per partner.
 
-    The period and the statement type travel in ``data`` from the wizard;
-    the report action itself is bound to ``res.partner``.
+    The period, the statement type and the partners travel in ``data`` from
+    the wizard; the report action itself is bound to ``res.partner``.
+
+    When a report action carries ``data``, the web client requests
+    ``/report/pdf/<report>?options=...`` without record ids, so ``docids``
+    is ``None`` on Print and the partners come from ``data["partner_ids"]``.
+    Server-side renders (Send by Email) pass the ids explicitly.
     """
 
     _name = "report.drkds_customer_statement.report_drkds_statement"
@@ -23,7 +28,8 @@ class DrkdsStatementReport(models.AbstractModel):
         company = self.env["res.company"].browse(
             data.get("company_id") or self.env.company.id
         )
-        partners = self.env["res.partner"].browse(docids).commercial_partner_id
+        partner_ids = docids or data.get("partner_ids") or []
+        partners = self.env["res.partner"].browse(partner_ids).commercial_partner_id
         statements = [
             partner._drkds_statement_data(
                 date_from, date_to,

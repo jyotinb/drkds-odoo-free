@@ -45,13 +45,13 @@
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">Company currency throughout</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A foreign-currency invoice is listed at the company-currency value of its journal item, with the original amount noted beside the reference, so the running balance stays one ledger figure.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A foreign-currency item is listed at the company-currency value of its journal item, with its amount in the original currency noted beside the reference (on an Outstanding only statement, the amount still open in that currency), so the running balance stays one ledger figure.</p>
       </div>
     </div>
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">Send with the PDF on the chatter</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Send by Email renders the PDF, posts it on the contact&#x27;s chatter as a message with the PDF attached, and emails it with a mail template you can edit under Email Templates.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Send by Email renders the statements together rather than one PDF run per partner, emails each one to the contacts you selected (a person at a company receives the company&#x27;s statement) and logs it as a note with the PDF on the company&#x27;s chatter. Followers of the contact are not mailed. The mail template is editable under Email Templates.</p>
       </div>
     </div>
     <div class="oe_span6">
@@ -119,9 +119,11 @@
       <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
       <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
         <li>Works on Odoo 19 Community. The only dependency is Invoicing (account).</li>
-        <li>Reads posted receivable and payable journal items only; drafts never appear.</li>
+        <li>Reads posted receivable and payable journal items of the chosen company and its branches; drafts never appear.</li>
         <li>A contact person&#x27;s invoices roll up to the statement of their company.</li>
         <li>Items not yet due are shown in the 0-30 bucket, so the four buckets always add up to the total due.</li>
+        <li>Billing and Accounting read-only users can print; sending by email needs the Invoicing (Billing) right.</li>
+        <li>Large selections are rendered 50 statements at a time, about 15 seconds per 50; a run of several hundred needs the server&#x27;s limit_time_real above Odoo&#x27;s 120-second default.</li>
         <li>The ageing fields on the contact are computed when read and never stored, so they are always current.</li>
         <li>No follow-up levels, reminders or scheduled jobs; it prints and sends what you ask for.</li>
       </ul>

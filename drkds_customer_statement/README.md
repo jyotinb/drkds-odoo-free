@@ -21,14 +21,19 @@ mailable statement of account. This module adds one, driven from Contacts.
 - **Ageing as at the date.** Open amounts are replayed from the partial
   reconciliations dated on or before the end date, so a statement reprinted
   for an earlier month shows what the customer owed then.
-- **Company currency throughout.** A foreign-currency invoice is listed at the
-  company-currency value of its journal item, with the original currency
-  amount noted next to the reference.
-- **Send by Email.** Renders the PDF, posts it on the contact's chatter as a
-  message with the PDF attached, and emails it with the *Statement of
-  Account: Send* mail template, the same path as Send message on a chatter.
+- **Company currency throughout.** A foreign-currency item is listed at the
+  company-currency value of its journal item, with its amount in the original
+  currency noted next to the reference. On an *Outstanding only* statement
+  that note is the amount still open in that currency. Lines with no foreign
+  amount, such as exchange differences, carry no note.
+- **Send by Email.** Renders the statements together (50 per PDF run, not one
+  run per partner), emails each statement to the contacts you selected with
+  the *Statement of Account: Send* mail template, and logs it as a note with
+  the PDF attached on the company's chatter. Only the selected contacts
+  receive it; followers of the contact are not mailed.
 - **Partner form.** A **Statement** smart button, and four ageing fields plus
-  the total due on the Invoicing tab (computed when read, never stored).
+  the total due on the Invoicing tab (computed when read, never stored),
+  visible to Billing and Accounting read-only users.
 - **Settings.** The company bank account and a footer note printed on every
   statement, under Invoicing > Configuration > Settings > Customer Invoices.
 
@@ -51,29 +56,51 @@ depends only on Invoicing (`account`).
    from the Actions menu.
 2. Set **From**, **To**, the **Statement Type** and whether to include the
    vendor side.
-3. **Print** for the PDF, or **Send by Email** to attach it to each contact's
-   chatter and send it.
+3. **Print** for one PDF with every statement, or **Send by Email** to email
+   each statement and log it on the company's chatter.
 
-Statements are addressed to the commercial entity: a contact person's
-invoices roll up to their company's statement.
+Statements cover the commercial entity: a contact person's invoices roll up
+to their company's statement. The email goes to the contacts you selected:
+select the company to email the company's address, or a person at the
+company (for example the accounts contact) to email that person the
+company's statement. Every selected contact needs an email address.
+
+Access: Billing and Accounting read-only users can open the wizard and
+print; **Send by Email** needs the Invoicing (Billing) right. Contact
+Creation is not needed.
 
 ## Notes
 
 - Only posted receivable (and, when asked, payable) journal items of the
-  current company are read. Draft documents never appear.
+  chosen company and its branches are read. A branch is part of the same
+  legal entity, so the parent's statement includes it; a branch's own
+  statement shows only its postings. Draft documents never appear.
 - Ageing days are counted from the due date, or the document date when there
   is none.
 - The partner ageing fields reflect today's receivable position in the
-  current company and are recomputed on every read.
+  current company and its branches, and are recomputed on every read.
+- Dates on the statement follow the language's date format.
+- A bank account removed from the company (Odoo archives it) is no longer
+  printed, even while the setting still points at it.
+- Large selections are rendered 50 statements per PDF run and merged into
+  one document. Allow about 15 seconds per 50 statements: a run of several
+  hundred needs the server's `limit_time_real` above Odoo's 120-second
+  default.
 - No follow-up levels, no automatic reminders, no scheduled jobs.
 
 ## Tests
 
 `tests/test_statement.py` checks the running balance, as-at ageing, the
-multi-currency row, the vendor side, contact roll-up and the rendered HTML
-with hand-computed figures for five invoices and two payments at fixed dates.
-`tests/test_scenario.py` runs month-end statements for two customers through
-the wizard, including print and send.
+multi-currency rows (including the open foreign amount after a part payment
+and an exchange difference), the vendor side, contact roll-up, other
+companies and branches, field access and the rendered HTML, with
+hand-computed figures for five invoices and two payments at fixed dates.
+`tests/test_send.py` covers who may send, who receives the email and the
+single rendering run. `tests/test_print_http.py` prints through
+`/report/download` exactly as the web client does. `tests/test_pdf_batches.py`
+checks that large runs are rendered in batches. `tests/test_scenario.py` runs
+month-end statements for two customers through the wizard, including print
+and send.
 
 ## Dependencies
 

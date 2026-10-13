@@ -36,12 +36,13 @@ class StatementCase(AccountTestInvoicingCommon):
 
     @classmethod
     def _invoice(cls, date, amount, partner=None, currency=None,
-                 move_type="out_invoice", ref=None):
+                 move_type="out_invoice", ref=None, company=None):
         return cls._create_invoice(
             move_type=move_type,
             invoice_date=date,
             partner_id=(partner or cls.customer).id,
-            currency_id=(currency or cls.company_data["currency"]).id,
+            currency_id=(currency or (company or cls.env.company).currency_id).id,
+            company_id=company.id if company else None,
             invoice_date_due=date,
             ref=ref,
             invoice_line_ids=[(0, 0, {
@@ -61,6 +62,15 @@ class StatementCase(AccountTestInvoicingCommon):
             "payment_date": fields.Date.to_date(date),
             "amount": amount,
         })._create_payments()
+
+    def _wizard(self, partners, user=None, **values):
+        """The wizard as opened from the contact list with ``partners`` selected."""
+        wizard_model = self.env["drkds.statement.wizard"]
+        if user:
+            wizard_model = wizard_model.with_user(user)
+        return wizard_model.with_context(
+            active_model="res.partner", active_ids=partners.ids,
+        ).create({"date_from": "2024-06-01", "date_to": "2024-06-30", **values})
 
     def _data(self, date_from, date_to, statement_type="activity",
               include_vendor=False):

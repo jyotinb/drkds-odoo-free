@@ -2,7 +2,8 @@ from datetime import date
 
 from odoo import fields
 from odoo.exceptions import UserError
-from odoo.tests import tagged
+from odoo.tests import new_test_user, tagged
+from odoo.tools.misc import format_date
 
 from .common import StatementCase
 
@@ -139,8 +140,8 @@ class TestStatement(StatementCase):
         stranger = self.env["res.partner"].create({"name": "Nobody Yet"})
         self.assertAlmostEqual(stranger.drkds_stmt_total_due, 0.0, 2)
 
-    def test_draft_and_other_company_excluded(self):
-        """Draft invoices and another company's postings never reach the statement."""
+    def test_draft_excluded(self):
+        """Draft invoices never reach the statement."""
         self._create_invoice(
             invoice_date="2024-06-29", partner_id=self.customer.id,
             invoice_line_ids=[(0, 0, {"name": "draft", "quantity": 1, "price_unit": 999.0})],
@@ -149,6 +150,96 @@ class TestStatement(StatementCase):
             date(2024, 6, 1), date(2024, 6, 30), "activity",
         )
         self.assertAlmostEqual(data["closing_balance"], 1720.0, 2)
+
+    def test_other_company_excluded(self):
+        """A posting in another company stays on that company's statement only."""
+        company_2 = self.setup_other_company(name="Coastal Statement Co")["company"]
+        self._invoice("2024-06-14", 333.0, company=company_2)
+        data = self.customer._drkds_statement_data(date(2024, 6, 1), date(2024, 6, 30))
+        self.assertAlmostEqual(data["closing_balance"], 1720.0, 2)
+        self.assertAlmostEqual(data["ageing"]["total"], 1720.0, 2)
+        other = self.customer._drkds_statement_data(
+            date(2024, 6, 1), date(2024, 6, 30), company=company_2,
+        )
+        self.assertAlmostEqual(other["opening_balance"], 0.0, 2)
+        self.assertAlmostEqual(other["closing_balance"], 333.0, 2)
+        self.assertEqual(other["currency"], company_2.currency_id)
+
+    def test_branch_postings_on_parent_statement(self):
+        """A branch is the same legal entity: its invoices belong on the parent's statement.
+
+        Core's partner ``credit`` counts them too. The branch's own statement
+        still shows only what the branch posted.
+        """
+        branch = self.env["res.company"].create({
+            "name": "Gujarat Branch", "parent_id": self.env.company.id,
+        })
+        self.env.cr.precommit.run()  # loads the branch's chart, as core's tests do
+        self._invoice("2024-06-20", 230.0, company=branch)
+        parent = self.customer._drkds_statement_data(date(2024, 6, 1), date(2024, 6, 30))
+        self.assertAlmostEqual(parent["closing_balance"], 1950.0, 2)   # 1,720 + 230
+        self.assertAlmostEqual(parent["ageing"]["b0_30"], 800.0, 2)     # 570 + 230
+        self.assertAlmostEqual(parent["ageing"]["total"], 1950.0, 2)
+        own = self.customer._drkds_statement_data(
+            date(2024, 6, 1), date(2024, 6, 30), company=branch,
+        )
+        self.assertAlmostEqual(own["closing_balance"], 230.0, 2)
+
+    def test_outstanding_open_amount_in_original_currency(self):
+        """Part-paid in EUR after the rate moved: the open amount, not the invoice total.
+
+        INV5 is 300 EUR at 2.0 = 150.00. On 5 July 2024, at 2.5, the customer
+        pays 100 EUR = 40.00; Odoo books a 10.00 exchange difference (100 EUR
+        was 50.00 at the invoice rate). As at 31 July, 200 EUR = 100.00 is open.
+        """
+        self.env["res.currency.rate"].create({
+            "name": "2024-07-01", "rate": 2.5, "currency_id": self.eur.id,
+            "company_id": self.env.company.id,
+        })
+        payment = self._pay(self.inv5, "2024-07-05", 100.0)
+        exchange = self.inv5.line_ids.matched_credit_ids.exchange_move_id
+        self.assertEqual(len(exchange), 1)
+        self.assertLessEqual(exchange.date, date(2024, 7, 31))
+
+        data = self.customer._drkds_statement_data(
+            date(2024, 7, 1), date(2024, 7, 31), "outstanding",
+        )
+        row = next(r for r in data["lines"] if r["document"] == self.inv5.name)
+        self.assertAlmostEqual(row["debit"], 100.0, 2)
+        self.assertEqual(row["currency"], self.eur)
+        self.assertAlmostEqual(row["amount_currency"], 200.0, 2)
+
+        # Activity: the payment shows its EUR amount; the exchange difference
+        # has no foreign amount, so it carries no "(EUR 0.00)" note.
+        activity = self.customer._drkds_statement_data(date(2024, 7, 1), date(2024, 7, 31))
+        pay_row = next(r for r in activity["lines"] if r["document"] == payment.move_id.name)
+        self.assertAlmostEqual(pay_row["credit"], 40.0, 2)
+        self.assertAlmostEqual(pay_row["amount_currency"], -100.0, 2)
+        exch_row = next(r for r in activity["lines"] if r["document"] == exchange.name)
+        self.assertAlmostEqual(exch_row["credit"], 10.0, 2)
+        self.assertFalse(exch_row["currency"])
+        self.assertAlmostEqual(activity["closing_balance"], 1670.0, 2)  # 1,720 - 40 - 10
+
+    def test_ageing_fields_need_accounting_rights(self):
+        """Like core's ``credit``, the ageing fields are for accounting users only.
+
+        A plain employee cannot read journal items, and a salesman would read
+        only his own invoices: neither must be offered the fields.
+        """
+        employee = new_test_user(self.env, login="stmt_employee", groups="base.group_user")
+        fields_seen = self.env["res.partner"].with_user(employee).fields_get()
+        for name in ("drkds_stmt_currency_id", "drkds_stmt_0_30", "drkds_stmt_31_60",
+                     "drkds_stmt_61_90", "drkds_stmt_90_plus", "drkds_stmt_total_due"):
+            self.assertNotIn(name, fields_seen)
+        # The contact form still opens for the employee, without the fields.
+        form = self.env["res.partner"].with_user(employee).get_views([(False, "form")])
+        self.assertNotIn("drkds_stmt", form["views"]["form"]["arch"])
+        biller = new_test_user(self.env, login="stmt_fields_biller",
+                               groups="account.group_account_invoice")
+        self.env.invalidate_all()
+        self.assertAlmostEqual(
+            self.customer.with_user(biller).drkds_stmt_total_due, 1720.0, 2,
+        )
 
     def test_rendered_html(self):
         """The PDF template renders the figures the engine computed."""
@@ -159,8 +250,10 @@ class TestStatement(StatementCase):
                      "150.00", "1,720.00", "570.00", "500.00"):
             self.assertIn(text, html)
         self.assertIn(self.inv2.name, html)
-        self.assertIn("2024-03-01", html)
-        self.assertIn("2024-06-30", html)
+        # Dates follow the language's date format, like every Odoo document.
+        for day in (date(2024, 3, 1), date(2024, 4, 5), date(2024, 6, 30)):
+            self.assertIn(format_date(self.env, day), html)
+        self.assertNotIn("2024-06-30", html)
         self.assertIn('name="ageing"', html)
 
     def test_rendered_html_settings(self):
@@ -175,10 +268,26 @@ class TestStatement(StatementCase):
             "drkds_statement_note": "Please quote the invoice number when paying.",
         })
         html = self._render(self.customer, date_from="2024-03-01", date_to="2024-06-30")
-        self.assertIn("0011223344", html)
-        self.assertIn("Harbour Bank", html)
-        self.assertIn("HARBINBB", html)
+        self.assertIn("account 0011223344, Harbour Bank (HARBINBB)", html)
         self.assertIn("Please quote the invoice number when paying.", html)
+
+    def test_removed_bank_account_is_not_printed(self):
+        """Deleting a bank account archives it in Odoo 19 and keeps the setting.
+
+        A statement must not send customers to an account the company has
+        removed.
+        """
+        bank = self.env["res.partner.bank"].create({
+            "acc_number": "0099887766", "partner_id": self.env.company.partner_id.id,
+        })
+        self.env.company.drkds_statement_bank_id = bank
+        bank.unlink()
+        self.assertTrue(bank.exists())
+        self.assertFalse(bank.active)
+        self.assertEqual(self.env.company.drkds_statement_bank_id, bank)
+        html = self._render(self.customer, date_from="2024-03-01", date_to="2024-06-30")
+        self.assertNotIn("0099887766", html)
+        self.assertNotIn("Please remit to", html)
 
     def test_report_needs_period(self):
         """Printing without the wizard's period is refused, not rendered empty."""
