@@ -63,18 +63,24 @@
             <form string="Recurring Invoice">
                 <header>
                     <button name="action_start" string="Start" type="object"
-                            class="btn-primary" invisible="state != 'draft'"/>
+                            class="btn-primary" invisible="state != 'draft'"
+                            groups="account.group_account_invoice"/>
                     <button name="action_start" string="Resume" type="object"
-                            class="btn-primary" invisible="state != 'paused'"/>
+                            class="btn-primary" invisible="state != 'paused'"
+                            groups="account.group_account_invoice"/>
                     <button name="action_generate_now" string="Generate Now" type="object"
-                            invisible="state not in ('running', 'paused')"/>
+                            invisible="state not in ('running', 'paused')"
+                            groups="account.group_account_invoice"/>
                     <button name="action_pause" string="Pause" type="object"
-                            invisible="state != 'running'"/>
+                            invisible="state != 'running'"
+                            groups="account.group_account_invoice"/>
                     <button name="action_done" string="Mark as Done" type="object"
                             invisible="state not in ('running', 'paused')"
+                            groups="account.group_account_invoice"
                             confirm="No further invoices will be issued from this template. Continue?"/>
                     <button name="action_draft" string="Reset to Draft" type="object"
-                            invisible="state != 'done'"/>
+                            invisible="state != 'done'"
+                            groups="account.group_account_invoice"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,running,done"/>
                 </header>

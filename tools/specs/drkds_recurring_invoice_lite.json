@@ -7,23 +7,23 @@
   "features": [
     [
       "One template per contract",
-      "Customer, journal, currency, payment terms, terms and conditions, and the invoice lines with product, description, quantity, unit price and taxes. Totals are shown on the template so you know what will go out."
+      "Customer, journal, currency, payment terms from the customer, terms and conditions, and the invoice lines with product, description, quantity, unit price and taxes. Picking a product fills its list price in the template's currency. Totals are shown on the template, before the customer's fiscal position."
     ],
     [
       "Any interval",
       "Every N days, weeks, months or years, from a start date, with an optional end date after which the template marks itself done."
     ],
     [
+      "Taxes as on a typed invoice",
+      "Each invoice takes its fiscal position from the customer, or from the place of supply under the Indian localisation, and maps the template's taxes through it: GST becomes IGST for an inter-state customer, an export position gives its 0% tax."
+    ],
+    [
       "A scheduler that never doubles up",
-      "One invoice per template and date, however many times the job runs or the button is pressed. A scheduler that was off for a while catches up with one invoice per missed date."
+      "One invoice per template and date, however many times the job runs or the button is pressed. A scheduler that was off for a while catches up with one invoice per missed date. Each invoice is left in draft for a glance, or posted straight away."
     ],
     [
       "Month-end dates that hold",
       "A monthly template set on the 31st invoices on 28 February and is back on the 31st in March. A yearly one set on 29 February falls to the 28th in common years and returns on the next leap year."
-    ],
-    [
-      "Draft or posted",
-      "Leave each generated invoice in draft for a glance before it goes out, or let the template post it straight away."
     ],
     [
       "A trail both ways",
@@ -32,9 +32,10 @@
   ],
   "notes": [
     "Depends on Accounting (account) only. The generated documents are ordinary customer invoices numbered by the sale journal.",
-    "Access follows Accounting: billing users create and run templates, read-only accounting users can look at them. Multi-company record rules are in place.",
+    "Access follows Accounting: billing users create and run templates, read-only accounting users can look at them. Multi-company record rules are in place, and a branch uses its parent company's journal and taxes.",
     "A template that has issued invoices cannot be deleted, only archived, so the trail on its invoices stays intact.",
     "If one template cannot be invoiced (say a posting is refused), the scheduler records the reason on that template, leaves it to be retried tomorrow, and carries on with the others.",
+    "The scheduler serves every company and reads today's date in the time zone of each template's salesperson, so a job at 23:30 UTC already issues the next day's invoices for a business in India.",
     "Odoo's own Auto-post recurrence duplicates a posted entry monthly, quarterly or yearly. This module works from an editable template instead, adds daily and weekly intervals, pause and resume, an end date and a Generate Now button."
   ],
   "disclaimer": false,

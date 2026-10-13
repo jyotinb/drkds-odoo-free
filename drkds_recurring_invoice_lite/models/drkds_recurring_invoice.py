@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import Command, _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools import clean_context, is_html_empty
 
 _logger = logging.getLogger(__name__)
 
@@ -48,15 +49,16 @@ class DrkdsRecurringInvoice(models.Model):
         "res.company", string="Company", required=True, index=True,
         default=lambda self: self.env.company,
     )
+    # check_company adds the company part of the domain, parent companies
+    # included: a branch invoices on its parent's journals, taxes and products.
     partner_id = fields.Many2one(
         "res.partner", string="Customer", required=True, tracking=True,
         check_company=True,
-        domain="[('company_id', 'in', (False, company_id))]",
     )
     journal_id = fields.Many2one(
         "account.journal", string="Journal", required=True, check_company=True,
         compute="_compute_journal_id", store=True, readonly=False, precompute=True,
-        domain="[('type', '=', 'sale'), ('company_id', '=', company_id)]",
+        domain="[('type', '=', 'sale')]",
     )
     currency_id = fields.Many2one(
         "res.currency", string="Currency", required=True,
@@ -64,7 +66,9 @@ class DrkdsRecurringInvoice(models.Model):
     )
     payment_term_id = fields.Many2one(
         "account.payment.term", string="Payment Terms", check_company=True,
-        help="Copied onto every generated invoice. Empty means immediate.",
+        compute="_compute_payment_term_id", store=True, readonly=False, precompute=True,
+        help="Taken from the customer, copied onto every generated invoice. "
+        "Empty means the invoice is due on its own date.",
     )
     user_id = fields.Many2one(
         "res.users", string="Salesperson", default=lambda self: self.env.user,
@@ -86,6 +90,7 @@ class DrkdsRecurringInvoice(models.Model):
     )
     anchor_day = fields.Integer(
         string="Anchor Day", readonly=True, copy=True,
+        default=lambda self: fields.Date.context_today(self).day,
         help="Day of month the schedule is anchored to. Taken from the next "
         "date whenever a user sets it; the scheduler keeps it when advancing.",
     )
@@ -105,7 +110,8 @@ class DrkdsRecurringInvoice(models.Model):
     )
     narration = fields.Html(
         string="Terms and Conditions",
-        help="Copied onto the generated invoice as its terms and conditions.",
+        help="Printed on every generated invoice instead of the company's "
+        "default terms and conditions. Leave empty to keep the default.",
     )
     line_ids = fields.One2many(
         "drkds.recurring.invoice.line", "recurring_id", string="Lines", copy=True,
@@ -147,13 +153,21 @@ class DrkdsRecurringInvoice(models.Model):
     # ------------------------------------------------------------------
     @api.depends("company_id")
     def _compute_journal_id(self):
+        Journal = self.env["account.journal"]
         for rec in self:
-            if rec.journal_id and rec.journal_id.company_id == rec.company_id:
+            if rec.journal_id.company_id in rec.company_id.parent_ids:
                 continue
-            rec.journal_id = self.env["account.journal"].search(
-                [("type", "=", "sale"), ("company_id", "=", rec.company_id.id)],
-                limit=1,
-            )
+            rec.journal_id = Journal.search([
+                *Journal._check_company_domain(rec.company_id),
+                ("type", "=", "sale"),
+            ], limit=1)
+
+    @api.depends("partner_id", "company_id")
+    def _compute_payment_term_id(self):
+        for rec in self:
+            rec.payment_term_id = rec.partner_id.with_company(
+                rec.company_id
+            ).property_payment_term_id
 
     @api.depends("journal_id", "company_id")
     def _compute_currency_id(self):
@@ -178,6 +192,34 @@ class DrkdsRecurringInvoice(models.Model):
             rec.amount_untaxed = untaxed
             rec.amount_total = total
             rec.amount_tax = total - untaxed
+
+    @api.constrains("journal_id")
+    def _check_journal_type(self):
+        for rec in self:
+            if rec.journal_id.type != "sale":
+                raise ValidationError(_(
+                    "%(journal)s is not a sales journal; customer invoices can "
+                    "only be issued in one.", journal=rec.journal_id.display_name,
+                ))
+
+    @api.constrains("state", "line_ids")
+    def _check_runnable(self):
+        """What Start requires, held whatever the path to running: a direct
+        write, an import, a ``default_state`` in the context. Otherwise the
+        scheduler would issue an empty invoice every period."""
+        for rec in self.filtered(lambda r: r.state in ("running", "paused")):
+            if not rec.line_ids.filtered(lambda l: not l.display_type):
+                raise ValidationError(_(
+                    "%s needs at least one invoice line to run.", rec.display_name,
+                ))
+            # Reachable through Reset to Draft on a template its end date closed.
+            if rec.end_date and rec.next_date > rec.end_date:
+                raise ValidationError(_(
+                    "%(template)s: the next invoice date %(next)s is after the "
+                    "end date %(end)s. Move the end date, or the next date, "
+                    "before starting.",
+                    template=rec.display_name, next=rec.next_date, end=rec.end_date,
+                ))
 
     @api.constrains("next_date", "end_date")
     def _check_dates(self):
@@ -262,11 +304,10 @@ class DrkdsRecurringInvoice(models.Model):
     # workflow buttons
     # ------------------------------------------------------------------
     def action_start(self):
+        """Run the template; :meth:`_check_runnable` vets its content."""
         for rec in self:
             if rec.state not in ("draft", "paused"):
                 raise UserError(_("Only a draft or paused template can be started."))
-            if not rec.line_ids.filtered(lambda l: not l.display_type):
-                raise UserError(_("Add at least one invoice line before starting."))
         self.write({"state": "running"})
         return True
 
@@ -300,10 +341,11 @@ class DrkdsRecurringInvoice(models.Model):
         if self.state not in ("running", "paused"):
             raise UserError(_("Start the template before generating an invoice."))
         if self.end_date and self.next_date > self.end_date:
-            self.write({"state": "done"})
+            # Raising rolls the request back, so nothing is written here.
             raise UserError(_(
-                "The next date %s is past the end date %s; the template has "
-                "been marked done.", self.next_date, self.end_date,
+                "The next date %(next)s is past the end date %(end)s: there is "
+                "nothing left to issue. Mark the template as done, or move the "
+                "end date.", next=self.next_date, end=self.end_date,
             ))
         date = self.next_date
         invoice = self._generate_for_date(date) or self._existing_invoice_for(date)
@@ -337,8 +379,10 @@ class DrkdsRecurringInvoice(models.Model):
         ], limit=1)
 
     def _prepare_invoice_vals(self, date):
+        """Header of the invoice issued for ``date``. The lines are added by
+        :meth:`_generate_for_date` once the invoice has its fiscal position."""
         self.ensure_one()
-        return {
+        vals = {
             "move_type": "out_invoice",
             "company_id": self.company_id.id,
             "partner_id": self.partner_id.id,
@@ -348,12 +392,16 @@ class DrkdsRecurringInvoice(models.Model):
             "invoice_payment_term_id": self.payment_term_id.id,
             "invoice_user_id": self.user_id.id,
             "invoice_origin": self.reference,
-            "narration": self.narration,
             "recurring_id": self.id,
-            "invoice_line_ids": [
-                Command.create(line._prepare_invoice_line_vals()) for line in self.line_ids
-            ],
         }
+        if not self.payment_term_id:
+            # Otherwise the invoice is due on the day it was generated, which
+            # for a catch-up or an early Generate Now is not its own date.
+            vals["invoice_date_due"] = date
+        if not is_html_empty(self.narration):
+            # Left out, the invoice takes the company's default conditions.
+            vals["narration"] = self.narration
+        return vals
 
     def _generate_for_date(self, date):
         """Create (and optionally post) the invoice dated ``date``.
@@ -364,9 +412,19 @@ class DrkdsRecurringInvoice(models.Model):
         self.ensure_one()
         if self._existing_invoice_for(date):
             return self.env["account.move"]
-        invoice = self.env["account.move"].with_company(self.company_id).create(
-            self._prepare_invoice_vals(date)
-        )
+        # Defaults in the caller's context are meant for the template (a
+        # default_state of 'running' is not an invoice state).
+        Move = self.env["account.move"].with_context(clean_context(self.env.context))
+        invoice = Move.with_company(self.company_id).create(self._prepare_invoice_vals(date))
+        # The invoice settles its fiscal position from the customer (with
+        # l10n_in, from the place of supply). The template's taxes go through
+        # it as they would on a line typed into the invoice: GST becomes IGST
+        # for an inter-state customer, 0% for an export.
+        fiscal_position = invoice.fiscal_position_id
+        invoice.write({"invoice_line_ids": [
+            Command.create(line._prepare_invoice_line_vals(fiscal_position))
+            for line in self.line_ids
+        ]})
         if self.auto_post:
             invoice.action_post()
         self.message_post(body=_(
@@ -402,20 +460,42 @@ class DrkdsRecurringInvoice(models.Model):
             self._advance_after_generation()
         return created
 
+    def _today(self):
+        """Today's date in the time zone of the template's salesperson.
+
+        The job runs as OdooBot, whose time zone is normally unset, so UTC. At
+        23:30 UTC an Indian business is already on the next day; reading the
+        date in UTC would issue its invoices a day late. Activities read their
+        deadline in their assignee's zone the same way.
+        """
+        self.ensure_one()
+        tz = self.user_id.tz
+        return fields.Date.context_today(self.with_context(tz=tz) if tz else self)
+
     @api.model
     def _cron_generate_invoices(self, today=None):
         """Daily job. Each template is isolated in its own savepoint, so one
         failing template (a missing account, a blocked posting) is logged and
-        recorded on the template without stopping the others."""
-        today = today or fields.Date.context_today(self)
-        due = self.search([
-            ("state", "=", "running"), ("next_date", "<=", today),
+        recorded on the template without stopping the others.
+
+        A system job: it serves the running templates of every company, as
+        their owners set them up, whichever user the scheduled action runs as.
+        Hence sudo; each invoice is created in its template's company.
+        ``today`` overrides every template's own date (tests, manual runs).
+        """
+        due = self.sudo().search([
+            ("state", "=", "running"),
+            # No time zone is more than one day ahead of UTC.
+            ("next_date", "<=", today or fields.Date.today() + timedelta(days=1)),
         ])
         created = self.env["account.move"]
         for template in due:
+            template_today = today or template._today()
+            if template.next_date > template_today:
+                continue
             try:
                 with self.env.cr.savepoint():
-                    created |= template._process_due(today)
+                    created |= template._process_due(template_today)
             except Exception as exc:  # noqa: BLE001 - must keep serving other templates
                 _logger.exception(
                     "Recurring invoice %s: generation failed", template.reference,

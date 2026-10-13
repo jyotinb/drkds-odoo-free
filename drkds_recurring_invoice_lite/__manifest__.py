@@ -11,14 +11,17 @@ invoice as a template and issues it on schedule, so nobody has to remember.
 
 What it does
 ------------
-* **A template per contract.** Customer, journal, currency, the invoice lines
-  with product, description, quantity, unit price and taxes, and the schedule:
-  every N days, weeks, months or years, starting on a date, optionally ending
-  on another.
+* **A template per contract.** Customer, journal, currency, payment terms,
+  the invoice lines with product, description, quantity, unit price and taxes,
+  and the schedule: every N days, weeks, months or years, starting on a date,
+  optionally ending on another. Branches use their parent company's journal
+  and taxes.
 * **A daily scheduler.** Every running template whose next date has arrived
   becomes a real customer invoice carrying its lines, dated on the scheduled
-  date. The template then advances to the following date. Templates past their
-  end date are marked done.
+  date, with the taxes mapped through the customer's fiscal position (GST to
+  IGST for an inter-state customer). The template then advances to the
+  following date. Templates past their end date are marked done. "Today" is
+  read in the salesperson's time zone, and every company is served.
 * **Auto-post, or not.** A template can leave its invoices in draft for a
   review, or post them straight away.
 * **Never twice.** One invoice per template and date, however many times the

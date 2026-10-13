@@ -26,9 +26,11 @@ class DrkdsRecurringInvoiceLine(models.Model):
     display_type = fields.Selection(
         [("line_section", "Section"), ("line_note", "Note")], default=False,
     )
+    # check_company supplies the company part of these domains, parent
+    # companies included, so a branch sees its parent's products and taxes.
     product_id = fields.Many2one(
         "product.product", string="Product", check_company=True,
-        domain="[('sale_ok', '=', True), ('company_id', 'in', (False, company_id))]",
+        domain="[('sale_ok', '=', True)]",
     )
     name = fields.Text(string="Description", required=True)
     quantity = fields.Float(
@@ -38,7 +40,7 @@ class DrkdsRecurringInvoiceLine(models.Model):
     price_unit = fields.Float(string="Unit Price", digits="Product Price")
     tax_ids = fields.Many2many(
         "account.tax", string="Taxes", check_company=True,
-        domain="[('type_tax_use', '=', 'sale'), ('company_id', '=', company_id)]",
+        domain="[('type_tax_use', '=', 'sale')]",
     )
     price_subtotal = fields.Monetary(
         string="Subtotal", compute="_compute_amounts", store=True,
@@ -68,17 +70,26 @@ class DrkdsRecurringInvoiceLine(models.Model):
     @api.onchange("product_id")
     def _onchange_product_id(self):
         for line in self:
-            if not line.product_id:
-                continue
             product = line.product_id
+            if not product:
+                continue
+            company = line.company_id or self.env.company
             line.name = product.get_product_multiline_description_sale()
             line.product_uom_id = product.uom_id
-            line.price_unit = product.lst_price
-            line.tax_ids = product.taxes_id.filtered(
-                lambda t: t.company_id == line.company_id
+            # Same helpers as an invoice line: the list price converted into
+            # the template's currency, and the product's taxes of this company
+            # or, for a branch, of the nearest parent that has some.
+            line.price_unit = product._get_tax_included_unit_price(
+                company,
+                line.currency_id or company.currency_id,
+                line.recurring_id.next_date or fields.Date.context_today(line),
+                "sale",
+                product_uom=product.uom_id,
             )
+            line.tax_ids = product.taxes_id._filter_taxes_by_company(company)
 
-    def _prepare_invoice_line_vals(self):
+    def _prepare_invoice_line_vals(self, fiscal_position=None):
+        """Values of the invoice line, taxes mapped by ``fiscal_position``."""
         self.ensure_one()
         if self.display_type:
             return {
@@ -93,5 +104,7 @@ class DrkdsRecurringInvoiceLine(models.Model):
             "quantity": self.quantity,
             "product_uom_id": self.product_uom_id.id or self.product_id.uom_id.id,
             "price_unit": self.price_unit,
-            "tax_ids": [Command.set(self.tax_ids.ids)],
+            "tax_ids": [Command.set(
+                (fiscal_position or self.env["account.fiscal.position"]).map_tax(self.tax_ids).ids
+            )],
         }

@@ -7,7 +7,7 @@ from psycopg2.errors import CheckViolation
 from odoo import Command
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo.exceptions import UserError, ValidationError
-from odoo.tests import tagged
+from odoo.tests import Form, new_test_user, tagged
 from odoo.tools import mute_logger
 
 
@@ -250,8 +250,40 @@ class TestRecurringInvoice(AccountTestInvoicingCommon):
         tpl = self._template(line_ids=[
             Command.create({"display_type": "line_section", "name": "Heading"}),
         ])
-        with self.assertRaises(UserError):
+        with self.assertRaises(ValidationError):
             tpl.action_start()
+        self.assertEqual(tpl.state, "draft")
+
+    def test_running_needs_lines_whatever_the_path(self):
+        """The rules Start applies hold for direct writes and creates too
+        (RPC, imports, a default_state in the context): otherwise the
+        scheduler would issue an empty invoice every period."""
+        bare = {"name": "Bare", "partner_id": self.partner_a.id, "next_date": date(2026, 1, 15)}
+        with self.assertRaises(ValidationError):
+            self.Template.create(dict(bare, state="running"))
+        with self.assertRaises(ValidationError):
+            self.Template.with_context(default_state="running").create(bare)
+        tpl = self._template()
+        tpl.action_start()
+        with self.assertRaises(ValidationError):
+            tpl.write({"line_ids": [Command.clear()]})
+        closed = self._template(end_date=date(2026, 1, 15))
+        closed.action_start()
+        closed.action_generate_now()
+        with self.assertRaises(ValidationError):
+            closed.write({"state": "running"})
+        self.assertEqual(closed.state, "done")
+
+    def test_generation_ignores_default_keys_in_context(self):
+        """Defaults meant for the template (default_state) must not reach
+        the invoice it creates."""
+        tpl = self._template()
+        tpl.action_start()
+        action = tpl.with_context(default_state="running", default_name="X/1").action_generate_now()
+        invoice = self.Move.browse(action["res_id"])
+        self.assertEqual(invoice.state, "draft")
+        self.assertNotEqual(invoice.name, "X/1")
+        self.assertEqual(invoice.amount_total, 4040.0)
 
     def test_end_before_next_rejected(self):
         with self.assertRaises(ValidationError):
@@ -281,3 +313,250 @@ class TestRecurringInvoice(AccountTestInvoicingCommon):
         self.assertEqual(len(dup.line_ids), 2)
         self.assertEqual(dup.amount_total, 4040.0)
         self.assertFalse(dup.invoice_ids)
+
+    def test_start_refused_past_end_date(self):
+        """A template closed by its end date and reset to draft cannot run on
+        until its dates are put right."""
+        tpl = self._template(end_date=date(2026, 1, 15))
+        tpl.action_start()
+        tpl.action_generate_now()
+        self.assertEqual(tpl.state, "done")
+        self.assertEqual(tpl.next_date, date(2026, 2, 15))
+        tpl.action_draft()
+        with self.assertRaises(ValidationError):
+            tpl.action_start()
+        self.assertEqual(tpl.state, "draft")
+        tpl.end_date = date(2026, 6, 30)
+        tpl.action_start()
+        self.assertEqual(tpl.state, "running")
+
+    def test_journal_must_be_a_sale_journal(self):
+        tpl = self._template()
+        with self.assertRaises(ValidationError):
+            tpl.journal_id = self.company_data["default_journal_purchase"]
+
+    def test_anchor_taken_from_default_next_date(self):
+        """Created without a next date (import, API), the template is
+        anchored on the default date, today, like the form would do."""
+        with freeze_time("2026-01-31"):
+            tpl = self.Template.create({
+                "name": "Imported",
+                "partner_id": self.partner_a.id,
+                "line_ids": [Command.create({"name": "Fee", "price_unit": 100.0})],
+            })
+        self.assertEqual(tpl.next_date, date(2026, 1, 31))
+        self.assertEqual(tpl.anchor_day, 31)
+        self.assertEqual(tpl._next_after(date(2026, 2, 28)), date(2026, 3, 31))
+
+    # -- what the invoice carries -----------------------------------------
+    def test_fiscal_position_maps_taxes(self):
+        """An export customer's fiscal position replaces 18% by 0%, as it
+        would on an invoice typed by hand.
+
+        Lines: 3 x 1000 at 18% (mapped to 0%) + 2 x 250 untaxed.
+        Untaxed 3500, tax 0, total 3500 (and not 4040).
+        """
+        company = self.company_data["company"]
+        tax_0 = self.env["account.tax"].create({
+            "name": "RCL Export 0%",
+            "amount_type": "percent",
+            "amount": 0.0,
+            "type_tax_use": "sale",
+            "company_id": company.id,
+            "original_tax_ids": [Command.set(self.tax_18.ids)],
+        })
+        export = self.env["account.fiscal.position"].create({
+            "name": "RCL Export",
+            "company_id": company.id,
+            "tax_ids": [Command.set(tax_0.ids)],
+        })
+        customer = self.env["res.partner"].create({
+            "name": "RCL Overseas Buyer",
+            "property_account_position_id": export.id,
+        })
+        tpl = self._template(partner_id=customer.id)
+        tpl.action_start()
+        tpl.action_generate_now()
+        invoice = tpl.invoice_ids
+        self.assertEqual(invoice.fiscal_position_id, export)
+        taxed = invoice.invoice_line_ids.filtered(lambda l: l.name == "Taxed service")
+        self.assertEqual(taxed.tax_ids, tax_0)
+        self.assertEqual(invoice.amount_untaxed, 3500.0)
+        self.assertEqual(invoice.amount_tax, 0.0)
+        self.assertEqual(invoice.amount_total, 3500.0)
+        # A customer without a fiscal position keeps the template's taxes.
+        plain = self._template()
+        plain.action_start()
+        plain.action_generate_now()
+        self.assertEqual(plain.invoice_ids.amount_total, 4040.0)
+
+    def test_foreign_currency_template(self):
+        """product_a lists at 1000 USD (company currency). From 2017 the test
+        rate is 2 EUR per USD, so a EUR template prices it 2000 EUR:
+        untaxed 2000, tax 18% 360, total 2360 EUR = 1180 USD."""
+        eur = self.setup_other_currency("EUR")
+        f = Form(self.Template)
+        f.name = "Euro retainer"
+        f.partner_id = self.partner_a
+        f.next_date = date(2026, 1, 15)
+        f.currency_id = eur
+        with f.line_ids.new() as line:
+            line.product_id = self.product_a
+            line.tax_ids.clear()
+            line.tax_ids.add(self.tax_18)
+        tpl = f.save()
+        self.assertEqual(tpl.line_ids.price_unit, 2000.0)
+        self.assertEqual(tpl.amount_total, 2360.0)
+        tpl.action_start()
+        tpl.action_generate_now()
+        invoice = tpl.invoice_ids
+        self.assertEqual(invoice.currency_id, eur)
+        self.assertEqual(invoice.amount_total, 2360.0)
+        self.assertEqual(invoice.amount_total_signed, 1180.0)
+
+    def test_payment_terms_and_conditions(self):
+        """The customer's payment terms come onto the template; the company's
+        default terms and conditions stay on the invoice unless the template
+        has its own; an invoice without terms is due on its own date."""
+        company = self.company_data["company"]
+        terms_30 = self.env.ref("account.account_payment_term_30days")
+        self.env["ir.config_parameter"].sudo().set_param("account.use_invoice_terms", True)
+        company.invoice_terms = "<p>Goods once sold are not taken back.</p>"
+        customer = self.env["res.partner"].create({
+            "name": "RCL Thirty Days",
+            "property_payment_term_id": terms_30.id,
+        })
+        f = Form(self.Template)
+        f.name = "Thirty days"
+        f.partner_id = customer
+        f.next_date = date(2026, 1, 15)
+        with f.line_ids.new() as line:
+            line.name = "Service"
+            line.price_unit = 1000.0
+        tpl = f.save()
+        self.assertEqual(tpl.payment_term_id, terms_30)
+        tpl.action_start()
+        tpl.action_generate_now()
+        invoice = tpl.invoice_ids
+        self.assertEqual(invoice.invoice_payment_term_id, terms_30)
+        self.assertEqual(invoice.invoice_date_due, date(2026, 2, 14))
+        self.assertIn("Goods once sold", invoice.narration)
+        # The template's own conditions replace the company default.
+        tpl.narration = "<p>Payable by NEFT only.</p>"
+        tpl.action_generate_now()
+        second = tpl.invoice_ids - invoice
+        self.assertIn("NEFT", second.narration)
+        self.assertNotIn("Goods once sold", second.narration)
+        # No terms anywhere: issued ahead of time, still due on its own date.
+        bare = self.env["res.partner"].create({"name": "RCL No Terms"})
+        early = self._template(partner_id=bare.id, next_date=date(2026, 3, 1))
+        self.assertFalse(early.payment_term_id)
+        with freeze_time("2026-02-10"):
+            early.action_start()
+            early.action_generate_now()
+        self.assertEqual(early.invoice_ids.invoice_date, date(2026, 3, 1))
+        self.assertEqual(early.invoice_ids.invoice_date_due, date(2026, 3, 1))
+
+    # -- companies, users and time zones -----------------------------------
+    def test_branch_uses_parent_journal_and_taxes(self):
+        """A branch has no journals or taxes of its own; it invoices on its
+        parent's, like any invoice typed in the branch. product_a: 1000 at
+        the parent's 15% sale tax, total 1150."""
+        company = self.company_data["company"]
+        branch = self._create_company(name="RCL Branch", parent_id=company.id)
+        f = Form(self.Template.with_company(branch))
+        f.name = "Branch retainer"
+        f.partner_id = self.partner_a
+        f.next_date = date(2026, 1, 15)
+        self.assertEqual(f.journal_id, self.company_data["default_journal_sale"])
+        with f.line_ids.new() as line:
+            line.product_id = self.product_a
+        tpl = f.save()
+        self.assertEqual(tpl.company_id, branch)
+        self.assertEqual(tpl.line_ids.tax_ids, self.tax_sale_a)
+        self.assertEqual(tpl.amount_total, 1150.0)
+        tpl.action_start()
+        tpl.action_generate_now()
+        invoice = tpl.invoice_ids
+        self.assertEqual(invoice.company_id, branch)
+        self.assertEqual(invoice.journal_id, self.company_data["default_journal_sale"])
+        self.assertEqual(invoice.amount_total, 1150.0)
+
+    def test_cron_serves_every_company_whatever_its_user(self):
+        """The scheduled action may be pointed at a user with no accounting
+        rights; it still serves every company, each invoice in its own."""
+        tpl = self._template()
+        other = self.setup_other_company(name="RCL Second Company")
+        tpl2 = self.Template.with_company(other["company"]).create({
+            "name": "Second company",
+            "partner_id": self.partner_a.id,
+            "company_id": other["company"].id,
+            "next_date": date(2026, 1, 15),
+            "line_ids": [Command.create({"name": "Fee", "quantity": 1.0, "price_unit": 100.0})],
+        })
+        (tpl + tpl2).action_start()
+        bot = new_test_user(self.env, login="rcl_cron", groups="base.group_user")
+        with freeze_time("2026-01-15 06:00:00"):
+            created = self.Template.with_user(bot)._cron_generate_invoices()
+        self.assertEqual(len(created), 2)
+        self.assertEqual(tpl.invoice_ids.company_id, self.company_data["company"])
+        self.assertEqual(tpl2.invoice_ids.company_id, other["company"])
+        self.assertEqual(tpl2.invoice_ids.journal_id, other["default_journal_sale"])
+        self.assertEqual(tpl2.invoice_ids.amount_total, 100.0)
+
+    def test_today_is_read_in_the_salesperson_time_zone(self):
+        """23:30 UTC on 14 January is already 05:00 on the 15th in India and
+        still the 14th in New York (18:30)."""
+        def owner(login, tz):
+            return new_test_user(
+                self.env, login=login, tz=tz,
+                groups="base.group_user,account.group_account_invoice",
+            )
+        ist = self._template(name="Kolkata", user_id=owner("rcl_ist", "Asia/Kolkata").id)
+        nyc = self._template(name="New York", user_id=owner("rcl_nyc", "America/New_York").id)
+        (ist + nyc).action_start()
+        with freeze_time("2026-01-14 23:30:00"):
+            created = self.Template._cron_generate_invoices()
+        self.assertEqual(created.recurring_id, ist)
+        self.assertEqual(created.invoice_date, date(2026, 1, 15))
+        self.assertEqual(nyc.next_date, date(2026, 1, 15))
+        # 05:30 UTC on the 15th is 00:30 in New York: its turn.
+        with freeze_time("2026-01-15 05:30:00"):
+            created = self.Template._cron_generate_invoices()
+        self.assertEqual(created.recurring_id, nyc)
+
+    def test_invoice_readers_without_template_access(self):
+        """A user who may read invoices but not templates (a salesperson)
+        does not get the template field on the invoice form or search, so
+        neither can reach a model they cannot read."""
+        reader_group = self.env["res.groups"].create({"name": "RCL invoice reader"})
+        self.env["ir.model.access"].create({
+            "name": "rcl invoice reader",
+            "model_id": self.env.ref("account.model_account_move").id,
+            "group_id": reader_group.id,
+            "perm_read": True,
+        })
+        reader = new_test_user(
+            self.env, login="rcl_reader",
+            group_ids=(self.env.ref("base.group_user") | reader_group).ids,
+        )
+        form = self.env.ref("account.view_move_form").id
+        search = self.env.ref("account.view_account_invoice_filter").id
+        views = self.env["account.move"].with_user(reader).get_views([(form, "form"), (search, "search")])
+        self.assertNotIn("recurring_id", views["views"]["form"]["arch"])
+        self.assertNotIn("recurring_id", views["views"]["search"]["arch"])
+        billing = new_test_user(
+            self.env, login="rcl_billing", groups="base.group_user,account.group_account_invoice",
+        )
+        views = self.env["account.move"].with_user(billing).get_views([(form, "form"), (search, "search")])
+        self.assertIn("recurring_id", views["views"]["form"]["arch"])
+        self.assertIn("recurring_id", views["views"]["search"]["arch"])
+
+    def test_read_only_users_get_no_action_buttons(self):
+        readonly = new_test_user(
+            self.env, login="rcl_readonly", groups="base.group_user,account.group_account_readonly",
+        )
+        arch = self.Template.with_user(readonly).get_views([(False, "form")])["views"]["form"]["arch"]
+        for button in ("action_start", "action_pause", "action_generate_now", "action_done", "action_draft"):
+            self.assertNotIn(f'name="{button}"', arch)
+        self.assertIn('name="action_view_invoices"', arch)

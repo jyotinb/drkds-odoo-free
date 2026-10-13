@@ -27,7 +27,7 @@
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">One template per contract</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Customer, journal, currency, payment terms, terms and conditions, and the invoice lines with product, description, quantity, unit price and taxes. Totals are shown on the template so you know what will go out.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Customer, journal, currency, payment terms from the customer, terms and conditions, and the invoice lines with product, description, quantity, unit price and taxes. Picking a product fills its list price in the template&#x27;s currency. Totals are shown on the template, before the customer&#x27;s fiscal position.</p>
       </div>
     </div>
     <div class="oe_span6">
@@ -38,20 +38,20 @@
     </div>
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Taxes as on a typed invoice</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Each invoice takes its fiscal position from the customer, or from the place of supply under the Indian localisation, and maps the template&#x27;s taxes through it: GST becomes IGST for an inter-state customer, an export position gives its 0% tax.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">A scheduler that never doubles up</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">One invoice per template and date, however many times the job runs or the button is pressed. A scheduler that was off for a while catches up with one invoice per missed date.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">One invoice per template and date, however many times the job runs or the button is pressed. A scheduler that was off for a while catches up with one invoice per missed date. Each invoice is left in draft for a glance, or posted straight away.</p>
       </div>
     </div>
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">Month-end dates that hold</h4>
         <p style="color:#5d6d7e; margin:0; line-height:1.6;">A monthly template set on the 31st invoices on 28 February and is back on the 31st in March. A yearly one set on 29 February falls to the 28th in common years and returns on the next leap year.</p>
-      </div>
-    </div>
-    <div class="oe_span6">
-      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
-        <h4 style="color:#183a5c; margin:0 0 6px 0;">Draft or posted</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Leave each generated invoice in draft for a glance before it goes out, or let the template post it straight away.</p>
       </div>
     </div>
     <div class="oe_span6">
@@ -119,9 +119,10 @@
       <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
       <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
         <li>Depends on Accounting (account) only. The generated documents are ordinary customer invoices numbered by the sale journal.</li>
-        <li>Access follows Accounting: billing users create and run templates, read-only accounting users can look at them. Multi-company record rules are in place.</li>
+        <li>Access follows Accounting: billing users create and run templates, read-only accounting users can look at them. Multi-company record rules are in place, and a branch uses its parent company&#x27;s journal and taxes.</li>
         <li>A template that has issued invoices cannot be deleted, only archived, so the trail on its invoices stays intact.</li>
         <li>If one template cannot be invoiced (say a posting is refused), the scheduler records the reason on that template, leaves it to be retried tomorrow, and carries on with the others.</li>
+        <li>The scheduler serves every company and reads today&#x27;s date in the time zone of each template&#x27;s salesperson, so a job at 23:30 UTC already issues the next day&#x27;s invoices for a business in India.</li>
         <li>Odoo&#x27;s own Auto-post recurrence duplicates a posted entry monthly, quarterly or yearly. This module works from an editable template instead, adds daily and weekly intervals, pause and resume, an end date and a Generate Now button.</li>
       </ul>
     </div>
