@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_drkds_documents" model="ir.ui.view">
+        <field name="name">res.config.settings.form.drkds.documents</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="60"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Document Folders" string="Document Folders" name="drkds_documents_lite"
+                     groups="drkds_documents_lite.group_document_manager">
+                    <block title="Chatter Mirroring" name="drkds_documents_mirroring">
+                        <setting id="drkds_document_mirror_setting" string="Mirror chatter files"
+                                 help="Every file posted in the chatter of these models is also filed as a document, in a folder named after the model under Linked Records.">
+                            <field name="drkds_document_mirror_model_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_drkds_documents_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'module': 'drkds_documents_lite', 'bin_size': False}</field>
+    </record>
+
+</odoo>

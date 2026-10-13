@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="folder_company" model="drkds.document.folder">
+        <field name="name">Company Documents</field>
+        <field name="sequence">10</field>
+        <field name="description">Registrations, licences, policies and other files the company keeps.</field>
+    </record>
+
+    <record id="folder_linked_records" model="drkds.document.folder">
+        <field name="name">Linked Records</field>
+        <field name="sequence">90</field>
+        <field name="description">One sub-folder per model whose chatter files are mirrored here.</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- A folder is visible when it has no read group, or when the user is in
+         one of its read or write groups. all_group_ids includes implied groups,
+         so granting a parent group is enough. -->
+    <record id="rule_document_folder_user_read" model="ir.rule">
+        <field name="name">Document folders: readable folders</field>
+        <field name="model_id" ref="model_drkds_document_folder"/>
+        <field name="domain_force">['|', ('read_group_ids', '=', False),
+            '|', ('read_group_ids', 'in', user.all_group_ids.ids),
+                 ('write_group_ids', 'in', user.all_group_ids.ids)]</field>
+        <field name="groups" eval="[(4, ref('group_document_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_document_folder_manager" model="ir.rule">
+        <field name="name">Document folders: all</field>
+        <field name="model_id" ref="model_drkds_document_folder"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_document_manager'))]"/>
+    </record>
+
+    <!-- Documents follow their folder. Read: the folder is readable. Write,
+         create, delete: the folder is readable AND either has no write group
+         or the user is in one of them. -->
+    <record id="rule_document_user_read" model="ir.rule">
+        <field name="name">Documents: in readable folders</field>
+        <field name="model_id" ref="model_drkds_document"/>
+        <field name="domain_force">['|', ('folder_id.read_group_ids', '=', False),
+            '|', ('folder_id.read_group_ids', 'in', user.all_group_ids.ids),
+                 ('folder_id.write_group_ids', 'in', user.all_group_ids.ids)]</field>
+        <field name="groups" eval="[(4, ref('group_document_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_document_user_write" model="ir.rule">
+        <field name="name">Documents: in writable folders</field>
+        <field name="model_id" ref="model_drkds_document"/>
+        <field name="domain_force">['&amp;',
+            '|', ('folder_id.read_group_ids', '=', False),
+            '|', ('folder_id.read_group_ids', 'in', user.all_group_ids.ids),
+                 ('folder_id.write_group_ids', 'in', user.all_group_ids.ids),
+            '|', ('folder_id.write_group_ids', '=', False),
+                 ('folder_id.write_group_ids', 'in', user.all_group_ids.ids)]</field>
+        <field name="groups" eval="[(4, ref('group_document_user'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_document_manager" model="ir.rule">
+        <field name="name">Documents: all</field>
+        <field name="model_id" ref="model_drkds_document"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_document_manager'))]"/>
+    </record>
+
+    <record id="rule_document_folder_company" model="ir.rule">
+        <field name="name">Document folders: multi-company</field>
+        <field name="model_id" ref="model_drkds_document_folder"/>
+        <field name="domain_force">['|', ('company_id', '=', False),
+            ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+    <record id="rule_document_company" model="ir.rule">
+        <field name="name">Documents: multi-company</field>
+        <field name="model_id" ref="model_drkds_document"/>
+        <field name="domain_force">['|', ('company_id', '=', False),
+            ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+
+</odoo>

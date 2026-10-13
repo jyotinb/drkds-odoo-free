@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_drkds_document_folder_user,drkds.document.folder user,model_drkds_document_folder,drkds_documents_lite.group_document_user,1,0,0,0
+access_drkds_document_folder_manager,drkds.document.folder manager,model_drkds_document_folder,drkds_documents_lite.group_document_manager,1,1,1,1
+access_drkds_document_tag_user,drkds.document.tag user,model_drkds_document_tag,drkds_documents_lite.group_document_user,1,0,0,0
+access_drkds_document_tag_manager,drkds.document.tag manager,model_drkds_document_tag,drkds_documents_lite.group_document_manager,1,1,1,1
+access_drkds_document_user,drkds.document user,model_drkds_document,drkds_documents_lite.group_document_user,1,1,1,1
+access_drkds_document_add_wizard_user,drkds.document.add.wizard user,model_drkds_document_add_wizard,drkds_documents_lite.group_document_user,1,1,1,1

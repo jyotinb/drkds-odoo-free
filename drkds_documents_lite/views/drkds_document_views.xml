@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_document_kanban" model="ir.ui.view">
+        <field name="name">drkds.document.kanban</field>
+        <field name="model">drkds.document</field>
+        <field name="arch" type="xml">
+            <kanban quick_create="false" sample="1">
+                <field name="attachment_id"/>
+                <field name="preview_kind"/>
+                <field name="mimetype"/>
+                <field name="expiry_state"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex flex-column h-100">
+                            <div class="d-flex align-items-center justify-content-center mb-2"
+                                 style="height:120px; background:#f3f4f6; border-radius:4px; overflow:hidden;">
+                                <img t-if="record.preview_kind.raw_value == 'image'"
+                                     t-att-src="'/web/image/ir.attachment/' + record.attachment_id.raw_value + '/datas?height=240'"
+                                     t-att-alt="record.name.value"
+                                     style="max-height:120px; max-width:100%; object-fit:contain;"/>
+                                <div t-else="" class="o_image" style="width:64px; height:64px;"
+                                     t-att-data-mimetype="record.mimetype.raw_value or 'unknown'"/>
+                            </div>
+                            <field name="name" class="fw-bold text-truncate"/>
+                            <field name="folder_id" class="text-muted small text-truncate"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <div class="d-flex mt-2 align-items-center">
+                                <span t-if="record.expiry_state.raw_value == 'soon'"
+                                      class="badge text-bg-warning">Expires <field name="expiry_date"/></span>
+                                <span t-if="record.expiry_state.raw_value == 'expired'"
+                                      class="badge text-bg-danger">Expired <field name="expiry_date"/></span>
+                                <field name="activity_ids" widget="kanban_activity" class="ms-2"/>
+                                <field name="user_id" widget="many2one_avatar_user" class="ms-auto"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_drkds_document_list" model="ir.ui.view">
+        <field name="name">drkds.document.list</field>
+        <field name="model">drkds.document</field>
+        <field name="arch" type="xml">
+            <list string="Documents" multi_edit="1">
+                <field name="name"/>
+                <field name="folder_id"/>
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
+                <field name="user_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="partner_id" optional="show"/>
+                <field name="res_name" optional="show"/>
+                <field name="mimetype" optional="hide"/>
+                <field name="file_size" optional="hide"/>
+                <field name="expiry_date" optional="show"
+                       decoration-danger="expiry_state == 'expired'"
+                       decoration-warning="expiry_state == 'soon'"/>
+                <field name="expiry_state" column_invisible="True"/>
+                <field name="create_date" string="Added" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="activity_exception_decoration" widget="activity_exception"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_document_form" model="ir.ui.view">
+        <field name="name">drkds.document.form</field>
+        <field name="model">drkds.document</field>
+        <field name="arch" type="xml">
+            <form string="Document">
+                <header>
+                    <button name="action_download" type="object" string="Download"
+                            class="btn-primary" icon="fa-download"
+                            invisible="preview_kind == 'none'"/>
+                    <button name="action_open_linked_record" type="object" string="Open Record"
+                            invisible="not res_model or not res_id"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Expired" bg_color="text-bg-danger"
+                            invisible="expiry_state != 'expired'"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Shop and Establishment Licence"/></h1>
+                    </div>
+                    <group>
+                        <group name="file">
+                            <field name="file" filename="file_name" widget="binary"/>
+                            <field name="file_name" invisible="1"/>
+                            <field name="preview_kind" invisible="1"/>
+                            <field name="attachment_id" invisible="1"/>
+                            <field name="mimetype"/>
+                            <field name="file_size"/>
+                            <field name="folder_id"/>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                        </group>
+                        <group name="people">
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="partner_id"/>
+                            <field name="res_name" invisible="not res_model"/>
+                            <field name="res_model" invisible="1"/>
+                            <field name="res_id" invisible="1"/>
+                            <field name="expiry_date"/>
+                            <field name="expiry_state" invisible="not expiry_date"/>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Notes about this file..."/>
+                    <notebook>
+                        <page string="Preview" name="preview" invisible="preview_kind not in ('image', 'pdf')">
+                            <field name="file" widget="pdf_viewer" invisible="preview_kind != 'pdf'"/>
+                            <field name="file" widget="image" invisible="preview_kind != 'image'"
+                                   options="{'size': [0, 400]}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_document_search" model="ir.ui.view">
+        <field name="name">drkds.document.search</field>
+        <field name="model">drkds.document</field>
+        <field name="arch" type="xml">
+            <search string="Documents">
+                <field name="name" string="Document"
+                       filter_domain="['|', '|', ('name', 'ilike', self), ('description', 'ilike', self), ('file_name', 'ilike', self)]"/>
+                <field name="folder_id" operator="child_of"/>
+                <field name="tag_ids"/>
+                <field name="user_id"/>
+                <field name="partner_id"/>
+                <field name="res_model"/>
+                <filter name="my" string="My Documents" domain="[('user_id', '=', uid)]"/>
+                <filter name="linked" string="Linked to a Record" domain="[('res_model', '!=', False)]"/>
+                <separator/>
+                <filter name="expiring" string="Expiring Soon" domain="[('expiry_state', '=', 'soon')]"/>
+                <filter name="expired" string="Expired" domain="[('expiry_state', '=', 'expired')]"/>
+                <filter name="with_expiry" string="Has Expiry Date" domain="[('expiry_date', '!=', False)]"/>
+                <separator/>
+                <filter name="images" string="Images" domain="[('mimetype', '=like', 'image/%')]"/>
+                <filter name="pdfs" string="PDF" domain="[('mimetype', '=', 'application/pdf')]"/>
+                <separator/>
+                <filter name="activities_overdue" string="Late Activities"
+                        domain="[('my_activity_date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="activities_today" string="Today's Activities"
+                        domain="[('my_activity_date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_folder" string="Folder" context="{'group_by': 'folder_id'}"/>
+                    <filter name="group_owner" string="Owner" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_partner" string="Contact" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_model" string="Linked Model" context="{'group_by': 'res_model'}"/>
+                    <filter name="group_expiry" string="Expiry Month" context="{'group_by': 'expiry_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_document" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="res_model">drkds.document</field>
+        <field name="view_mode">kanban,list,form,activity</field>
+        <field name="search_view_id" ref="view_drkds_document_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">File a document</p>
+            <p>
+                Upload a file, put it in a folder, tag it, name the owner and the
+                contact, and set an expiry date if it has one.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_drkds_document_expiring" model="ir.actions.act_window">
+        <field name="name">Expiring Documents</field>
+        <field name="res_model">drkds.document</field>
+        <field name="view_mode">list,kanban,form,activity</field>
+        <field name="search_view_id" ref="view_drkds_document_search"/>
+        <field name="domain">[('expiry_date', '!=', False)]</field>
+        <field name="context">{'search_default_expiring': 1, 'search_default_expired': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nothing is about to expire</p>
+            <p>Documents with an expiry date within the next seven days, or already past it, are listed here.</p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_server_drkds_add_to_documents" model="ir.actions.server">
+        <field name="name">Add to Documents</field>
+        <field name="model_id" ref="base.model_ir_attachment"/>
+        <field name="binding_model_id" ref="base.model_ir_attachment"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="group_ids" eval="[(4, ref('drkds_documents_lite.group_document_user'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_drkds_add_to_documents()</field>
+    </record>
+</odoo>

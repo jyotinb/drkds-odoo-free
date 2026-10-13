@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_document_tag_list" model="ir.ui.view">
+        <field name="name">drkds.document.tag.list</field>
+        <field name="model">drkds.document.tag</field>
+        <field name="arch" type="xml">
+            <list string="Tags" editable="bottom">
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_document_tag_search" model="ir.ui.view">
+        <field name="name">drkds.document.tag.search</field>
+        <field name="model">drkds.document.tag</field>
+        <field name="arch" type="xml">
+            <search string="Tags">
+                <field name="name"/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_document_tag" model="ir.actions.act_window">
+        <field name="name">Tags</field>
+        <field name="res_model">drkds.document.tag</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a tag</p>
+            <p>Tags cut across folders: Signed, Draft, Renewal due, Confidential.</p>
+        </field>
+    </record>
+
+</odoo>

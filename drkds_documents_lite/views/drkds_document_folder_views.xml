@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_drkds_document_folder_list" model="ir.ui.view">
+        <field name="name">drkds.document.folder.list</field>
+        <field name="model">drkds.document.folder</field>
+        <field name="arch" type="xml">
+            <list string="Folders" default_order="complete_name">
+                <field name="complete_name" string="Folder"/>
+                <field name="description" optional="show"/>
+                <field name="read_group_ids" widget="many2many_tags" optional="show"/>
+                <field name="write_group_ids" widget="many2many_tags" optional="show"/>
+                <field name="model_id" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                <field name="document_count" string="Documents"/>
+                <field name="document_count_total" string="Including sub-folders" optional="hide"/>
+                <field name="sequence" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_document_folder_form" model="ir.ui.view">
+        <field name="name">drkds.document.folder.form</field>
+        <field name="model">drkds.document.folder</field>
+        <field name="arch" type="xml">
+            <form string="Folder">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_documents" type="object"
+                                class="oe_stat_button" icon="fa-file-o">
+                            <field name="document_count_total" widget="statinfo" string="Documents"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name" string="Folder"/>
+                        <h1><field name="name" placeholder="e.g. Contracts"/></h1>
+                    </div>
+                    <group>
+                        <group name="tree">
+                            <field name="parent_id"/>
+                            <field name="sequence"/>
+                            <field name="complete_name"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group name="access">
+                            <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                            <field name="read_group_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"/>
+                            <field name="write_group_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"/>
+                            <field name="model_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="What belongs in this folder?"/>
+                    <notebook>
+                        <page string="Sub-folders" name="children">
+                            <field name="child_ids" context="{'default_parent_id': id}">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="description"/>
+                                    <field name="read_group_ids" widget="many2many_tags"/>
+                                    <field name="write_group_ids" widget="many2many_tags"/>
+                                    <field name="document_count"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_drkds_document_folder_search" model="ir.ui.view">
+        <field name="name">drkds.document.folder.search</field>
+        <field name="model">drkds.document.folder</field>
+        <field name="arch" type="xml">
+            <search string="Folders">
+                <field name="complete_name" string="Folder"
+                       filter_domain="['|', ('complete_name', 'ilike', self), ('description', 'ilike', self)]"/>
+                <field name="parent_id"/>
+                <field name="read_group_ids"/>
+                <filter name="top_level" string="Top Level Only"
+                        domain="[('parent_id', '=', False)]"/>
+                <filter name="restricted" string="Restricted"
+                        domain="[('read_group_ids', '!=', False)]"/>
+                <filter name="mirrored" string="Mirroring a Model"
+                        domain="[('model_id', '!=', False)]"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_parent" string="Parent Folder"
+                            context="{'group_by': 'parent_id'}"/>
+                    <filter name="group_company" string="Company"
+                            context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_drkds_document_folder" model="ir.actions.act_window">
+        <field name="name">Folders</field>
+        <field name="res_model">drkds.document.folder</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a folder</p>
+            <p>
+                Folders are the shelves. Nest them as deeply as you like and give
+                each one the groups that may see it and the groups that may file
+                in it.
+            </p>
+        </field>
+    </record>
+
+</odoo>

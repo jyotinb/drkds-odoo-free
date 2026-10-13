@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_drkds_documents_root" name="Documents"
+              web_icon="drkds_documents_lite,static/description/icon.png"
+              groups="drkds_documents_lite.group_document_user"
+              sequence="56"/>
+
+    <menuitem id="menu_drkds_documents_all" name="Documents"
+              parent="menu_drkds_documents_root" action="action_drkds_document"
+              sequence="10"/>
+
+    <menuitem id="menu_drkds_documents_expiring" name="Expiring"
+              parent="menu_drkds_documents_root" action="action_drkds_document_expiring"
+              sequence="20"/>
+
+    <menuitem id="menu_drkds_documents_configuration" name="Configuration"
+              parent="menu_drkds_documents_root" sequence="90"
+              groups="drkds_documents_lite.group_document_manager"/>
+
+    <menuitem id="menu_drkds_documents_folders" name="Folders"
+              parent="menu_drkds_documents_configuration" action="action_drkds_document_folder"
+              sequence="10"/>
+
+    <menuitem id="menu_drkds_documents_tags" name="Tags"
+              parent="menu_drkds_documents_configuration" action="action_drkds_document_tag"
+              sequence="20"/>
+
+    <menuitem id="menu_drkds_documents_settings" name="Settings"
+              parent="menu_drkds_documents_configuration" action="action_drkds_documents_config_settings"
+              sequence="30"/>
+
+</odoo>
