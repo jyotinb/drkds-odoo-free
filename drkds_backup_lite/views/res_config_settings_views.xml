@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_drkds_backup" model="ir.ui.view">
+        <field name="name">res.config.settings.form.drkds.backup</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Database Backup" string="Database Backup" name="drkds_backup_lite"
+                     groups="base.group_system">
+                    <block title="Scheduled Backup" name="drkds_backup_block">
+                        <setting id="drkds_backup_default_folder_setting"
+                                 string="Default Backup Folder"
+                                 help="Proposed for every new backup configuration. It must be writable by the system user that runs Odoo.">
+                            <field name="drkds_backup_default_folder" placeholder="/var/backups/odoo"/>
+                        </setting>
+                        <setting id="drkds_backup_configs_setting"
+                                 string="Backup Configurations"
+                                 help="Each configuration dumps the database to a folder on its own schedule.">
+                            <button name="action_drkds_open_backup_configs" type="object"
+                                    string="Manage Backups" icon="oi-arrow-right" class="btn-link"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

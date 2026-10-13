@@ -1,0 +1,44 @@
+{
+  "module": "drkds_backup_lite",
+  "title": "Scheduled Database Backup (Lite)",
+  "summary": "Nightly database dumps to a local folder, with retention, a log and failure alerts, on Odoo 19 Community",
+  "intro": "Name a folder on the server, pick a format, say how many copies to keep, and the database is dumped on the schedule you set. Each run, good or bad, lands in a log with its file, size and duration. When a run fails, the people you name get a to-do, so a backup that quietly stopped working is a thing of the past.\n\nThe dump is made by pg_dump with the connection Odoo already uses. No master password is asked for, none is stored, and nothing leaves the server.",
+  "shots": [],
+  "features": [
+    [
+      "Backup configurations",
+      "A name, the target folder, the format, how many files to keep, who to tell on failure, and the schedule. Each configuration owns its own scheduled action; archive it to pause, delete it to remove."
+    ],
+    [
+      "Two formats",
+      "A zip with dump.sql, manifest.json and the filestore, which the database manager restores as it is, or a PostgreSQL custom-format dump for pg_restore."
+    ],
+    [
+      "Retention",
+      "After each successful run the oldest files of this database beyond the last N are removed from the folder and their log lines marked. Other files in the folder are never touched."
+    ],
+    [
+      "A log per run",
+      "File, full path, size, duration, status and message, with a flag telling whether the file is still on disk. Filter by status, group by configuration or day."
+    ],
+    [
+      "Backup Now and Test Folder",
+      "Run a configuration on demand and land on its log line. Check that the Odoo system user can actually write to the folder before the night comes."
+    ],
+    [
+      "Failure alerts",
+      "A failed run posts a note in the configuration's chatter and a to-do activity to every notified user, with the reason."
+    ]
+  ],
+  "notes": [
+    "Only administrators (Settings access) see the menu, the configurations and the runs.",
+    "pg_dump must be installed on the Odoo server and on the PATH, or named by pg_path in the Odoo configuration file.",
+    "The folder must exist and be writable by the system user that runs Odoo. The Test Folder button tells you whether it is.",
+    "File names are <database>_<YYYYMMDD_HHMMSS>.zip or .dump, timestamped in UTC.",
+    "Retention runs only after a successful backup, so a failing night never deletes the copies you still have.",
+    "Depends only on base and mail. One database per configuration: the one Odoo is running.",
+    "The lite edition writes to a local folder only. There is no remote target, no encryption and no restore from the interface."
+  ],
+  "disclaimer": false,
+  "paid_sentence": "The drkds Backup app adds remote targets (SFTP, S3), encryption, restore from the interface and multi-database schedules."
+}

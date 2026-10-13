@@ -1,0 +1,151 @@
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h2 class="oe_slogan" style="color:#183a5c; margin-bottom:6px;">Scheduled Database Backup (Lite)</h2>
+      <h3 class="oe_slogan" style="color:#5d6d7e; font-weight:400; margin-top:0;">Nightly database dumps to a local folder, with retention, a log and failure alerts, on Odoo 19 Community</h3>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        Name a folder on the server, pick a format, say how many copies to keep, and the database is dumped on the schedule you set. Each run, good or bad, lands in a log with its file, size and duration. When a run fails, the people you name get a to-do, so a backup that quietly stopped working is a thing of the past.</p>
+      <p style="font-size:16px; line-height:1.6; color:#2c3e50;">
+        The dump is made by pg_dump with the connection Odoo already uses. No master password is asked for, none is stored, and nothing leaves the server.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
+    </div>
+  </div>
+  <div class="oe_row oe_spaced">
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Backup configurations</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A name, the target folder, the format, how many files to keep, who to tell on failure, and the schedule. Each configuration owns its own scheduled action; archive it to pause, delete it to remove.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Two formats</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A zip with dump.sql, manifest.json and the filestore, which the database manager restores as it is, or a PostgreSQL custom-format dump for pg_restore.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Retention</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">After each successful run the oldest files of this database beyond the last N are removed from the folder and their log lines marked. Other files in the folder are never touched.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">A log per run</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">File, full path, size, duration, status and message, with a flag telling whether the file is still on disk. Filter by status, group by configuration or day.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Backup Now and Test Folder</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Run a configuration on demand and land on its log line. Check that the Odoo system user can actually write to the folder before the night comes.</p>
+      </div>
+    </div>
+    <div class="oe_span6">
+      <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
+        <h4 style="color:#183a5c; margin:0 0 6px 0;">Failure alerts</h4>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">A failed run posts a note in the configuration&#x27;s chatter and a to-do activity to every notified user, with the reason.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center; padding:18px;">
+      <h3 class="oe_slogan" style="color:#183a5c;">The drkds free suite for Odoo 19 Community</h3>
+      <p style="font-size:15px; line-height:2; color:#5d6d7e;">
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_in_eway_watch" style="color:#183a5c;">E-Way Bill Expiry Watch (India)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_in_fy_sequence" style="color:#183a5c;">Indian Financial Year Numbering</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_in_gst_summary" style="color:#183a5c;">GST Outward and Inward Summary (India)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_in_inr_words" style="color:#183a5c;">Rupee Amounts in Words (Lakh and Crore)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_in_invoice_print_extras" style="color:#183a5c;">Indian Invoice Print Extras</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_in_msme_vendor" style="color:#183a5c;">MSME Vendor Payment Tracking (India)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_in_partner_validate" style="color:#183a5c;">India Partner Identifier Validation</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_in_payroll_components" style="color:#183a5c;">Indian Payroll Components (PF, ESI, PT)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_in_tds_rate_register" style="color:#183a5c;">India TDS Rate and Deduction Register</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_in_upi_qr_invoice" style="color:#183a5c;">UPI Payment QR on Invoices (India)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_asset_register_lite" style="color:#183a5c;">Fixed Asset Register (Lite)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_branch_lite" style="color:#183a5c;">Branches (Lite)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_budget_lite" style="color:#183a5c;">Account Budgets (Lite)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_knowledge_base_lite" style="color:#183a5c;">Knowledge Base (Lite)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_label_designer_lite" style="color:#183a5c;">Label Designer (Lite)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_material_request_lite" style="color:#183a5c;">Material Request (Lite)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_password_vault_lite" style="color:#183a5c;">Password Vault (Lite)</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_proforma_invoice" style="color:#183a5c;">Proforma Invoice</a>
+         · 
+        <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_ticketing_lite" style="color:#183a5c;">Support Tickets (Lite)</a>
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Need the full version? The drkds Backup app adds remote targets (SFTP, S3), encryption, restore from the interface and multi-database schedules.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container oe_dark">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12">
+      <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
+      <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
+        <li>Only administrators (Settings access) see the menu, the configurations and the runs.</li>
+        <li>pg_dump must be installed on the Odoo server and on the PATH, or named by pg_path in the Odoo configuration file.</li>
+        <li>The folder must exist and be writable by the system user that runs Odoo. The Test Folder button tells you whether it is.</li>
+        <li>File names are &lt;database&gt;_&lt;YYYYMMDD_HHMMSS&gt;.zip or .dump, timestamped in UTC.</li>
+        <li>Retention runs only after a successful backup, so a failing night never deletes the copies you still have.</li>
+        <li>Depends only on base and mail. One database per configuration: the one Odoo is running.</li>
+        <li>The lite edition writes to a local folder only. There is no remote target, no encryption and no restore from the interface.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <p style="font-size:15px; color:#5d6d7e;">
+        Odoo 19 Community · Licence LGPL-3 · Free and open source
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Part of the drkds Indian SME suite for Odoo 19 Community.
+      </p>
+      <p style="font-size:15px; color:#5d6d7e;">
+        Support: <a href="mailto:jyotinboghani@gmail.com" style="color:#183a5c;">jyotinboghani@gmail.com</a>
+         · 
+        <a href="https://drkdsinfo.com" style="color:#183a5c;">drkdsinfo.com</a>
+      </p>
+    </div>
+  </div>
+</section>

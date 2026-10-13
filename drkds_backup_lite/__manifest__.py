@@ -1,0 +1,61 @@
+{
+    "name": "Scheduled Database Backup (Lite)",
+    "summary": "Nightly database dumps to a local folder, with retention, a log and failure alerts, on Odoo 19 Community",
+    "description": """
+Scheduled Database Backup (Lite)
+================================
+
+A scheduled dump of the current database to a folder on the server, for
+Odoo 19 Community. Set a folder, pick a format, say how many copies to keep,
+and the cron does the rest. Every run, good or bad, is written to a log,
+and a failed run raises a to-do for the people you name.
+
+What it gives you
+-----------------
+* **Backup configurations** - a name, the target folder, the format, how
+  many files to keep, who to tell when it fails, and the schedule. Each
+  configuration owns its own scheduled action.
+* **Two formats** - a zip holding ``dump.sql``, ``manifest.json`` and the
+  filestore, which the database manager can restore as it is; or a plain
+  PostgreSQL custom-format dump for ``pg_restore``.
+* **Retention** - after each run the oldest files beyond the last N are
+  removed from the folder, and their log lines are marked as such.
+* **A log per run** - file, size, duration, status and message. Nothing
+  disappears silently.
+* **Backup now** - run a configuration on demand and land on its log.
+* **Test folder** - check that the Odoo system user can write to the
+  folder before the night comes.
+* **Failure alerts** - a failed run posts a to-do activity to the notified
+  users and a note in the configuration's chatter.
+
+Notes
+-----
+The dump is produced by ``pg_dump`` with the connection settings Odoo is
+already running with. No master password is asked for, none is stored, and
+nothing is sent anywhere. The folder must be writable by the system user
+that runs Odoo.
+
+The drkds Backup app adds remote targets (SFTP, S3), encryption,
+restore from the interface and multi-database schedules.
+
+Part of the drkds Indian SME suite for Odoo 19 Community.
+""",
+    "version": "19.0.1.0.0",
+    "category": "Administration",
+    "author": "drkds",
+    "website": "https://drkdsinfo.com",
+    "support": "jyotinboghani@gmail.com",
+    "license": "LGPL-3",
+    "depends": ["base", "mail"],
+    "data": [
+        "security/ir.model.access.csv",
+        "views/drkds_backup_log_views.xml",
+        "views/drkds_backup_config_views.xml",
+        "views/res_config_settings_views.xml",
+        "views/drkds_backup_menus.xml",
+    ],
+    "images": [],
+    "installable": True,
+    "application": False,
+    "auto_install": False,
+}

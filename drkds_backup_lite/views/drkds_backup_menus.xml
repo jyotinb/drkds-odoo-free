@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_drkds_backup_root" name="Database Backup"
+              parent="base.menu_administration" sequence="60"
+              groups="base.group_system"/>
+    <menuitem id="menu_drkds_backup_config" name="Configurations"
+              parent="menu_drkds_backup_root"
+              action="action_drkds_backup_config" sequence="10"/>
+    <menuitem id="menu_drkds_backup_log" name="Runs"
+              parent="menu_drkds_backup_root"
+              action="action_drkds_backup_log" sequence="20"/>
+
+</odoo>
