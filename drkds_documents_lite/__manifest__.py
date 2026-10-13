@@ -15,6 +15,7 @@ What it gives you
 * **Folders** - a tree of folders, each with its own read and write groups.
   A folder with no read group is open to every document user; a folder with
   read groups is invisible to anyone outside them, and so are its documents.
+  Sub-folders follow their parent's groups until given groups of their own.
 * **Documents** - a file stored as a normal Odoo attachment, with name,
   folder, tags, owner, contact, a link to any record, description, expiry
   date, and the size and type read from the file. Kanban with image
@@ -27,13 +28,15 @@ What it gives you
   posted in the chatter of those records is also filed as a document in a
   folder of its own, linked back to the record.
 * **Expiry reminders** - a daily job schedules a to-do for the owner seven
-  days before a document expires.
+  days before a document expires, counted on the owner's own date.
 
 Security
 --------
 Document users see the folders and documents their groups allow. Document
 managers see everything and maintain folders, tags and the mirroring list.
-Record rules enforce it, so it holds in exports and the API too.
+Record rules enforce it, so it holds in exports and the API too. A file
+keeps the access of the record it belongs to, and a document's owner
+follows it and is reminded about it only when they can open it.
 
 The drkds Documents app adds workflow actions on folders, request-a-file,
 sharing links, versioning and OCR-based indexing.

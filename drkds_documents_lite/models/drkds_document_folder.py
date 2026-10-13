@@ -1,5 +1,6 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.fields import Command
 
 
 class DrkdsDocumentFolder(models.Model):
@@ -14,6 +15,9 @@ class DrkdsDocumentFolder(models.Model):
     say who may add, change and delete documents in it; left empty, anyone who
     can read the folder can write in it. The record rules in
     ``security/drkds_documents_rules.xml`` turn these lists into domains.
+
+    A sub-folder starts with its parent's lists and keeps following them
+    until it is given lists of its own (see ``create`` and ``write``).
     """
 
     _name = "drkds.document.folder"
@@ -111,6 +115,29 @@ class DrkdsDocumentFolder(models.Model):
                 if "company_id" not in vals and parent.company_id:
                     vals["company_id"] = parent.company_id.id
         return super().create(vals_list)
+
+    def write(self, vals):
+        # A sub-folder that still carries this folder's old access list
+        # follows the change, so restricting a folder restricts the branch
+        # made under it earlier. A sub-folder given a list of its own keeps
+        # it, and so does everything below it. Each list follows separately.
+        inherited = [fname for fname in ("read_group_ids", "write_group_ids") if fname in vals]
+        before = {
+            folder: {fname: folder[fname] for fname in inherited}
+            for folder in self
+        } if inherited else {}
+        result = super().write(vals)
+        for folder, old_lists in before.items():
+            for fname, old_groups in old_lists.items():
+                new_groups = folder[fname]
+                if new_groups == old_groups:
+                    continue
+                heirs = folder.with_context(active_test=False).child_ids.filtered(
+                    lambda child: child[fname] == old_groups
+                )
+                if heirs:
+                    heirs.write({fname: [Command.set(new_groups.ids)]})
+        return result
 
     @api.model
     def _get_mirror_folder(self, model_name):

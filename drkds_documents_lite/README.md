@@ -39,9 +39,11 @@ installs it is made a document manager.
 2. **Documents > Configuration > Folders**: build the tree. On each folder,
    **Read Groups** says who may see it (empty: every document user) and
    **Write Groups** says who may file in it (empty: anyone who can see it).
-   A new sub-folder starts with its parent's groups.
+   A new sub-folder starts with its parent's groups and follows later
+   changes to them, until it is given groups of its own.
 3. **Documents > Configuration > Tags**: a few labels that cut across
-   folders, such as *Signed*, *Draft*, *Renewal due*.
+   folders, such as *Signed*, *Draft*, *Renewal due*. A new tag gets a
+   colour of its own; change it in the list.
 4. **Documents > Configuration > Settings**, or **Settings > Document
    Folders**: pick the models whose chatter files should be mirrored. A
    folder named after each model is created under *Linked Records*.
@@ -55,14 +57,21 @@ installs it is made a document manager.
    Technical > Attachments*), select files, open the *Actions* menu and
    choose *Add to Documents*. Pick the folder and tags. The attachment is
    linked, not copied, and the document carries the record and the contact
-   it came from.
+   it came from. A folder kept for one company gives the document that
+   company; a contact of another company is then left off.
 3. **Mirroring**: once a model is in the settings, posting a file in the
    chatter of one of its records files it as a document in that model's
-   folder, linked to the record, owned by the person who posted it.
+   folder, linked to the record, owned by the person who posted it. The
+   poster follows the document only if they can open it. A record of a
+   company the folder is not kept for is not mirrored, and the post itself
+   always goes through.
 4. **Expiring**: lists everything expiring within seven days or already
    expired. The nightly job schedules a to-do for the owner, with the
-   expiry date as deadline. Changing the expiry date makes it fire again
-   for the new date.
+   expiry date as deadline, counting the seven days on the owner's own date
+   (their timezone). Changing the expiry date makes it fire again for the
+   new date. A document whose owner cannot act on it (no owner, an archived
+   owner, or an owner outside the folder's groups) gets no to-do until it
+   has an owner who can open it; it is still listed under *Expiring*.
 5. **Open Record** on a linked document jumps to the record it concerns.
 
 ## Behaviour worth knowing
@@ -70,6 +79,14 @@ installs it is made a document manager.
 - A restricted folder is invisible, documents included, to anyone outside
   its read groups. The rules are record rules, so this holds in exports and
   the API, not only in the interface.
+- Moving a document into another folder, or another company, needs the
+  right to file there.
+- A file keeps the access of the record it belongs to. A document whose
+  file belongs to a record you cannot open shows its name, type and size,
+  but not the file. A document can only be pointed at a file its author
+  can open.
+- A document's owner, and the poster of a mirrored file, follow the
+  document and get its expiry reminders only when they can open it.
 - A file uploaded through the form belongs to its document and is deleted
   with it. A file taken from another record (by *Add to Documents* or by
   mirroring) stays with that record whatever happens to the document.
@@ -77,8 +94,9 @@ installs it is made a document manager.
 - A folder that still holds documents, or sub-folders, cannot be deleted;
   archive it instead.
 - Uninstalling the module keeps every file. Files uploaded through the form
-  become plain attachments under *Settings > Technical > Attachments*;
-  mirrored files are left on their records.
+  or posted in a document's chatter become plain attachments under
+  *Settings > Technical > Attachments*; mirrored files are left on their
+  records.
 - The lite edition has no file versions, no share links, no request-a-file
   and no workflow actions on folders.
 

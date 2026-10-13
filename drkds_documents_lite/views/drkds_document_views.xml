@@ -73,7 +73,7 @@
                 <header>
                     <button name="action_download" type="object" string="Download"
                             class="btn-primary" icon="fa-download"
-                            invisible="preview_kind == 'none'"/>
+                            invisible="preview_kind in ('none', 'restricted')"/>
                     <button name="action_open_linked_record" type="object" string="Open Record"
                             invisible="not res_model or not res_id"/>
                 </header>
@@ -82,13 +82,18 @@
                             invisible="expiry_state != 'expired'"/>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
                             invisible="active"/>
+                    <div class="alert alert-info" role="status" invisible="preview_kind != 'restricted'">
+                        The file of this document belongs to a record you cannot open, so it
+                        is not shown to you.
+                    </div>
                     <div class="oe_title">
                         <label for="name"/>
                         <h1><field name="name" placeholder="e.g. Shop and Establishment Licence"/></h1>
                     </div>
                     <group>
                         <group name="file">
-                            <field name="file" filename="file_name" widget="binary"/>
+                            <field name="file" filename="file_name" widget="binary"
+                                   readonly="preview_kind == 'restricted'"/>
                             <field name="file_name" invisible="1"/>
                             <field name="preview_kind" invisible="1"/>
                             <field name="attachment_id" invisible="1"/>

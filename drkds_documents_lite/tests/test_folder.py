@@ -103,3 +103,51 @@ class TestFolder(DocumentsCommon):
         self.assertEqual(self.folder_legal.document_count, 1)
         self.assertEqual(self.folder_legal.document_count_total, 3)
         self.assertEqual(contracts.document_count, 2)
+
+    # -- a change of groups reaches the branch ----------------------------------
+    def test_restricting_a_folder_restricts_the_sub_folders_that_followed_it(self):
+        """Sub-folders made before the parent was restricted carried the
+        parent's old (open) lists; they follow the change. A sub-folder given
+        lists of its own keeps them."""
+        hr = self.Folder.create({"name": "HR"})
+        payroll = self.Folder.create({"name": "Payroll", "parent_id": hr.id})
+        year = self.Folder.create({"name": "2026", "parent_id": payroll.id})
+        old_year = self.Folder.create({"name": "2025", "parent_id": payroll.id})
+        old_year.active = False
+        everyone = self.env.ref("base.group_user")
+        notices = self.Folder.create({
+            "name": "Notices", "parent_id": hr.id, "read_group_ids": [(6, 0, everyone.ids)],
+        })
+        open_under_notices = self.Folder.create({
+            "name": "Canteen", "parent_id": notices.id, "read_group_ids": [(5,)],
+        })
+        payslip = self._document(name="Payslip", folder_id=year.id)
+
+        hr.read_group_ids = [(6, 0, self.legal_group.ids)]
+
+        self.assertEqual(payroll.read_group_ids, self.legal_group)
+        self.assertEqual(year.read_group_ids, self.legal_group)
+        self.assertEqual(old_year.read_group_ids, self.legal_group, "archived folders follow too")
+        self.assertEqual(notices.read_group_ids, everyone, "its own list is kept")
+        self.assertFalse(open_under_notices.read_group_ids,
+                         "below a folder with its own list nothing is inherited from higher up")
+        self.env.invalidate_all()
+        self.assertNotIn(payslip, self.Document.with_user(self.clerk).search([]))
+        self.assertNotIn(year, self.Folder.with_user(self.clerk).search([]))
+        self.assertIn(payslip, self.Document.with_user(self.lawyer).search([]))
+
+        # Write groups follow the same path, and so does opening up again.
+        hr.write_group_ids = [(6, 0, self.legal_group.ids)]
+        self.assertEqual(year.write_group_ids, self.legal_group)
+        self.assertEqual(notices.write_group_ids, self.legal_group,
+                         "Notices had the same (empty) write list as HR, so it followed")
+        hr.read_group_ids = [(5,)]
+        self.assertFalse(payroll.read_group_ids)
+        self.assertFalse(year.read_group_ids)
+        self.assertEqual(notices.read_group_ids, everyone)
+
+    # -- tags ------------------------------------------------------------------
+    def test_a_new_tag_shows_on_kanban_cards(self):
+        """The Kanban many2many_tags widget hides tags of colour 0."""
+        tags = self.Tag.create([{"name": f"Tag {i}"} for i in range(30)])
+        self.assertTrue(all(1 <= tag.color <= 11 for tag in tags), tags.mapped("color"))

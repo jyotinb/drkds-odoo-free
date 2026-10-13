@@ -15,6 +15,11 @@ class DrkdsDocument(models.Model):
     by "Add to Documents" or by chatter mirroring only points at an
     attachment that belongs to another record; the file is not copied and
     deleting the document never deletes it.
+
+    Base decides who may read an attachment from the record it belongs to,
+    so a borrowed file keeps the access of its record. A reader who can see
+    the document but not that record sees the document without its file
+    (``preview_kind`` is ``restricted``); nothing here widens access to it.
     """
 
     _name = "drkds.document"
@@ -45,9 +50,11 @@ class DrkdsDocument(models.Model):
     mimetype = fields.Char(string="Type", related="attachment_id.mimetype")
     file_size = fields.Integer(string="Size", related="attachment_id.file_size")
     preview_kind = fields.Selection(
-        [("image", "Image"), ("pdf", "PDF"), ("other", "Other"), ("none", "No file")],
+        [("image", "Image"), ("pdf", "PDF"), ("other", "Other"), ("none", "No file"),
+         ("restricted", "Not accessible")],
         compute="_compute_preview_kind",
-        help="Which inline preview the form and the Kanban card use.",
+        help="Which inline preview the form and the Kanban card use. Not accessible: "
+        "the file belongs to a record you cannot open.",
     )
     tag_ids = fields.Many2many(
         "drkds.document.tag", "drkds_document_tag_rel", "document_id", "tag_id", string="Tags",
@@ -80,10 +87,15 @@ class DrkdsDocument(models.Model):
 
     # -- file ------------------------------------------------------------
     @api.depends("attachment_id", "attachment_id.datas", "attachment_id.name")
+    @api.depends_context("uid")
     def _compute_file(self):
+        # Only a file the reader may open is read; the others read as empty
+        # instead of failing the whole form or list for one borrowed file.
+        readable = self.attachment_id._filtered_access("read")
         for document in self:
-            document.file = document.attachment_id.datas
-            document.file_name = document.attachment_id.name
+            attachment = document.attachment_id & readable
+            document.file = attachment.datas
+            document.file_name = attachment.name
 
     def _owns_attachment(self):
         self.ensure_one()
@@ -115,17 +127,63 @@ class DrkdsDocument(models.Model):
                 })
 
     @api.depends("attachment_id.mimetype")
+    @api.depends_context("uid")
     def _compute_preview_kind(self):
+        readable = self.attachment_id._filtered_access("read")
         for document in self:
-            mimetype = document.attachment_id.mimetype or ""
             if not document.attachment_id:
                 document.preview_kind = "none"
-            elif mimetype.startswith("image/"):
+                continue
+            if document.attachment_id not in readable:
+                document.preview_kind = "restricted"
+                continue
+            mimetype = document.attachment_id.mimetype or ""
+            if mimetype.startswith("image/"):
                 document.preview_kind = "image"
             elif mimetype == "application/pdf":
                 document.preview_kind = "pdf"
             else:
                 document.preview_kind = "other"
+
+    # -- access ------------------------------------------------------------
+    @api.model_create_multi
+    def create(self, vals_list):
+        if not self.env.su:
+            self._check_attachment_readable([vals.get("attachment_id") for vals in vals_list])
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if not self.env.su and vals.get("attachment_id"):
+            self._check_attachment_readable([vals["attachment_id"]])
+        result = super().write(vals)
+        if not self.env.su and ("folder_id" in vals or "company_id" in vals):
+            # Record rules are checked against the values before the write.
+            # Check the destination too: moving a document into a folder (or
+            # a company) its mover may not file in is a write there.
+            self.check_access("write")
+        return result
+
+    @api.model
+    def _check_attachment_readable(self, attachment_ids):
+        """A document may only point at a file its author can read; otherwise
+        it would show the name, type and size of someone else's file."""
+        attachments = self.env["ir.attachment"].browse([att_id for att_id in attachment_ids if att_id])
+        attachments.check_access("read")
+
+    def _readable_by(self, user):
+        """The documents of ``self`` that ``user`` may read."""
+        return self.with_user(user)._filtered_access("read").with_env(self.env)
+
+    def _message_auto_subscribe_followers(self, updated_values, default_subtype_ids):
+        # Mail subscribes the owner, and a follower receives every message
+        # posted here. An owner who cannot read the document (outside the
+        # folder's groups, or without document rights, as the poster of a
+        # mirrored file may be) is left out.
+        followers = super()._message_auto_subscribe_followers(updated_values, default_subtype_ids)
+        owner = self.env["res.users"].sudo().browse(updated_values.get("user_id") or [])
+        if owner and followers and self._readable_by(owner) != self:
+            followers = [entry for entry in followers if entry[0] != owner.partner_id.id]
+        return followers
 
     # -- linked record ---------------------------------------------------
     @api.depends("res_model", "res_id")
@@ -210,20 +268,35 @@ class DrkdsDocument(models.Model):
         Idempotent: ``expiry_reminded_date`` records the date reminded for, so
         a second run on the same day does nothing and a moved expiry date is
         reminded again.
+
+        "Today" is the owner's date, in the owner's timezone: the job runs as
+        OdooBot, with no timezone, whose date is UTC.
+
+        Only an active owner who can open the document is reminded. A to-do
+        for OdooBot is read by nobody, and an activity subscribes and notifies
+        its assignee, which must not reach someone outside the folder. Such a
+        document is not marked as reminded, so it is reminded once it has an
+        owner who can open it; meanwhile it is listed under Expiring.
         """
-        today = fields.Date.today()
-        limit = today + timedelta(days=EXPIRY_WARNING_DAYS)
+        # No timezone is more than a day ahead of UTC.
+        horizon = fields.Date.today() + timedelta(days=EXPIRY_WARNING_DAYS + 1)
         candidates = self.search([
             ("expiry_date", "!=", False),
-            ("expiry_date", "<=", limit),
-        ])
-        due = candidates.filtered(lambda d: d.expiry_reminded_date != d.expiry_date)
-        for document in due:
-            user = document.user_id if document.user_id and document.user_id.active else self.env.user
+            ("expiry_date", "<=", horizon),
+        ]).filtered(lambda d: d.expiry_reminded_date != d.expiry_date)
+        due = self.browse()
+        for document in candidates:
+            owner = document.user_id
+            if not owner.active or not document._readable_by(owner):
+                continue
+            owner_today = fields.Date.context_today(document.with_context(tz=owner.tz or "UTC"))
+            if document.expiry_date > owner_today + timedelta(days=EXPIRY_WARNING_DAYS):
+                continue
+            due |= document
             document.activity_schedule(
                 "mail.mail_activity_data_todo",
                 date_deadline=document.expiry_date,
-                user_id=user.id,
+                user_id=owner.id,
                 summary=_("Document expires on %s", fields.Date.to_string(document.expiry_date)),
                 note=_("The document %s in folder %s expires on %s.",
                        document.name, document.folder_id.complete_name,
@@ -234,31 +307,62 @@ class DrkdsDocument(models.Model):
 
     # -- mirroring ---------------------------------------------------------
     @api.model
+    def _values_from_record(self, record, folder, default_company):
+        """Company and contact of a document filed from ``record`` into
+        ``folder``, consistent with each other so the company check passes.
+
+        The company is the record's when the folder may hold it, else the
+        folder's, else ``default_company``. The contact is the record itself
+        for a contact, else the record's ``partner_id``, and is left out when
+        it belongs to another company than the document.
+
+        Returns ``(values, fits)``; ``fits`` is False when the record belongs
+        to a company the folder is not kept for.
+        """
+        Company = self.env["res.company"]
+        record_company = Company
+        field = record._fields.get("company_id")
+        if field is not None and field.comodel_name == "res.company":
+            record_company = record.company_id
+        fits = not (record_company and folder.company_id) or bool(
+            folder.filtered_domain(folder._check_company_domain(record_company))
+        )
+        company = (record_company if fits else Company) or folder.company_id or default_company
+        partner = self.env["res.partner"]
+        if record._name == "res.partner":
+            partner = record
+        elif "partner_id" in record._fields and record._fields["partner_id"].comodel_name == "res.partner":
+            partner = record.partner_id
+        # Compared in sudo: the poster may not be allowed to read the contact.
+        if partner and not partner.sudo().filtered_domain(partner._check_company_domain(company)):
+            partner = self.env["res.partner"]
+        return {"company_id": company.id, "partner_id": partner.id}, fits
+
+    @api.model
     def _mirror_attachments(self, record, attachments, folder):
         """File ``attachments`` of ``record`` into ``folder`` as documents.
 
         Attachments already filed, and attachments that do not belong to the
-        record, are skipped. Runs with elevated rights because the person who
-        posted the file need not have any document access at all.
+        record, are skipped, and so is a record of a company the folder is not
+        kept for. This runs inside someone's message post, so it must never
+        fail it.
+
+        Runs with elevated rights because the person who posted the file need
+        not have any document access at all. That person is the owner, but
+        follows the document only when they can read it (see
+        ``_message_auto_subscribe_followers``).
         """
         attachments = attachments.sudo().filtered(
             lambda a: a.res_model == record._name and a.res_id == record.id
         )
         if not attachments:
             return self.browse()
+        link_values, fits = self._values_from_record(record, folder, self.env["res.company"])
+        if not fits:
+            return self.browse()
         existing = self.sudo().search([("attachment_id", "in", attachments.ids)])
         done = set(existing.mapped("attachment_id").ids)
         owner = self.env.user if self.env.user._is_internal() else self.env["res.users"]
-        partner = self.env["res.partner"]
-        if record._name == "res.partner":
-            partner = record
-        elif "partner_id" in record._fields and record._fields["partner_id"].comodel_name == "res.partner":
-            partner = record.partner_id
-        company = self.env["res.company"]
-        if "company_id" in record._fields and record._fields["company_id"].comodel_name == "res.company":
-            company = record.company_id
-        if folder.company_id and (not company or company != folder.company_id):
-            company = folder.company_id
         vals_list = [{
             "name": attachment.name,
             "folder_id": folder.id,
@@ -266,7 +370,6 @@ class DrkdsDocument(models.Model):
             "res_model": record._name,
             "res_id": record.id,
             "user_id": owner.id,
-            "partner_id": partner.id,
-            "company_id": company.id,
+            **link_values,
         } for attachment in attachments if attachment.id not in done]
-        return self.sudo().create(vals_list)
+        return self.sudo().with_context(mail_create_nosubscribe=True).create(vals_list)

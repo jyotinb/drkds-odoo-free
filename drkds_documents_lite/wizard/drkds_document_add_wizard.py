@@ -31,17 +31,17 @@ class DrkdsDocumentAddWizard(models.TransientModel):
                 "res_model": attachment.res_model or False,
                 "res_id": attachment.res_id or False,
             }
+            if self.folder_id.company_id:
+                vals["company_id"] = self.folder_id.company_id.id
             if attachment.res_model and attachment.res_id and attachment.res_model in self.env:
                 record = self.env[attachment.res_model].browse(attachment.res_id)
                 if record.exists():
-                    if record._name == "res.partner":
-                        vals["partner_id"] = record.id
-                    elif "partner_id" in record._fields and record._fields["partner_id"].comodel_name == "res.partner":
-                        vals["partner_id"] = record.partner_id.id
-                    if "company_id" in record._fields and record._fields["company_id"].comodel_name == "res.company" and record.company_id:
-                        vals["company_id"] = record.company_id.id
-            if self.folder_id.company_id:
-                vals["company_id"] = self.folder_id.company_id.id
+                    # The folder chosen wins over the record's company; the
+                    # record's contact is kept only where it fits.
+                    link_values, _fits = Document._values_from_record(
+                        record, self.folder_id, self.env.company,
+                    )
+                    vals.update(link_values)
             vals_list.append(vals)
         if not vals_list:
             raise UserError(_("Every selected attachment is already filed as a document."))

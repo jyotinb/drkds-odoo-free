@@ -28,16 +28,19 @@ For each folder:
 | Mirrored Model | Set from Settings; files posted in this model's chatter land here. |
 
 A new sub-folder starts with its parent's read and write groups and company,
-so a restricted branch stays restricted. A manager may change them
-afterwards.
+so a restricted branch stays restricted. When a folder's read or write groups
+change later, every sub-folder that still had the folder's old groups
+follows, all the way down; a sub-folder that was given groups of its own
+keeps them, and so does everything under it.
 
 The **Documents** button on the form opens everything filed in the folder
 and its sub-folders.
 
 ## 3. Tags
 
-**Documents > Configuration > Tags**: name and colour. A document can carry
-any number of tags, and the search filters by them.
+**Documents > Configuration > Tags**: name and colour. A new tag gets a
+colour of its own (a tag without colour would not show on the Kanban cards).
+A document can carry any number of tags, and the search filters by them.
 
 ## 4. File a document
 
@@ -54,6 +57,13 @@ any number of tags, and the search filters by them.
 A PDF or image shows in the **Preview** tab. **Download** fetches the file.
 The chatter below keeps comments and activities on the document.
 
+To move a document to another folder you need the right to file in that
+folder.
+
+A document taken from another record keeps that record's access to the
+file. If you can see the document but not the record, the form says so and
+shows the type and size but not the file, and there is no Download button.
+
 ## 5. File an existing attachment
 
 Any list of attachments, for example **Settings > Technical > Attachments**,
@@ -61,9 +71,10 @@ has **Add to Documents** in its **Actions** menu. Select the files, run it,
 choose the folder and tags, click **Add**. The documents open in a list.
 
 The file is linked, not copied. The document records the record the
-attachment came from, and the contact when the record has one. An
-attachment already filed is skipped; if every selected file is already
-filed, the wizard says so.
+attachment came from, and the contact when the record has one. If the
+folder is kept for one company the document takes that company, and a
+contact of another company is left off. An attachment already filed is
+skipped; if every selected file is already filed, the wizard says so.
 
 ## 6. Mirror chatter files automatically
 
@@ -77,6 +88,11 @@ linked to the record, with the poster as owner and the record's contact and
 company. Removing a model from the list stops the mirroring; the folder and
 its documents stay.
 
+- The poster follows the new document only when they can open it, so a
+  poster outside the folder does not receive the messages posted on it.
+- If you give the mirror folder a company, records of other companies are
+  not mirrored into it. Posting on them works as usual.
+
 ## 7. Expiry reminders
 
 **Documents > Expiring** lists documents expiring within the next seven
@@ -85,8 +101,14 @@ and red.
 
 A daily scheduled job, *Documents: expiry reminders*, schedules a **To Do**
 activity for the owner of each such document, with the expiry date as the
-deadline. Each expiry date is reminded once; set a new date after a renewal
+deadline. The seven days are counted on the owner's own date, in their
+timezone. Each expiry date is reminded once; set a new date after a renewal
 and the job fires again when that date comes within seven days.
+
+The to-do goes only to an owner who can act on it. A document with no
+owner, an archived owner, or an owner outside the folder's groups gets no
+to-do; set an owner who can open it and the next run reminds them. Until
+then it is listed under **Expiring**.
 
 ## 8. Find things again
 
@@ -107,5 +129,6 @@ Record** button.
   (uploaded through the form). A file taken from another record stays with
   that record.
 - A folder with documents or sub-folders cannot be deleted; archive it.
-- Uninstalling keeps every file. Files uploaded through the form remain as
-  plain attachments under **Settings > Technical > Attachments**.
+- Uninstalling keeps every file. Files uploaded through the form or posted
+  in a document's chatter remain as plain attachments under **Settings >
+  Technical > Attachments**.
