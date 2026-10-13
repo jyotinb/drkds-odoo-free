@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
 
+    <!-- Own: requested by the user, or raised by them for someone else.
+         To approve: submitted onwards in a category they approve; a draft
+         stays with whoever is writing it. Decided: the user's decision stays
+         visible after they leave the category. -->
     <record id="rule_approval_request_user" model="ir.rule">
         <field name="name">Approval requests: own and to approve</field>
         <field name="model_id" ref="model_drkds_approval_request"/>
-        <field name="domain_force">['|',
+        <field name="domain_force">['|', '|', '|',
             ('requester_id', '=', user.id),
-            ('category_id.approver_ids', 'in', [user.id])]</field>
+            ('create_uid', '=', user.id),
+            ('approver_id', '=', user.id),
+            '&amp;', ('state', '!=', 'draft'), ('category_id.approver_ids', 'in', [user.id])]</field>
         <field name="groups" eval="[(4, ref('group_approval_user'))]"/>
     </record>
 

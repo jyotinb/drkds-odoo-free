@@ -20,11 +20,13 @@ What it gives you
   ``APR/00001`` from a sequence, with title, date, amount and currency,
   contact and a rich-text description.
 * **One level, any approver** - any approver of the category may decide; the
-  first decision closes the request. Nobody can approve their own request,
-  and a refusal always carries a reason.
-* **Activities and mail** - submitting schedules a to-do for every approver;
-  a decision clears those activities and emails the requester with the
-  outcome, using templates you can edit.
+  first decision closes the request. Nobody can decide on a request they
+  asked for or raised for someone else, and a refusal always carries a
+  reason. Once submitted, what was asked for is frozen.
+* **Activities and mail** - submitting schedules a to-do for every approver
+  who can decide, and changing a category's approvers moves the to-dos of
+  waiting requests; a decision clears those activities and emails the
+  requester alone with the outcome, using templates you can edit.
 * **Kanban, list and form** - a Kanban by state, a list, and a form with a
   status bar, Submit, Approve, Refuse, Cancel and Reset buttons.
 * **Search** - my requests, to approve by me, each state, group by category,
@@ -32,9 +34,11 @@ What it gives you
 
 Security
 --------
-An approval user sees the requests they raised and the requests of the
-categories they approve. An approval manager sees everything and maintains
-the categories.
+An approval user sees the requests they asked for or raised, the submitted
+requests of the categories they approve, and the requests they decided; a
+draft stays with whoever is writing it. An approval manager sees everything
+and maintains the categories. The state and the decision change only
+through the buttons, in the API as well.
 
 The drkds Approvals app adds multi-level and sequential approval chains,
 amount-based routing, delegation and approval reporting.

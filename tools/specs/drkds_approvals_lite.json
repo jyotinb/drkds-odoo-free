@@ -2,7 +2,7 @@
   "module": "drkds_approvals_lite",
   "title": "Approval Requests (Lite)",
   "summary": "One-level approval requests with categories, approvers and a decision trail, on Odoo 19 Community",
-  "intro": "Someone needs a yes or a no: an expense to be paid back, a day away, something to buy. They raise a numbered request in a category, every approver of that category gets a to-do, one of them approves or refuses, and the requester gets the decision by email. Chatter and field tracking keep the whole exchange on the record, and nobody can approve their own request.",
+  "intro": "Someone needs a yes or a no: an expense to be paid back, a day away, something to buy. They raise a numbered request in a category, every approver of that category who can act on it gets a to-do, one of them approves or refuses, and the requester gets the decision by email. Chatter and field tracking keep the whole exchange on the record, and nobody can decide on a request they asked for or raised.",
   "shots": [],
   "features": [
     [
@@ -19,7 +19,7 @@
     ],
     [
       "To-dos and email",
-      "Submitting schedules an activity for every approver. A decision clears those activities and posts an email to the requester from a template you can edit."
+      "Submitting schedules an activity for every approver who can act on the request, and changing a category's approvers moves the to-dos of the requests already waiting. A decision clears those activities and mails the requester alone, from a template you can edit; the request's contact is never mailed."
     ],
     [
       "Kanban, list and form",
@@ -31,10 +31,10 @@
     ]
   ],
   "notes": [
-    "Two access groups: a user sees the requests they raised and the requests of the categories they approve; an administrator sees everything and maintains categories.",
-    "Record rules enforce the visibility, so it holds in the API and in exports, not only in the interface.",
-    "The requester can never approve or refuse their own request, even as an approver or administrator.",
-    "A refused or cancelled request can be reset to draft, corrected and submitted again; its reference is kept.",
+    "Two access groups: a user sees the requests they asked for or raised, the submitted requests of the categories they approve and the requests they decided, while a draft stays with whoever is writing it; an administrator sees everything and maintains categories.",
+    "Record rules enforce the visibility, and a direct write cannot change the state, the decision, or what a submitted request asks for, so it holds in the API and in imports, not only in the interface.",
+    "Nobody can approve or refuse a request they asked for or raised for someone else, even as an approver or administrator.",
+    "A refused or cancelled request can be reset to draft by its requester or an administrator, corrected and submitted again; its reference is kept.",
     "Depends only on base and mail. Nothing else is dragged into your database.",
     "The lite edition decides in one step. There is no approval chain, no amount-based routing and no delegation."
   ],

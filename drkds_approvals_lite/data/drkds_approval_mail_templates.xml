@@ -5,6 +5,10 @@
         <field name="name">Approval Request: Approved</field>
         <field name="model_id" ref="model_drkds_approval_request"/>
         <field name="subject">{{ object.name }} approved: {{ object.title }}</field>
+        <!-- Odoo 19 defaults use_default_to to True, which ignores partner_to
+             and mails the record's partner_id: here the request's contact,
+             an outside party. The decision is for the requester. -->
+        <field name="use_default_to" eval="False"/>
         <field name="partner_to">{{ object.requester_id.partner_id.id }}</field>
         <field name="description">Sent to the requester when a request is approved.</field>
         <field name="body_html" type="html">
@@ -30,6 +34,10 @@
         <field name="name">Approval Request: Refused</field>
         <field name="model_id" ref="model_drkds_approval_request"/>
         <field name="subject">{{ object.name }} refused: {{ object.title }}</field>
+        <!-- Odoo 19 defaults use_default_to to True, which ignores partner_to
+             and mails the record's partner_id: here the request's contact,
+             an outside party. The decision is for the requester. -->
+        <field name="use_default_to" eval="False"/>
         <field name="partner_to">{{ object.requester_id.partner_id.id }}</field>
         <field name="description">Sent to the requester when a request is refused.</field>
         <field name="body_html" type="html">

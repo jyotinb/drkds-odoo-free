@@ -39,7 +39,11 @@ class ApprovalsCommon(TransactionCase):
         cls.cat_leave.approver_ids = [(6, 0, cls.approver.ids)]
         cls.cat_purchase.approver_ids = [(6, 0, cls.approver.ids)]
 
-        cls.supplier = cls.env["res.partner"].create({"name": "Sharma Stationers"})
+        # An outside party: it may sit on a request as its contact, and must
+        # never be mailed the internal decision.
+        cls.supplier = cls.env["res.partner"].create(
+            {"name": "Sharma Stationers", "email": "sales@sharmastationers.example"}
+        )
 
     def _request(self, user, **vals):
         values = {
@@ -56,3 +60,9 @@ class ApprovalsCommon(TransactionCase):
             ("res_model", "=", "drkds.approval.request"),
             ("res_id", "=", request.id),
         ])
+
+    def _notified_partners(self, request, before_message_ids):
+        """Partners notified (inbox or email) by the messages posted on
+        `request` since `before_message_ids` was taken."""
+        messages = request.message_ids.filtered(lambda m: m.id not in before_message_ids)
+        return messages.notification_ids.res_partner_id

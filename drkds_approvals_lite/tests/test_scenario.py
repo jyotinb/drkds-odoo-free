@@ -47,6 +47,7 @@ class TestApprovalScenario(ApprovalsCommon):
         self.assertEqual(to_approve, taxi | lunch)
 
         # 4. Approve the taxi, refuse the lunch through the wizard.
+        before = (taxi | lunch).message_ids.ids
         taxi.with_user(self.approver).action_approve()
         wizard = self.env["drkds.approval.refuse.wizard"].with_user(self.approver).create({
             "request_id": lunch.id,
@@ -71,9 +72,11 @@ class TestApprovalScenario(ApprovalsCommon):
         self.assertIn("approved", taxi_bodies)
         self.assertIn("refused", lunch_bodies)
         self.assertIn("Entertainment is not claimable", lunch_bodies)
-        #    (Odoo 19 keeps recipients as notifications on the message.)
-        self.assertIn(self.clerk.partner_id, taxi.message_ids.notification_ids.mapped("res_partner_id"))
-        self.assertIn(self.clerk.partner_id, lunch.message_ids.notification_ids.mapped("res_partner_id"))
+        #    (Odoo 19 keeps recipients as notifications on the message.) The
+        #    second approver follows both claims through their to-do, but the
+        #    mail is the clerk's: nobody else is sent it.
+        self.assertEqual(self._notified_partners(taxi, before), self.clerk.partner_id)
+        self.assertEqual(self._notified_partners(lunch, before), self.clerk.partner_id)
 
         # 6. The clerk sees both, so does the manager, the outsider sees none,
         #    and the expense total is 1250 + 4800 = 6050.

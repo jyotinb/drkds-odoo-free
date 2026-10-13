@@ -11,7 +11,7 @@
   <div class="oe_row oe_spaced">
     <div class="oe_span12">
       <p class="oe_mt32" style="font-size:16px; line-height:1.6; color:#2c3e50;">
-        Someone needs a yes or a no: an expense to be paid back, a day away, something to buy. They raise a numbered request in a category, every approver of that category gets a to-do, one of them approves or refuses, and the requester gets the decision by email. Chatter and field tracking keep the whole exchange on the record, and nobody can approve their own request.
+        Someone needs a yes or a no: an expense to be paid back, a day away, something to buy. They raise a numbered request in a category, every approver of that category who can act on it gets a to-do, one of them approves or refuses, and the requester gets the decision by email. Chatter and field tracking keep the whole exchange on the record, and nobody can decide on a request they asked for or raised.
       </p>
     </div>
   </div>
@@ -45,7 +45,7 @@
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">To-dos and email</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Submitting schedules an activity for every approver. A decision clears those activities and posts an email to the requester from a template you can edit.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Submitting schedules an activity for every approver who can act on the request, and changing a category&#x27;s approvers moves the to-dos of the requests already waiting. A decision clears those activities and mails the requester alone, from a template you can edit; the request&#x27;s contact is never mailed.</p>
       </div>
     </div>
     <div class="oe_span6">
@@ -118,10 +118,10 @@
     <div class="oe_span12">
       <h3 class="oe_slogan" style="color:#183a5c;">Good to know</h3>
       <ul style="font-size:15px; line-height:1.8; color:#2c3e50;">
-        <li>Two access groups: a user sees the requests they raised and the requests of the categories they approve; an administrator sees everything and maintains categories.</li>
-        <li>Record rules enforce the visibility, so it holds in the API and in exports, not only in the interface.</li>
-        <li>The requester can never approve or refuse their own request, even as an approver or administrator.</li>
-        <li>A refused or cancelled request can be reset to draft, corrected and submitted again; its reference is kept.</li>
+        <li>Two access groups: a user sees the requests they asked for or raised, the submitted requests of the categories they approve and the requests they decided, while a draft stays with whoever is writing it; an administrator sees everything and maintains categories.</li>
+        <li>Record rules enforce the visibility, and a direct write cannot change the state, the decision, or what a submitted request asks for, so it holds in the API and in imports, not only in the interface.</li>
+        <li>Nobody can approve or refuse a request they asked for or raised for someone else, even as an approver or administrator.</li>
+        <li>A refused or cancelled request can be reset to draft by its requester or an administrator, corrected and submitted again; its reference is kept.</li>
         <li>Depends only on base and mail. Nothing else is dragged into your database.</li>
         <li>The lite edition decides in one step. There is no approval chain, no amount-based routing and no delegation.</li>
       </ul>

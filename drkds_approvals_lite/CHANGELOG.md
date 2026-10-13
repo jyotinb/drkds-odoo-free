@@ -18,3 +18,42 @@ First release.
   menus, category configuration menu.
 - Approval user and administrator groups with record rules and multi-company
   rules.
+
+### Fixed during review, before release
+
+- The decision mail went to the request's contact (`partner_id`, often a
+  supplier) instead of the requester: Odoo 19 templates default to *Default
+  Recipients*, which ignores `partner_to`. Both templates now switch it off,
+  so a requester who never followed the request is told too.
+- The decision mail also went to every follower, and every approver follows
+  through their to-do, with a body addressed to the requester. It is now
+  posted as a note to the requester alone.
+- State and decision fields could be written directly (an RPC client could
+  approve its own request, create one already approved, or pass
+  `default_state`), and amount, category and the rest could change after
+  approval. They now change only through the buttons, and the content only
+  in draft.
+- Whoever raised a request for someone else could approve it. They are now
+  barred like the requester. The `create_uid` used for this cannot be forged.
+- Raising a request for someone else failed with an access error for an
+  approval user. The person who raised it now keeps sight of it.
+- An approver who was the requester got a to-do they could not act on; a
+  category whose only approver was the requester accepted submissions
+  nobody could decide. To-dos now go only to approvers who can decide
+  (not the requester or raiser, holding the access and the request's
+  company), and submit is refused when none is left.
+- Changing a category's approvers left removed approvers with to-dos on
+  requests they could no longer open, and gave new approvers none. Waiting
+  requests now follow the change.
+- An approver removed from a category lost sight of the requests they had
+  decided. The record rule now keeps them.
+- Approvers could see and edit a clerk's draft before it was submitted.
+  Drafts are now private to whoever raised them.
+- An emptied description (`<p><br></p>`) satisfied *Description Required*.
+- Anyone who could see a refused request could reset it to draft. Reset,
+  like Cancel, now belongs to the requester, the raiser and administrators,
+  and the form hides Submit, Cancel and Reset from everyone else.
+- Requester and approver pickers now offer only users with the Approval
+  Requests access.
+- The reference could be rewritten through a direct write; it is now
+  allocated once and never changes, as documented.

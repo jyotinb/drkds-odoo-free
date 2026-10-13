@@ -62,15 +62,17 @@
             <form string="Approval Request">
                 <header>
                     <button name="action_submit" type="object" string="Submit"
-                            class="btn-primary" invisible="state != 'draft'"/>
+                            class="btn-primary" invisible="state != 'draft' or not can_manage"/>
                     <button name="action_approve" type="object" string="Approve"
                             class="btn-primary" invisible="not can_decide"/>
                     <button name="action_open_refuse_wizard" type="object" string="Refuse"
                             class="btn-secondary" invisible="not can_decide"/>
                     <button name="action_cancel" type="object" string="Cancel"
-                            class="btn-secondary" invisible="state not in ('draft', 'submitted')"/>
+                            class="btn-secondary"
+                            invisible="state not in ('draft', 'submitted') or not can_manage"/>
                     <button name="action_reset_to_draft" type="object" string="Reset to Draft"
-                            class="btn-secondary" invisible="state not in ('refused', 'cancelled')"/>
+                            class="btn-secondary"
+                            invisible="state not in ('refused', 'cancelled') or not can_manage"/>
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,submitted,approved"/>
                 </header>
@@ -103,11 +105,13 @@
                             <field name="decision_date" invisible="not decision_date"/>
                             <field name="company_id" groups="base.group_multi_company"
                                    readonly="state != 'draft'"/>
-                            <!-- mirrors of the category, read by the required="" rules above -->
+                            <!-- mirrors of the category, read by the required="" rules above,
+                                 and the per-user flags the header buttons read -->
                             <field name="require_description" invisible="1"/>
                             <field name="require_amount" invisible="1"/>
                             <field name="require_partner" invisible="1"/>
                             <field name="can_decide" invisible="1"/>
+                            <field name="can_manage" invisible="1"/>
                         </group>
                     </group>
                     <div class="alert alert-danger" role="alert" invisible="state != 'refused'">
@@ -138,7 +142,7 @@
                 <field name="partner_id"/>
                 <filter name="my_requests" string="My Requests" domain="[('requester_id', '=', uid)]"/>
                 <filter name="to_approve" string="To Approve by Me"
-                        domain="[('state', '=', 'submitted'), ('approver_ids', 'in', uid), ('requester_id', '!=', uid)]"/>
+                        domain="[('state', '=', 'submitted'), ('approver_ids', 'in', uid), ('requester_id', '!=', uid), ('create_uid', '!=', uid)]"/>
                 <filter name="decided_by_me" string="Decided by Me" domain="[('approver_id', '=', uid)]"/>
                 <separator/>
                 <filter name="open" string="Open" domain="[('state', 'in', ('draft', 'submitted'))]"/>
