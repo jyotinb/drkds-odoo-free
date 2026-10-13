@@ -7,7 +7,7 @@
   "features": [
     [
       "The administrator chooses where it appears",
-      "Settings, Technical, Mass Update lists the models on which the action is allowed. Enabling a model puts a Mass update entry in the Actions menu of its list view; disabling takes it away again. Nothing is bound to a model you did not choose."
+      "Settings, Technical, Mass Update lists the models on which the action is allowed. Enabling a model puts a Mass update entry in the Actions menu of its list view; disabling takes it away again. Nothing is bound to a model you did not choose, and the wizard itself refuses any model that is not enabled."
     ],
     [
       "Only fields that can be written",
@@ -19,11 +19,11 @@
     ],
     [
       "Set empty",
-      "One tick clears the field on every selected record instead of setting a value. Numbers go to zero, a tag field loses all its tags, everything else becomes empty."
+      "One tick clears the field on every selected record instead of setting a value. Numbers go to zero, a tag field loses all its tags, everything else becomes empty. A required field cannot be emptied."
     ],
     [
       "As you, in batches, never as superuser",
-      "Records are written 500 at a time under your own rights. When an access rule refuses a batch, each record of that batch is retried alone, so one locked record never blocks the other 499."
+      "Records are written 500 at a time under your own rights. When an access rule refuses a batch, each record of that batch is retried alone, so one locked record never blocks the other 499. Your wizard is visible to you alone, so nobody else can change what it is about to write."
     ],
     [
       "A result you can act on",
@@ -33,9 +33,11 @@
   "notes": [
     "Depends on base only. Works on any regular model, from contacts to your own custom models.",
     "The wizard never uses superuser rights. The model's access rights and record rules decide what each user may change, exactly as if they edited each record by hand.",
+    "Restrictions that exist only in a form view, such as an invoice number that becomes read-only once posted, are not applied. Enable a model only when every user with write access on it may change any field the model lets them write.",
     "A tag (many-to-many) value is added to the existing tags; it does not replace them. Use Set empty to remove all tags.",
     "There is no undo. Check the selection and the value before applying; the wizard asks for confirmation.",
-    "Uninstalling removes every Mass update action the module created, so no dead entry is left in any Actions menu.",
+    "Each record behaves as if edited by hand: assigning a salesperson on 200 orders sends that person 200 assignment emails, and a translatable field is written in your current language.",
+    "Uninstalling removes every Mass update action the module created, renamed and duplicated ones included, so no dead entry is left in any Actions menu.",
     "One field per run. Run the wizard again on the same selection to change a second field."
   ],
   "disclaimer": false,

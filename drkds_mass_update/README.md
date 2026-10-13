@@ -9,8 +9,13 @@ depends on `base` only, LGPL-3.
 - **Settings > Technical > Mass Update.** The administrator lists the models
   on which mass update is allowed. Enabling a model adds a **Mass update**
   entry to the Actions menu of its list view (a server action bound to that
-  model). Disabling or deleting the line removes it. Uninstalling the module
-  removes every action it created.
+  model). Disabling or deleting the line removes it. Wizards, abstract
+  models, reports and other database views cannot be enabled. Uninstalling
+  the module removes every action that opens the wizard, including a renamed
+  or duplicated one.
+- **Only enabled models.** The wizard itself refuses a model that is not
+  enabled, also when it is called directly over RPC rather than from the
+  Actions menu.
 - **The wizard, in two steps.** Shows how many records are selected and
   offers only the fields that can be written; **Next** then asks for a value
   of the matching kind, or a **Set Empty** tick; **Apply** writes.
@@ -24,11 +29,17 @@ depends on `base` only, LGPL-3.
 - **Tags are added, not replaced.** For a many2many field the chosen record is
   linked to every selected record; existing tags stay. Set Empty removes all
   tags.
+- **Values are checked.** Set Empty is not offered on a required field (a
+  required number or yes/no can still be set to 0 or No). A choice must be
+  one of the field's own choices. The record picked for a link or tag field
+  must be one you can read; a record of a company you are not in is refused.
 - **As the current user, in batches of 500.** The write never uses superuser
   rights. When an access rule refuses a batch, every record of that batch is
   retried alone, so one locked record never blocks the others.
 - **Result.** Updated count, not-updated count, and the list of records that
-  could not be changed with the reason Odoo gave.
+  could not be changed with the reason Odoo gave. A record deleted after it
+  was selected is listed as no longer existing, so the two counts always add
+  up to the selection.
 
 ## Install
 
@@ -68,18 +79,39 @@ with the usual access error. Record rules apply record by record: a refused
 record is reported, the rest are updated. The field list also hides fields
 reserved to groups the user is not in.
 
+Each wizard is visible only to the user who opened it (a record rule on the
+wizard): the model, records, field and value it stores are what the write
+uses, so no other user can read or change them before Apply.
+
+**Choose the enabled models with care.** The wizard offers every field the
+model lets the user write. Restrictions that exist only in a form view are
+not applied: a field that the form makes read-only in some state, or hides
+from some group, can still be written. For example a billing user can
+rename a posted invoice when Journal Entries are enabled, because only the
+form makes the number read-only. Enable a model only when that is acceptable
+for every user with write access on it.
+
 ## Notes
 
 - There is no undo. The wizard asks for confirmation before writing.
 - Writes are plain ORM writes: constraints, onchange-independent computes and
-  tracking behave exactly as a manual edit of each record would.
+  tracking behave exactly as a manual edit of each record would. A business
+  rule that refuses one record (for example archiving a contact linked to an
+  active user) stops the whole run and nothing is written.
+- Notifications are sent per record, as for a manual edit: assigning a
+  salesperson on 200 sales orders sends that person 200 assignment emails.
+- A translatable field is written in your current language, as in the form;
+  other languages keep their translation.
+- The record picker lists every record of the target model you can read. It
+  does not apply a narrower choice the form may use (for example internal
+  users only for a salesperson).
 - `drkds.mass.update.model` is a configuration table; it has no company
   field because a bound action is global to the model.
 - The wizard reads field names, labels and choices from the registry, not
   from `ir.model.fields`, because a plain internal user has no read access
   on the technical models in Odoo 19. That is also why the field is chosen
   before the value.
-- Uninstall is clean: the uninstall hook deletes the bound server actions,
-  the models and views go with the module.
+- Uninstall is clean: the uninstall hook deletes the bound server actions
+  (and any copy of one), the models and views go with the module.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

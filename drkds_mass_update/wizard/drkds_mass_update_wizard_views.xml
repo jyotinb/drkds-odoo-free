@@ -7,10 +7,17 @@
         <field name="arch" type="xml">
             <form string="Mass Update">
                 <field name="state" invisible="1"/>
+                <!-- state: shows one step at a time -->
                 <field name="model_name" invisible="1"/>
+                <!-- model_name: kept with the record so each step reads the same model -->
                 <field name="relation_model" invisible="1"/>
+                <!-- relation_model: target model of the record picker (value_record_id) -->
                 <field name="field_type" invisible="1"/>
+                <!-- field_type: shows the value input matching the field -->
+                <field name="field_required" invisible="1"/>
+                <!-- field_required: hides Set Empty on a required field -->
                 <field name="res_ids" invisible="1"/>
+                <!-- res_ids: the selection, kept with the record between steps -->
                 <!-- Step 1: which field -->
                 <div invisible="state != 'field'">
                     <group>
@@ -36,7 +43,10 @@
                         </group>
                         <group>
                             <field name="field_label"/>
-                            <field name="set_empty"/>
+                            <!-- A required field cannot be emptied; a required
+                                 number or yes/no can still be set to 0 / No. -->
+                            <field name="set_empty"
+                                   invisible="field_required and field_type not in ('boolean', 'integer', 'float', 'monetary')"/>
                         </group>
                     </group>
                     <group string="New Value" invisible="set_empty">

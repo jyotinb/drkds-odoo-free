@@ -16,6 +16,11 @@ from .common import CTX_FIELD, CTX_MODEL, MassUpdateCommon
 
 @tagged("post_install", "-at_install")
 class TestFieldList(MassUpdateCommon):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.partner_line = cls._enable("res.partner")
+
     def test_offered_and_excluded_fields_on_partner(self):
         names = self.Wizard.with_user(self.clerk)._get_writable_field_names("res.partner")
         # Offered: stored, writable, of a supported type.
@@ -117,6 +122,7 @@ class TestValueTypes(MassUpdateCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls._enable("res.partner")
         cls.partners = cls.Partner.create([
             {"name": "Asha Traders", "ref": "A1", "color": 3},
             {"name": "Bharat Mills", "ref": "B2", "color": 5},
@@ -138,6 +144,7 @@ class TestValueTypes(MassUpdateCommon):
         self.assertEqual(self.partners.mapped("ref"), ["A1", "B2", "C3"])
 
     def test_text(self):
+        self._enable("res.groups")
         groups = self.env["res.groups"].create([
             {"name": "drkds T1"}, {"name": "drkds T2"},
         ])
@@ -164,6 +171,7 @@ class TestValueTypes(MassUpdateCommon):
         self.assertEqual(self.partners.mapped("is_company"), [True] * 3)
 
     def test_date(self):
+        self._enable("res.currency.rate")
         currency = self.env["res.currency"].create({"name": "DMU", "symbol": "D"})
         rates = self.env["res.currency.rate"].create([
             {"currency_id": currency.id, "name": "2026-01-01", "rate": 1.1},
@@ -175,6 +183,7 @@ class TestValueTypes(MassUpdateCommon):
         self.assertEqual(rates[0].name, datetime.date(2026, 1, 1))
 
     def test_datetime(self):
+        self._enable("ir.cron")
         cron_model = self.env["ir.model"]._get("drkds.mass.update.model")
         crons = self.env["ir.cron"].create([
             {"name": "drkds mup cron %d" % i, "model_id": cron_model.id,
@@ -241,9 +250,64 @@ class TestValueTypes(MassUpdateCommon):
         self._apply(self.clerk, self.partners, "ref", value_char="X")
         self.assertEqual(self.partners.read(["name", "color", "comment", "type"]), before)
 
+    def test_a_choice_outside_the_field_selection_is_refused(self):
+        # res.partner.lang takes its choices from a method, and the ORM does
+        # not validate such a selection: any string would be stored. The
+        # wizard's own choice field is method-based too, so a crafted call
+        # can send anything; the wizard must check it against the field.
+        self.partners.write({"lang": False})
+        wizard = self._step_to_value(self._wizard(self.clerk, self.partners, "lang"))
+        wizard.value_selection = "xx_XX"
+        with self.assertRaises(UserError):
+            wizard.action_apply()
+        self.assertEqual(self.partners.mapped("lang"), [False] * 3)
+        wizard.value_selection = "en_US"
+        wizard.action_apply()
+        self.assertEqual(self.partners.mapped("lang"), ["en_US"] * 3)
+
+    def test_set_empty_is_refused_on_a_required_field(self):
+        # Emptying a required field used to reach the database and fail
+        # there with a NOT NULL violation.
+        self._enable("res.partner.category")
+        tags = self.env["res.partner.category"].create([{"name": "Keep A"}, {"name": "Keep B"}])
+        self.assertTrue(tags._fields["name"].required)
+        wizard = self._step_to_value(self._wizard(self.clerk, tags, "name"))
+        self.assertTrue(wizard.field_required)
+        wizard.set_empty = True
+        with self.assertRaises(UserError):
+            wizard.action_apply()
+        self.assertEqual(tags.mapped("name"), ["Keep A", "Keep B"])
+        # A required number may still be set to zero.
+        wizard = self._step_to_value(self._wizard(self.clerk, tags, "color"))
+        wizard.set_empty = True
+        wizard.action_apply()
+        self.assertEqual(tags.mapped("color"), [0, 0])
+
+    def test_a_value_record_the_user_cannot_read_is_refused(self):
+        # A partner of another company is invisible to the clerk, so the
+        # picker never offers it; a crafted id must not get through either.
+        other_company = self.env["res.company"].create({"name": "drkds Other Co"})
+        foreign = self.Partner.create(
+            {"name": "Foreign Parent", "company_id": other_company.id, "is_company": True}
+        )
+        self.env.invalidate_all()
+        with self.assertRaises(AccessError):
+            foreign.with_user(self.clerk).read(["name"])
+        wizard = self._step_to_value(self._wizard(self.clerk, self.partners, "parent_id"))
+        wizard.value_record_id = foreign.id
+        with self.assertRaises(AccessError):
+            wizard.action_apply()
+        self.assertFalse(self.partners.parent_id)
+        self.assertEqual(wizard.state, "value", "nothing was applied")
+
 
 @tagged("post_install", "-at_install")
 class TestAccess(MassUpdateCommon):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.partner_line = cls._enable("res.partner")
+
     def test_refused_record_is_reported_not_raised(self):
         partners = self.Partner.create([
             {"name": "Open One", "ref": "O1"},
@@ -293,6 +357,131 @@ class TestAccess(MassUpdateCommon):
         with self.assertRaises(AccessError):
             self.Enabled.with_user(self.clerk).create({"model_id": self.partner_model.id})
 
+    def test_another_user_cannot_read_or_change_my_wizard(self):
+        # The administrator is at the value step on one contact. A plain
+        # user who could rewrite that wizard would point it at res.users and
+        # let the administrator's Apply put them in the Settings group.
+        partner = self.Partner.create({"name": "Admin Target"})
+        wizard = self._step_to_value(self._wizard(self.admin, partner, "ref"))
+        system = self.env.ref("base.group_system")
+        self.env.invalidate_all()
+        spy = self.Wizard.with_user(self.reader)
+        self.assertFalse(spy.search([("id", "=", wizard.id)]))
+        with self.assertRaises(AccessError):
+            spy.browse(wizard.id).read(["model_name", "res_ids"])
+        with self.assertRaises(AccessError):
+            spy.with_context(**{CTX_MODEL: "res.users"}).browse(wizard.id).write({
+                "model_name": "res.users",
+                "res_ids": str(self.reader.id),
+                "field_name": "group_ids",
+                "value_record_id": system.id,
+            })
+        with self.assertRaises(AccessError):
+            spy.browse(wizard.id).unlink()
+        wizard.value_char = "ADM"
+        wizard.action_apply()
+        self.assertEqual(wizard.model_name, "res.partner")
+        self.assertEqual(partner.ref, "ADM")
+        self.env.invalidate_all()
+        self.assertNotIn(system, self.reader.group_ids)
+
+    def test_a_model_that_is_not_enabled_is_refused(self):
+        partner = self.Partner.create({"name": "Not Enabled", "ref": "NE"})
+        wizard = self._wizard(self.clerk, partner, "ref")
+        self.partner_line.action_disable()
+        with self.assertRaises(UserError) as caught:
+            wizard.action_next()
+        self.assertNotIsInstance(caught.exception, AccessError)
+        self.assertIn("not enabled", caught.exception.args[0])
+        # A wizard crafted directly on a model nobody enabled, by a user who
+        # may write that model, is refused as well.
+        group = self.env["res.groups"].create({"name": "drkds Not Enabled"})
+        crafted = self.Wizard.with_user(self.admin).with_context(**{CTX_MODEL: "res.groups"}).create({
+            "model_name": "res.groups",
+            "res_ids": str(group.id),
+            "field_name": "comment",
+            "state": "value",
+            "value_text": "crafted",
+        })
+        with self.assertRaises(UserError) as caught:
+            crafted.with_context(**{CTX_FIELD: "comment"}).action_apply()
+        self.assertIn("not enabled", caught.exception.args[0])
+        self.assertFalse(group.comment)
+        self.assertEqual(partner.ref, "NE")
+
+    def test_an_unreadable_record_is_reported_by_id_only(self):
+        # Hidden from the clerk for reading and writing: reported, counted,
+        # and its name is not disclosed in the result.
+        hidden_group = self.env["res.groups"].create({"name": "drkds Hidden Contacts"})
+        self.clerk.write({"group_ids": [(4, hidden_group.id)]})
+        self.env["ir.rule"].create({
+            "name": "drkds test: contacts marked HIDDEN are invisible",
+            "model_id": self.partner_model.id,
+            "domain_force": "[('ref', '!=', 'HIDDEN')]",
+            "groups": [(4, hidden_group.id)],
+            "perm_read": True, "perm_write": True,
+            "perm_create": False, "perm_unlink": False,
+        })
+        partners = self.Partner.create([
+            {"name": "Seen One"},
+            {"name": "Secret Holdings", "ref": "HIDDEN"},
+        ])
+        self.env.invalidate_all()
+        with self.assertRaises(AccessError):
+            partners[1].with_user(self.clerk).read(["name"])
+        wizard = self._apply(self.clerk, partners, "color", value_integer=8)
+        self.assertEqual(wizard.updated_count, 1)
+        self.assertEqual(wizard.failed_count, 1)
+        self.assertIn("<strong>#%d</strong>" % partners[1].id, wizard.result_summary)
+        self.assertNotIn("Secret Holdings", wizard.result_summary)
+        self.assertEqual(partners.mapped("color"), [8, 0])
+
+    def test_a_record_deleted_after_selection_is_reported(self):
+        partners = self.Partner.create([{"name": "Keep 1"}, {"name": "Gone"}, {"name": "Keep 2"}])
+        gone_id = partners[1].id
+        wizard = self._step_to_value(self._wizard(self.clerk, partners, "ref"))
+        wizard.value_char = "K"
+        partners[1].unlink()
+        wizard.action_apply()
+        self.assertEqual(wizard.record_count, 3)
+        self.assertEqual(wizard.updated_count, 2)
+        self.assertEqual(wizard.failed_count, 1)
+        self.assertIn("(id %d)" % gone_id, wizard.result_summary)
+        self.assertIn("no longer exists", wizard.result_summary)
+        self.assertEqual((partners[0] | partners[2]).mapped("ref"), ["K", "K"])
+
+    def test_a_repeated_id_counts_once(self):
+        partners = self.Partner.create([{"name": "Twice"}, {"name": "Once"}])
+        wizard = self.Wizard.with_user(self.clerk).with_context(**{
+            CTX_MODEL: "res.partner",
+            "active_model": "res.partner",
+            "active_ids": [partners[0].id, partners[0].id, partners[1].id],
+        }).create({"field_name": "color"})
+        self.assertEqual(wizard.record_count, 2)
+        wizard = self._step_to_value(wizard)
+        wizard.value_integer = 6
+        wizard.action_apply()
+        self.assertEqual(wizard.updated_count, 2)
+        self.assertEqual(partners.mapped("color"), [6, 6])
+
+    def test_the_result_is_safe_html(self):
+        # A record name is escaped in the result list...
+        partners = self.Partner.create([
+            {"name": "Plain"},
+            {"name": "<img src=x onerror=alert(1)>", "ref": "LOCKED"},
+        ])
+        wizard = self._apply(self.clerk, partners, "color", value_integer=1)
+        self.assertEqual(wizard.failed_count, 1)
+        self.assertIn("&lt;img src=x onerror=alert(1)&gt;", wizard.result_summary)
+        self.assertNotIn("<img", wizard.result_summary)
+        # ...and the result field cannot hold live markup written over RPC.
+        crafted = self.Wizard.with_user(self.clerk).create({
+            "model_name": "res.partner",
+            "result_summary": '<img src="x" onerror="alert(2)"><script>alert(3)</script>',
+        })
+        self.assertNotIn("onerror", crafted.result_summary)
+        self.assertNotIn("<script", crafted.result_summary)
+
 
 @tagged("post_install", "-at_install")
 class TestEnableDisable(MassUpdateCommon):
@@ -340,6 +529,15 @@ class TestEnableDisable(MassUpdateCommon):
         with self.assertRaises(ValidationError):
             self.Enabled.with_user(self.admin).create({"model_id": wizard_model.id})
 
+    def test_abstract_and_sql_view_models_cannot_be_enabled(self):
+        # image.mixin has no table; res.device is a database view. Either
+        # would carry a Mass update entry that can never write anything.
+        for model_name in ("image.mixin", "res.device"):
+            with self.subTest(model=model_name), self.assertRaises(ValidationError):
+                self.Enabled.with_user(self.admin).create(
+                    {"model_id": self.env["ir.model"]._get(model_name).id}
+                )
+
     def test_running_the_action_opens_the_wizard_on_the_selection(self):
         line = self.Enabled.with_user(self.admin).create({"model_id": self.partner_model.id})
         partners = self.Partner.create([{"name": "Run A"}, {"name": "Run B"}])
@@ -372,3 +570,15 @@ class TestEnableDisable(MassUpdateCommon):
         self.assertFalse(lines.mapped("server_action_id"))
         self.assertNotIn("Mass update", self._bound_action_names("res.partner"))
         self.assertNotIn("Mass update", self._bound_action_names("res.users"))
+
+    def test_uninstall_hook_removes_renamed_and_copied_actions(self):
+        line = self.Enabled.with_user(self.admin).create({"model_id": self.partner_model.id})
+        renamed = line.server_action_id
+        renamed.name = "Bulk edit"
+        # Duplicate on the server action form: a copy no line knows about,
+        # still opening the wizard that uninstalling removes.
+        copied = renamed.copy({"name": "Mass update (copy)"})
+        uninstall_hook(self.env)
+        self.assertFalse(renamed.exists())
+        self.assertFalse(copied.exists())
+        self.assertEqual(self._bound_action_names("res.partner").count("Mass update (copy)"), 0)

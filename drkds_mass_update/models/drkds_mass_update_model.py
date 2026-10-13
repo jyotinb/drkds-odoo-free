@@ -11,11 +11,16 @@ The action itself only opens the wizard. Nothing is written from here.
 """
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.tools.sql import TableKind, table_kind
+
+#: The wizard the bound action opens. Also how the uninstall hook recognises
+#: a bound action that no line knows about, such as a duplicated one.
+WIZARD_MODEL = "drkds.mass.update.wizard"
 
 #: What the bound action runs. ``records`` is the selection the user made in
 #: the list view; the wizard works out the rest from it.
 SERVER_ACTION_CODE = (
-    'action = env["drkds.mass.update.wizard"].action_open_for(records)'
+    'action = env["%s"].action_open_for(records)' % WIZARD_MODEL
 )
 
 
@@ -32,7 +37,7 @@ class DrkdsMassUpdateModel(models.Model):
         string="Model",
         required=True,
         ondelete="cascade",
-        domain=[("transient", "=", False)],
+        domain=[("transient", "=", False), ("abstract", "=", False)],
         help="The model whose list view gets the Mass update action.",
     )
     model_name = fields.Char(
@@ -62,7 +67,12 @@ class DrkdsMassUpdateModel(models.Model):
 
     @api.constrains("model_id")
     def _check_model_is_regular(self):
-        """Only a persisted, non-transient model with a list view makes sense."""
+        """Only a model stored in a table of its own can be mass updated.
+
+        Refused: wizards (transient), abstract models (no table at all) and
+        models read from a database view or a query, such as reports: their
+        list view would carry an action that can never write anything.
+        """
         for line in self:
             if line.model_id.transient:
                 raise ValidationError(
@@ -73,6 +83,13 @@ class DrkdsMassUpdateModel(models.Model):
                 raise ValidationError(
                     _("Model %s is not loaded in this database.")
                     % line.model_id.model
+                )
+            Model = self.env[line.model_id.model]
+            if Model._abstract or table_kind(self.env.cr, Model._table) != TableKind.Regular:
+                raise ValidationError(
+                    _("%s is not stored in a table of its own (an abstract model, a "
+                      "report or a database view) and cannot be mass updated.")
+                    % line.model_id.name
                 )
 
     @api.model_create_multi

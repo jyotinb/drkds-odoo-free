@@ -46,6 +46,14 @@ class MassUpdateCommon(TransactionCase):
             groups="base.group_user",
         )
 
+    @classmethod
+    def _enable(cls, *model_names):
+        """Enable mass update on these models, as the administrator does.
+        The wizard refuses any model that is not enabled."""
+        return cls.env["drkds.mass.update.model"].with_user(cls.admin).create(
+            [{"model_id": cls.env["ir.model"]._get(name).id} for name in model_names]
+        )
+
     def _wizard(self, user, records, field_name=None):
         """Create the wizard as ``user`` on ``records``, as the bound action
         does: the model travels in the context, the ids in the defaults."""

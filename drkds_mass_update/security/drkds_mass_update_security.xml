@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Odoo 19 puts no owner restriction on transient records: without this
+         rule any internal user could read another user's open wizard and
+         rewrite its model, records, field and value before that user presses
+         Apply, so the write would run with the other user's rights. Core
+         protects its own sensitive wizards (change.password.user,
+         res.users.identitycheck) the same way. -->
+    <record id="rule_drkds_mass_update_wizard_own" model="ir.rule">
+        <field name="name">Mass Update wizard: own wizards only</field>
+        <field name="model_id" ref="model_drkds_mass_update_wizard"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+    </record>
+
+</odoo>

@@ -8,6 +8,11 @@ never as superuser, in batches of 500. A batch refused by an access rule is
 retried one record at a time, so the refused records are reported by name
 and every other record is still updated.
 
+The wizard runs only on models the administrator enabled, and each wizard is
+visible to the user who opened it only (see the record rule in
+``security/drkds_mass_update_security.xml``): the stored model, records,
+field and value are what the write uses, so nobody else may change them.
+
 Why two steps and no ``ir.model`` pickers: in Odoo 19 a plain internal user
 has no read access on ``ir.model``, ``ir.model.fields`` or
 ``ir.model.fields.selection``, so a wizard built on Many2one fields to those
@@ -20,7 +25,7 @@ field is chosen first and the value second.
 from markupsafe import Markup, escape
 
 from odoo import _, api, fields, models
-from odoo.exceptions import AccessError, UserError
+from odoo.exceptions import AccessError, MissingError, UserError
 from odoo.models import MAGIC_COLUMNS
 from odoo.tools import split_every
 
@@ -74,10 +79,14 @@ class DrkdsMassUpdateWizard(models.TransientModel):
     relation_model = fields.Char(
         string="Related Model", compute="_compute_field_info"
     )
+    field_required = fields.Boolean(
+        string="Field Required", compute="_compute_field_info"
+    )
     set_empty = fields.Boolean(
         string="Set Empty",
         help="Clear the field on every selected record instead of setting "
-        "a value. Numbers become zero, a tag field loses all its tags.",
+        "a value. Numbers become zero, a tag field loses all its tags. Not "
+        "available on a required field.",
     )
     value_char = fields.Char(string="Text Value")
     value_text = fields.Text(string="Long Text Value")
@@ -99,7 +108,10 @@ class DrkdsMassUpdateWizard(models.TransientModel):
     )
     updated_count = fields.Integer(string="Updated", readonly=True)
     failed_count = fields.Integer(string="Not Updated", readonly=True)
-    result_summary = fields.Html(string="Result", readonly=True, sanitize=False)
+    # Sanitized like any user-writable html field: the summary is built from
+    # escaped markup, so sanitizing keeps it intact while refusing live
+    # markup sent straight over RPC.
+    result_summary = fields.Html(string="Result", readonly=True)
 
     # ------------------------------------------------------------------
     # Opening and stepping
@@ -158,6 +170,7 @@ class DrkdsMassUpdateWizard(models.TransientModel):
         self.ensure_one()
         if not self.field_name:
             raise UserError(_("Choose the field to update."))
+        self._check_model_enabled()
         self._check_field_allowed()
         self.write({"state": "value"})
         return self._action_reopen()
@@ -229,6 +242,24 @@ class DrkdsMassUpdateWizard(models.TransientModel):
         described = self.env[model_name].fields_get([field_name], attributes=["selection"])
         return list(described.get(field_name, {}).get("selection") or [])
 
+    def _check_model_enabled(self):
+        """Refuse a model the administrator has not enabled.
+
+        The bound action only exists on enabled models, but the wizard can
+        be created over RPC for any model name; the administrator's list is
+        only a control if the wizard itself enforces it.
+        """
+        self.ensure_one()
+        enabled = self.env["drkds.mass.update.model"].search_count(
+            [("model_name", "=", self.model_name), ("enabled", "=", True)], limit=1
+        )
+        if not enabled:
+            raise UserError(
+                _("Mass update is not enabled for %s. An administrator can enable "
+                  "it under Settings > Technical > Mass Update.")
+                % (self.model_description or self.model_name)
+            )
+
     def _check_field_allowed(self):
         self.ensure_one()
         if self.field_name not in self._get_writable_field_names(self.model_name):
@@ -244,7 +275,8 @@ class DrkdsMassUpdateWizard(models.TransientModel):
         self.ensure_one()
         if not self.res_ids:
             return []
-        return [int(i) for i in self.res_ids.split(",") if i.strip()]
+        # Each record once, in selection order.
+        return list(dict.fromkeys(int(i) for i in self.res_ids.split(",") if i.strip()))
 
     @api.depends("res_ids")
     def _compute_record_count(self):
@@ -270,6 +302,7 @@ class DrkdsMassUpdateWizard(models.TransientModel):
                 wizard.field_label = False
                 wizard.field_type = False
                 wizard.relation_model = False
+                wizard.field_required = False
                 continue
             described = self.env[wizard.model_name].fields_get(
                 [wizard.field_name], attributes=["string"]
@@ -277,6 +310,7 @@ class DrkdsMassUpdateWizard(models.TransientModel):
             wizard.field_label = described.get(wizard.field_name, {}).get("string") or field.string
             wizard.field_type = field.type
             wizard.relation_model = field.comodel_name or False
+            wizard.field_required = bool(field.required)
 
     # ------------------------------------------------------------------
     # The write
@@ -286,9 +320,18 @@ class DrkdsMassUpdateWizard(models.TransientModel):
         """The value to write, as the ORM expects it for the chosen field."""
         self.ensure_one()
         ftype = self.field_type
+        field = self.env[self.model_name]._fields[self.field_name]
         if self.set_empty:
             if ftype in ("integer", "float", "monetary"):
                 return 0
+            if ftype == "boolean":
+                return False
+            # The form never lets a required field be emptied; the database
+            # would refuse it with a NOT NULL error.
+            if field.required:
+                raise UserError(
+                    _("%s is a required field and cannot be emptied.") % self.field_label
+                )
             if ftype == "many2many":
                 return [fields.Command.clear()]
             return False
@@ -318,13 +361,26 @@ class DrkdsMassUpdateWizard(models.TransientModel):
         if ftype == "selection":
             if not self.value_selection:
                 raise UserError(_("Pick a choice, or tick Set Empty to clear the field."))
-            return self.value_selection
+            # The ORM does not validate a selection whose choices come from a
+            # method (res.partner.lang, tz, ...), and the choice field of this
+            # wizard is such a selection too: check the value here. Keys are
+            # matched as text, as the client sends them.
+            choices = {str(key): key for key in field.get_values(self.env)}
+            if self.value_selection not in choices:
+                raise UserError(
+                    _("%(value)s is not a valid choice for %(field)s.",
+                      value=self.value_selection, field=self.field_label)
+                )
+            return choices[self.value_selection]
         if ftype in ("many2one", "many2many"):
             if not self.value_record_id:
                 raise UserError(_("Pick a record, or tick Set Empty to clear the field."))
             target = self.env[self.relation_model].browse(self.value_record_id).exists()
             if not target:
                 raise UserError(_("The chosen record no longer exists."))
+            # The picker only offers records the user can read; refuse any
+            # other id, such as a record of a company the user is not in.
+            target.check_access("read")
             if ftype == "many2one":
                 return target.id
             return [fields.Command.link(target.id)]
@@ -364,7 +420,7 @@ class DrkdsMassUpdateWizard(models.TransientModel):
         """Display name when readable, else the id, never an error."""
         try:
             return record.display_name or "#%d" % record.id
-        except AccessError:
+        except (AccessError, MissingError):
             return "#%d" % record.id
 
     def _build_summary(self, updated, failures):
@@ -393,16 +449,24 @@ class DrkdsMassUpdateWizard(models.TransientModel):
             raise UserError(_("Choose the field to update."))
         if self.model_name not in self.env:
             raise UserError(_("Model %s is not loaded in this database.") % self.model_name)
+        self._check_model_enabled()
         self._check_field_allowed()
         Model = self.env[self.model_name]
         # Model-level write access is a hard requirement; without it there is
         # nothing to report record by record.
         Model.check_access("write")
-        records = Model.browse(self._get_res_ids()).exists()
-        if not records:
+        selected = Model.browse(self._get_res_ids())
+        if not selected:
             raise UserError(_("No record selected."))
         vals = {self.field_name: self._prepare_value()}
+        # A record deleted since the selection was made is reported, so the
+        # updated and not-updated counts always add up to the selection.
+        records = selected.exists()
         updated, failures = self._write_batches(records, vals)
+        failures += [
+            (record, _("This record no longer exists."))
+            for record in selected - records
+        ]
         self.write(
             {
                 "state": "done",

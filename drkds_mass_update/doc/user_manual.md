@@ -17,7 +17,8 @@ Settings > Technical > Mass Update. Only Settings administrators see this
 menu.
 
 1. Press **New** (the list is editable in place).
-2. Pick the model. Wizards and other transient models are not accepted.
+2. Pick the model. Wizards, abstract models, reports and other database
+   views are not accepted: nothing could be written there.
 3. Leave **Enabled** ticked and save.
 
 From now on the list view of that model carries a **Mass update** entry in its
@@ -27,6 +28,18 @@ Deleting the line removes the entry too.
 
 The **Bound Action** column shows the technical server action that carries the
 entry. It is created and removed for you; there is no need to touch it.
+
+The wizard only runs on enabled models. Disabling a model also stops a
+wizard a user already has open on it, and a wizard created directly over
+RPC for a model that is not enabled is refused.
+
+**Choose with care.** Everyone with write access on an enabled model can
+change any field the model lets them write. Restrictions that exist only in
+a form view are not applied: a field the form shows read-only in a given
+state, or hides from a group, can still be written. For example, with
+Journal Entries enabled a billing user could rename a posted invoice,
+because only the form makes the number read-only. Enable a model only when
+that is acceptable.
 
 ## 3. Running a mass update
 
@@ -44,7 +57,7 @@ entry. It is created and removed for you; there is no need to touch it.
    | --- | --- |
    | Text | a single line |
    | Long text | a multi-line box |
-   | Formatted text | a rich-text editor |
+   | Formatted text | a rich-text editor (a plain box taking HTML on a database without Odoo's editor module, which any app installs) |
    | Whole number, number, monetary | a number |
    | Yes / No | a checkbox |
    | Date, date and time | a date picker |
@@ -52,8 +65,16 @@ entry. It is created and removed for you; there is no need to touch it.
    | Link to a record | a record picker on the target model |
    | Tags | a record picker; the chosen tag is **added** to each record |
 
+   The record picker lists every record of the target model you can read; it
+   does not apply a narrower choice the form may use (for example internal
+   users only for a salesperson). A record you cannot read, such as one of a
+   company you are not in, is refused. A choice is checked against the
+   field's own choices when you apply.
+
 6. Or tick **Set Empty** to clear the field instead. Numbers become zero, a
-   tag field loses all its tags, everything else becomes empty.
+   tag field loses all its tags, everything else becomes empty. Set Empty is
+   not offered on a required field, except a number (set to zero) or a
+   yes/no (set to No).
 7. Press **Apply** and confirm.
 
 ## 4. Reading the result
@@ -63,7 +84,9 @@ The wizard stays open and shows:
 - **Updated**: the number of records written.
 - **Not Updated**: the number of records that were refused.
 - A list of the refused records, with their name, id and the reason Odoo
-  gave (usually an access rule).
+  gave (usually an access rule). A record you cannot even read is shown by
+  its id only. A record deleted after you selected it is listed as no longer
+  existing.
 
 Updated and Not Updated always add up to the number of selected records.
 Press **Close** when done. There is no undo: to reverse a change, run the
@@ -95,22 +118,35 @@ Salesperson, which is only proposed from the parent company) is offered.
   500; when a batch is refused, each record of that batch is tried alone, so
   only the refused records are left out and reported.
 - The write is a normal write by your user. Constraints, required fields and
-  tracking behave as if you had edited each record by hand. A constraint
-  error (for example a duplicate reference) stops the run and is shown as
-  usual; nothing is half-written.
+  tracking behave as if you had edited each record by hand. A constraint or
+  business rule error (for example a duplicate reference, or archiving a
+  contact linked to an active user) stops the run and is shown as usual;
+  nothing is written.
+- Notifications follow each record as for a hand edit: assigning a
+  salesperson on 200 orders sends that person 200 assignment emails.
+- A translatable field (a tag name, for instance) is written in your current
+  language, as in the form. Other languages keep their translation.
 - The wizard never uses superuser rights.
+- Your wizard is visible to you only. No other user can read it or change
+  what it is about to write.
 
 ## 7. Uninstalling
 
-Uninstalling the module deletes every **Mass update** action it created, so
-no Actions menu keeps a dead entry. Data written through the wizard is
+Uninstalling the module deletes every **Mass update** action it created,
+including one an administrator renamed, edited or duplicated, so no Actions
+menu keeps a dead entry. Data written through the wizard is
 ordinary record data and stays as it is.
 
 ## 8. Troubleshooting
 
 **Mass update is not in the Actions menu.** The model is not enabled, or
 the line is disabled. Check Settings > Technical > Mass Update. Reload the
-page after enabling.
+page after enabling. If someone deleted the action under Settings >
+Technical > Server Actions, the line still reads Enabled: untick **Enabled**
+and tick it again to recreate the action.
+
+**"Mass update is not enabled for ..."** The administrator disabled the
+model while your wizard was open. Ask for it to be enabled again.
 
 **The field I need is not offered.** See section 5. Most often the field is
 computed without an inverse, or reserved to a group you are not in.
