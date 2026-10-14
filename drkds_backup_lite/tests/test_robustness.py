@@ -12,7 +12,7 @@ from unittest.mock import patch
 from odoo import tools
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.service.db import dump_db_manifest
-from odoo.tests import tagged
+from odoo.tests import Form, tagged
 from odoo.tools import mute_logger
 
 from .common import CONFIG_LOGGER, BackupCommon
@@ -319,3 +319,41 @@ class TestBackupAccess(BackupCommon):
             log.with_user(self.admin).write({"status": "failed", "message": "edited"})
         log.with_user(self.admin).unlink()
         self.assertFalse(log.exists())
+
+
+@tagged("post_install", "-at_install")
+class TestBackupModelNames(BackupCommon):
+    """The models are this module's own, so it can be installed next to the
+    drkds Backup app.
+
+    They used to be named drkds.backup.config and drkds.backup.log, which
+    drkds_backup_manager also defines. With both installed, Odoo kept only
+    the later definition under each name: the two modules shared one table,
+    this module's fields (folder, keep_last, cron_id) left the registry and
+    every one of its screens failed to load. Run this suite on a database
+    where both modules are installed to prove they coexist.
+    """
+
+    def test_models_are_not_shared_with_another_module(self):
+        for model in (self.Config, self.Log):
+            self.assertNotIn(model._name, ("drkds.backup.config", "drkds.backup.log"))
+            self.assertEqual(
+                self.env["ir.model"]._get(model._name).modules, "drkds_backup_lite",
+                "%s is also defined by another module" % model._name,
+            )
+        for fname in ("folder", "keep_last", "cron_id", "nextcall"):
+            self.assertIn(fname, self.Config._fields)
+        for fname in ("folder", "path", "file_exists"):
+            self.assertIn(fname, self.Log._fields)
+
+    def test_views_match_the_registered_models(self):
+        views = self.env["ir.ui.view"].browse(self.env["ir.model.data"].search([
+            ("module", "=", "drkds_backup_lite"), ("model", "=", "ir.ui.view"),
+        ]).mapped("res_id"))
+        self.assertEqual(len(views), 7)
+        for view in views:
+            view._check_xml()
+        f = Form(self.Config.with_user(self.admin))
+        f.name = "Nightly"
+        f.folder = self.folder
+        self.assertTrue(f.save().cron_id)

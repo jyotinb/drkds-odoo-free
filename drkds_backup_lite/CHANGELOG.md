@@ -22,6 +22,9 @@ First release.
 
 ### Fixed during review, before release
 
+- The sentence about the paid app claimed S3 targets, encryption, restore
+  and multi-database schedules, none of which the paid Backup Manager has.
+  It now lists only what that app does.
 - Zip backups failed with "Access Denied" on a server with `list_db = False`:
   core's `dump_db_manifest` is gated on it too. The manifest is now written
   by the module.
@@ -55,3 +58,9 @@ First release.
   administrator could rewrite a run's status or message through RPC. Both
   buttons now check access, and run lines can no longer be edited (only
   deleted).
+- Installed next to the drkds Backup app (`drkds_backup_manager`), the
+  module stopped working: both named their models `drkds.backup.config` and
+  `drkds.backup.log`, so Odoo kept only the later definition and every
+  screen of this module failed to load. Its models are now
+  `drkds.backup.lite.config` and `drkds.backup.lite.log`, and the two apps
+  keep their own configurations, runs and scheduled actions.

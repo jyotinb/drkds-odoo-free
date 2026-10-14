@@ -18,8 +18,8 @@ class BackupCommon(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.Config = cls.env["drkds.backup.config"]
-        cls.Log = cls.env["drkds.backup.log"]
+        cls.Config = cls.env["drkds.backup.lite.config"]
+        cls.Log = cls.env["drkds.backup.lite.log"]
         cls.admin = new_test_user(
             cls.env, login="drkds_bkl_admin", name="Backup Admin",
             groups="base.group_user,base.group_system",
@@ -59,7 +59,7 @@ class BackupCommon(TransactionCase):
 
     def _todo_activities(self, config):
         return self.env["mail.activity"].search([
-            ("res_model", "=", "drkds.backup.config"),
+            ("res_model", "=", "drkds.backup.lite.config"),
             ("res_id", "=", config.id),
         ])
 

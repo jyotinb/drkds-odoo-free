@@ -3,7 +3,33 @@
   "title": "Scheduled Database Backup (Lite)",
   "summary": "Nightly database dumps to a local folder, with retention, a log and failure alerts, on Odoo 19 Community",
   "intro": "Name a folder on the server, pick a format, say how many copies to keep, and the database is dumped on the schedule you set. Each run, good or bad, lands in a log with its file, size and duration. When a run fails, the people you name get a to-do, so a backup that quietly stopped working is a thing of the past.\n\nThe dump is made by pg_dump with the connection Odoo already uses. No master password is asked for, none is stored, and nothing leaves the server.",
-  "shots": [],
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Backup runs",
+      "Three nightly zip backups of 3.0 MB each; with Keep Last at 2 the third run removed the oldest file, whose line now reads Done (file removed)."
+    ],
+    [
+      "screenshot_02.png",
+      "A backup configuration",
+      "A nightly configuration: database, backup folder, zip format with filestore, keep last 2, schedule, last status and who is told on failure."
+    ],
+    [
+      "screenshot_03.png",
+      "Backup configurations",
+      "Two configurations: a nightly zip kept twice and a weekly PostgreSQL dump kept four times, each with its own schedule."
+    ],
+    [
+      "screenshot_04.png",
+      "One backup run",
+      "A run's details: file, full path, size, duration, whether the file is still present, and what retention removed."
+    ],
+    [
+      "screenshot_05.png",
+      "The setting",
+      "General Settings: the default folder proposed for new configurations, and a link to manage them."
+    ]
+  ],
   "features": [
     [
       "Backup configurations",
@@ -41,5 +67,5 @@
     "The lite edition writes to a local folder only. There is no remote target, no encryption and no restore from the interface."
   ],
   "disclaimer": false,
-  "paid_sentence": "The drkds Backup app adds remote targets (SFTP, S3), encryption, restore from the interface and multi-database schedules."
+  "paid_sentence": "The paid drkds Backup Manager app adds SFTP and second-copy targets, retention by count and age, sha256 integrity checks, email summaries and a restore helper."
 }

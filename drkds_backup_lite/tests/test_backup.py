@@ -53,7 +53,7 @@ class TestBackupDump(BackupCommon):
         """The attachment store goes into the zip under filestore/, as the
         database manager expects it on restore."""
         attachment = self.env["ir.attachment"].create({
-            "name": "note.txt", "raw": b"keep me", "res_model": "drkds.backup.config", "res_id": 0,
+            "name": "note.txt", "raw": b"keep me", "res_model": "drkds.backup.lite.config", "res_id": 0,
         })
         self.assertTrue(attachment.store_fname, "attachment must be on disk, not in the table")
         config = self._config()
@@ -83,7 +83,7 @@ class TestBackupDump(BackupCommon):
     def test_backup_now_opens_the_log(self):
         config = self._config()
         action = config.with_user(self.admin).action_backup_now()
-        self.assertEqual(action["res_model"], "drkds.backup.log")
+        self.assertEqual(action["res_model"], "drkds.backup.lite.log")
         log = self.Log.browse(action["res_id"])
         self.assertEqual(log.status, "done", log.message)
         self.assertEqual(config.log_count, 1)
@@ -232,7 +232,7 @@ class TestBackupSecurity(BackupCommon):
         """The module keeps no credential: no field named like one, nothing in
         the parameters, and the database password, if the server uses one,
         appears neither in the log nor inside the archive."""
-        for model in ("drkds.backup.config", "drkds.backup.log"):
+        for model in ("drkds.backup.lite.config", "drkds.backup.lite.log"):
             for fname in self.env[model]._fields:
                 self.assertNotIn("passw", fname.lower(), "%s.%s" % (model, fname))
         params = self.env["ir.config_parameter"].sudo().search([("key", "like", "drkds_backup")])
@@ -261,7 +261,7 @@ class TestBackupSecurity(BackupCommon):
         self.assertEqual(cron.interval_type, "hours")
         self.assertEqual(cron.user_id, self.env.ref("base.user_root"))
         self.assertIn("model.browse(%d)._run_backup()" % config.id, cron.code)
-        self.assertEqual(cron.model_id.model, "drkds.backup.config")
+        self.assertEqual(cron.model_id.model, "drkds.backup.lite.config")
         self.assertTrue(cron.active)
 
         config.write({"interval_number": 1, "interval_type": "days", "name": "Weekly"})

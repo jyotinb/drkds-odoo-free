@@ -21,6 +21,31 @@
 
 <section class="oe_container">
   <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <img src="screenshot_01.png" alt="Backup runs" style="max-width:100%; height:auto; border:1px solid #d5dbdb; border-radius:4px;"/>
+      <p style="font-size:14px; color:#5d6d7e; line-height:1.6; margin-top:10px;">Three nightly zip backups of 3.0 MB each; with Keep Last at 2 the third run removed the oldest file, whose line now reads Done (file removed).</p>
+    </div>
+    <div class="oe_span12" style="text-align:center;">
+      <img src="screenshot_02.png" alt="A backup configuration" style="max-width:100%; height:auto; border:1px solid #d5dbdb; border-radius:4px;"/>
+      <p style="font-size:14px; color:#5d6d7e; line-height:1.6; margin-top:10px;">A nightly configuration: database, backup folder, zip format with filestore, keep last 2, schedule, last status and who is told on failure.</p>
+    </div>
+    <div class="oe_span12" style="text-align:center;">
+      <img src="screenshot_03.png" alt="Backup configurations" style="max-width:100%; height:auto; border:1px solid #d5dbdb; border-radius:4px;"/>
+      <p style="font-size:14px; color:#5d6d7e; line-height:1.6; margin-top:10px;">Two configurations: a nightly zip kept twice and a weekly PostgreSQL dump kept four times, each with its own schedule.</p>
+    </div>
+    <div class="oe_span12" style="text-align:center;">
+      <img src="screenshot_04.png" alt="One backup run" style="max-width:100%; height:auto; border:1px solid #d5dbdb; border-radius:4px;"/>
+      <p style="font-size:14px; color:#5d6d7e; line-height:1.6; margin-top:10px;">A run&#x27;s details: file, full path, size, duration, whether the file is still present, and what retention removed.</p>
+    </div>
+    <div class="oe_span12" style="text-align:center;">
+      <img src="screenshot_05.png" alt="The setting" style="max-width:100%; height:auto; border:1px solid #d5dbdb; border-radius:4px;"/>
+      <p style="font-size:14px; color:#5d6d7e; line-height:1.6; margin-top:10px;">General Settings: the default folder proposed for new configurations, and a link to manage them.</p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
     <div class="oe_span12">
       <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
     </div>
@@ -109,7 +134,7 @@
         <a href="https://github.com/jyotinb/drkds-odoo-free/tree/19.0/drkds_ticketing_lite" style="color:#183a5c;">Support Tickets (Lite)</a>
       </p>
       <p style="font-size:15px; color:#5d6d7e;">
-        Need the full version? The drkds Backup app adds remote targets (SFTP, S3), encryption, restore from the interface and multi-database schedules.
+        Need the full version? The paid drkds Backup Manager app adds SFTP and second-copy targets, retention by count and age, sha256 integrity checks, email summaries and a restore helper.
       </p>
     </div>
   </div>

@@ -2,8 +2,8 @@
 <odoo>
 
     <record id="view_drkds_backup_log_list" model="ir.ui.view">
-        <field name="name">drkds.backup.log.list</field>
-        <field name="model">drkds.backup.log</field>
+        <field name="name">drkds.backup.lite.log.list</field>
+        <field name="model">drkds.backup.lite.log</field>
         <field name="arch" type="xml">
             <list string="Backup Runs" create="0" edit="0"
                   decoration-info="status == 'running'"
@@ -25,8 +25,8 @@
     </record>
 
     <record id="view_drkds_backup_log_form" model="ir.ui.view">
-        <field name="name">drkds.backup.log.form</field>
-        <field name="model">drkds.backup.log</field>
+        <field name="name">drkds.backup.lite.log.form</field>
+        <field name="model">drkds.backup.lite.log</field>
         <field name="arch" type="xml">
             <form string="Backup Run" create="0" edit="0">
                 <sheet>
@@ -60,8 +60,8 @@
     </record>
 
     <record id="view_drkds_backup_log_search" model="ir.ui.view">
-        <field name="name">drkds.backup.log.search</field>
-        <field name="model">drkds.backup.log</field>
+        <field name="name">drkds.backup.lite.log.search</field>
+        <field name="model">drkds.backup.lite.log</field>
         <field name="arch" type="xml">
             <search string="Backup Runs">
                 <field name="name"/>
@@ -85,7 +85,7 @@
 
     <record id="action_drkds_backup_log" model="ir.actions.act_window">
         <field name="name">Backup Runs</field>
-        <field name="res_model">drkds.backup.log</field>
+        <field name="res_model">drkds.backup.lite.log</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_drkds_backup_log_search"/>
         <field name="help" type="html">

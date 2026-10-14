@@ -109,6 +109,10 @@ Mark it done once the cause is fixed.
   of your database plus your attachments; keep an eye on disk space.
 - Each configuration backs up the one database Odoo is running. For several
   databases, install the module in each.
+- The models are `drkds.backup.lite.config` and `drkds.backup.lite.log`,
+  names no other drkds module uses, so it can be installed in the same
+  database as the other drkds backup module; each keeps its own
+  configurations, runs and scheduled actions.
 - The temporary SQL file is written inside the backup folder, so the folder
   needs roughly twice the size of the dump free during a zip run.
 - The Backup Now button runs in the web request; a very large database may
@@ -121,7 +125,6 @@ Mark it done once the cause is fixed.
 Local folder only. There is no remote target, no encryption and no restore
 from the interface.
 
-The drkds Backup app adds remote targets (SFTP, S3), encryption, restore from
-the interface and multi-database schedules.
+The paid drkds Backup Manager app adds SFTP and second-copy targets, retention by count and age, sha256 integrity checks, email summaries and a restore helper.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

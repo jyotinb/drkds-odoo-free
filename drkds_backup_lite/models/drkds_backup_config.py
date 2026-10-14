@@ -54,14 +54,14 @@ class DrkdsBackupConfig(models.Model):
     ``find_pg_tool`` and ``exec_pg_environ`` and the same archive layout:
     ``dump.sql`` first, then ``manifest.json``, then ``filestore/``.
 
-    Every run writes a :class:`drkds.backup.log` line, opened as "running".
+    Every run writes a :class:`drkds.backup.lite.log` line, opened as "running".
     A failure never raises out of the cron: it is logged, posted to the
     chatter, and a to-do activity is scheduled for each notified user. A
     run whose worker is killed (``limit_time_real_cron``, a restart) is
     closed as failed by the next run; see :meth:`_close_interrupted_runs`.
     """
 
-    _name = "drkds.backup.config"
+    _name = "drkds.backup.lite.config"
     _description = "Backup Configuration"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "name, id"
@@ -89,7 +89,7 @@ class DrkdsBackupConfig(models.Model):
     )
     notify_user_ids = fields.Many2many(
         "res.users",
-        "drkds_backup_config_notify_rel",
+        "drkds_backup_lite_config_notify_rel",
         "config_id",
         "user_id",
         string="Notify on Failure",
@@ -108,7 +108,7 @@ class DrkdsBackupConfig(models.Model):
         related="cron_id.interval_type", string="Interval Unit", readonly=False
     )
     nextcall = fields.Datetime(related="cron_id.nextcall", string="Next Run", readonly=False)
-    log_ids = fields.One2many("drkds.backup.log", "config_id", string="Runs")
+    log_ids = fields.One2many("drkds.backup.lite.log", "config_id", string="Runs")
     log_count = fields.Integer(compute="_compute_last_run")
     last_run = fields.Datetime(compute="_compute_last_run", string="Last Run")
     last_status = fields.Selection(
@@ -445,7 +445,7 @@ class DrkdsBackupConfig(models.Model):
         Returns the log records written, one per configuration. Never
         raises for a failed dump; see the class docstring.
         """
-        logs = self.env["drkds.backup.log"]
+        logs = self.env["drkds.backup.lite.log"]
         for config in self:
             logs |= config._backup_once()
         return logs
@@ -536,7 +536,7 @@ class DrkdsBackupConfig(models.Model):
         folder, belongs to a run that died.
         """
         self.ensure_one()
-        stale = self.env["drkds.backup.log"].sudo().search(
+        stale = self.env["drkds.backup.lite.log"].sudo().search(
             [("config_id", "=", self.id), ("status", "=", "running")]
         )
         for log in stale:
@@ -579,7 +579,7 @@ class DrkdsBackupConfig(models.Model):
         folder = self.folder.strip()
         filename, final_path = self._next_file_name(folder)
         part_path = final_path + PART_SUFFIX
-        log = self.env["drkds.backup.log"].sudo().create({
+        log = self.env["drkds.backup.lite.log"].sudo().create({
             "config_id": self.id,
             "name": filename,
             "folder": folder,
@@ -646,7 +646,7 @@ class DrkdsBackupConfig(models.Model):
                 continue
             removed.append(name)
         if removed:
-            self.env["drkds.backup.log"].sudo().search([
+            self.env["drkds.backup.lite.log"].sudo().search([
                 ("folder", "=", folder),
                 ("name", "in", removed),
                 ("status", "=", "done"),
@@ -679,7 +679,7 @@ class DrkdsBackupConfig(models.Model):
         log = self._run_backup()
         return {
             "type": "ir.actions.act_window",
-            "res_model": "drkds.backup.log",
+            "res_model": "drkds.backup.lite.log",
             "res_id": log.id,
             "view_mode": "form",
             "target": "current",

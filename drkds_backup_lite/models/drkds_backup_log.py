@@ -13,20 +13,20 @@ STATUSES = [
 class DrkdsBackupLog(models.Model):
     """One line per backup run: what was written, where, how big, how long.
 
-    Written by :meth:`drkds.backup.config._backup_once`, in sudo, and never
+    Written by :meth:`drkds.backup.lite.config._backup_once`, in sudo, and never
     edited by hand (nobody has write access). A line opens as ``running`` and
     ends as ``done`` or ``failed``; a scheduled run killed on the way is
     closed as ``failed`` by the next run. The only later change is ``status``
     moving to ``deleted`` when retention removes the file.
     """
 
-    _name = "drkds.backup.log"
+    _name = "drkds.backup.lite.log"
     _description = "Backup Run"
     _order = "date_start desc, id desc"
     _rec_name = "name"
 
     config_id = fields.Many2one(
-        "drkds.backup.config", string="Configuration", required=True,
+        "drkds.backup.lite.config", string="Configuration", required=True,
         ondelete="cascade", index=True,
     )
     name = fields.Char(string="File", required=True, readonly=True)

@@ -27,7 +27,7 @@ class TestBackupScenario(BackupCommon):
         )
 
         # 2. The configuration, through the form: folder comes from Settings.
-        f = Form(admin_env["drkds.backup.config"])
+        f = Form(admin_env["drkds.backup.lite.config"])
         self.assertEqual(f.folder, self.folder)
         f.name = "Nightly"
         f.keep_last = 2

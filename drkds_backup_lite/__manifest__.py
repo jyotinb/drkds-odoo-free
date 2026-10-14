@@ -37,8 +37,7 @@ nothing is sent anywhere. It works with database listing turned off. The
 folder must be writable by the system user that runs Odoo, and may not be
 inside the filestore or an addons path.
 
-The drkds Backup app adds remote targets (SFTP, S3), encryption,
-restore from the interface and multi-database schedules.
+The paid drkds Backup Manager app adds SFTP and second-copy targets, retention by count and age, sha256 integrity checks, email summaries and a restore helper.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
 """,
@@ -56,7 +55,13 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/res_config_settings_views.xml",
         "views/drkds_backup_menus.xml",
     ],
-    "images": [],
+    "images": [
+        "static/description/screenshot_01.png",
+        "static/description/screenshot_02.png",
+        "static/description/screenshot_03.png",
+        "static/description/screenshot_04.png",
+        "static/description/screenshot_05.png",
+    ],
     "installable": True,
     "application": False,
     "auto_install": False,
