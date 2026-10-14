@@ -18,9 +18,10 @@ What it does
   The wizard refuses any model that is not enabled.
 * **The wizard** - shows how many records are selected, offers only the fields
   that can actually be written (stored, writable, not an identifier, not a
-  timestamp, not a binary, not a computed field without an inverse), and a
-  value input matching the field type: text, number, yes/no, date, date and
-  time, selection, record, tag.
+  timestamp, not a binary, not a computed field without an inverse) in a
+  picker you search by typing part of the field's name, and a value input
+  matching the field type: text, number, yes/no, date, date and time,
+  selection, record, tag.
 * **Set empty** - clears the field on every selected record instead of
   setting a value (not offered on a required field).
 * **Batches of 500, never as superuser** - the write runs as the current user
@@ -29,8 +30,9 @@ What it does
   other 499.
 * **A result you can act on** - updated count, failed count, and the list of
   records that could not be changed with the reason.
-* **Private wizard** - each wizard is visible to the user who opened it
-  only, so nobody else can change what it is about to write.
+* **Private wizard** - each wizard, with the fields and choices it offers,
+  is visible to the user who opened it only, so nobody else can change what
+  it is about to write.
 
 Who can use it
 --------------
@@ -55,7 +57,13 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "wizard/drkds_mass_update_wizard_views.xml",
         "views/drkds_mass_update_model_views.xml",
     ],
-    "images": [],
+    "images": [
+        "static/description/screenshot_01.png",
+        "static/description/screenshot_02.png",
+        "static/description/screenshot_03.png",
+        "static/description/screenshot_04.png",
+        "static/description/screenshot_05.png",
+    ],
     "installable": True,
     "application": False,
     "auto_install": False,

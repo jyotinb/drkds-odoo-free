@@ -26,12 +26,14 @@
                             <field name="record_count"/>
                         </group>
                         <group>
-                            <field name="field_name"/>
+                            <field name="field_choice_id" placeholder="Type to search a field"
+                                   options="{'no_create': True, 'no_open': True}"/>
                         </group>
                     </group>
                     <div class="alert alert-info" role="alert">
                         Only fields you can write are listed: stored, editable fields of a
-                        supported type. Press Next to enter the value.
+                        supported type. Type part of the field's name to find it, then press
+                        Next to enter the value.
                     </div>
                 </div>
                 <!-- Step 2: which value -->
@@ -58,7 +60,8 @@
                         <field name="value_boolean" invisible="field_type != 'boolean'"/>
                         <field name="value_date" invisible="field_type != 'date'"/>
                         <field name="value_datetime" invisible="field_type != 'datetime'"/>
-                        <field name="value_selection" invisible="field_type != 'selection'"/>
+                        <field name="value_choice_id" invisible="field_type != 'selection'"
+                               options="{'no_create': True, 'no_open': True}"/>
                         <field name="value_record_id" widget="many2one_reference"
                                invisible="field_type not in ('many2one', 'many2many')"
                                options="{'no_create': True, 'no_open': True}"/>
@@ -101,6 +104,35 @@
                             invisible="state != 'done'"/>
                 </footer>
             </form>
+        </field>
+    </record>
+
+    <!-- The choice lines are only seen through the wizard's two pickers;
+         this list and search serve their "Search More..." dialog. -->
+    <record id="view_drkds_mass_update_field_choice_list" model="ir.ui.view">
+        <field name="name">drkds.mass.update.field.choice.list</field>
+        <field name="model">drkds.mass.update.field.choice</field>
+        <field name="arch" type="xml">
+            <list string="Choices" create="false" edit="false" delete="false">
+                <field name="name"/>
+                <field name="technical_name"/>
+                <field name="field_type" optional="show"/>
+                <field name="relation_model" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_drkds_mass_update_field_choice_search" model="ir.ui.view">
+        <field name="name">drkds.mass.update.field.choice.search</field>
+        <field name="model">drkds.mass.update.field.choice</field>
+        <field name="arch" type="xml">
+            <search string="Choices">
+                <field name="name" string="Label or Technical Name"
+                       filter_domain="['|', ('name', 'ilike', self), ('technical_name', 'ilike', self)]"/>
+                <field name="field_type"/>
+                <filter name="group_by_field_type" string="Field Type"
+                        context="{'group_by': 'field_type'}"/>
+            </search>
         </field>
     </record>
 

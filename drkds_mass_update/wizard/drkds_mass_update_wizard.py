@@ -13,14 +13,17 @@ visible to the user who opened it only (see the record rule in
 ``security/drkds_mass_update_security.xml``): the stored model, records,
 field and value are what the write uses, so nobody else may change them.
 
-Why two steps and no ``ir.model`` pickers: in Odoo 19 a plain internal user
-has no read access on ``ir.model``, ``ir.model.fields`` or
-``ir.model.fields.selection``, so a wizard built on Many2one fields to those
-models is unusable by the very people it is for. Everything here comes from
-the registry instead. The field list is a Selection computed from the model
-named in the context, and the choices of a selection-type field are a
-Selection computed from the field named in the context, which is why the
-field is chosen first and the value second.
+Why the pickers point at choice lines of the wizard's own: in Odoo 19 a
+plain internal user has no read access on ``ir.model``, ``ir.model.fields``
+or ``ir.model.fields.selection``, so a wizard built on Many2one fields to
+those models is unusable by the very people it is for. And a Selection whose
+options a method computes from a context key is empty in the browser, which
+sends ``get_views`` no such key. So the wizard reads the fields and choices
+from the registry and stores them as ``drkds.mass.update.field.choice``
+lines it owns: the field lines when it is created (``action_open_for``
+creates it before the dialog opens, so the lines exist when the form loads),
+the choices of a selection-type field when the field step is confirmed,
+which is why the field is chosen first and the value second.
 """
 from markupsafe import Markup, escape
 
@@ -31,10 +34,6 @@ from odoo.tools import split_every
 
 #: Records written per ``write`` call.
 BATCH_SIZE = 500
-
-#: Context keys carrying the model and the chosen field between steps.
-CTX_MODEL = "drkds_mup_model"
-CTX_FIELD = "drkds_mup_field"
 
 #: Field types the wizard knows how to take a value for. Anything else is
 #: left out of the field list rather than offered with no way to fill it.
@@ -71,8 +70,22 @@ class DrkdsMassUpdateWizard(models.TransientModel):
     record_count = fields.Integer(
         string="Selected Records", compute="_compute_record_count"
     )
-    field_name = fields.Selection(
-        selection="_selection_field_name", string="Field to Update"
+    choice_ids = fields.One2many(
+        comodel_name="drkds.mass.update.field.choice",
+        inverse_name="wizard_id",
+        string="Choices",
+    )
+    # String domains: they only guide the picker. The chosen line is checked
+    # again (field_name below, _prepare_value) before anything is written.
+    field_choice_id = fields.Many2one(
+        comodel_name="drkds.mass.update.field.choice",
+        string="Field to Update",
+        domain="[('wizard_id', '=', id), ('kind', '=', 'field')]",
+    )
+    field_name = fields.Char(
+        string="Technical Field Name",
+        compute="_compute_field_name",
+        store=True,
     )
     field_label = fields.Char(string="Field", compute="_compute_field_info")
     field_type = fields.Char(string="Field Type", compute="_compute_field_info")
@@ -96,8 +109,10 @@ class DrkdsMassUpdateWizard(models.TransientModel):
     value_boolean = fields.Boolean(string="Yes / No Value")
     value_date = fields.Date(string="Date Value")
     value_datetime = fields.Datetime(string="Date and Time Value")
-    value_selection = fields.Selection(
-        selection="_selection_value_selection", string="Choice"
+    value_choice_id = fields.Many2one(
+        comodel_name="drkds.mass.update.field.choice",
+        string="Choice",
+        domain="[('wizard_id', '=', id), ('kind', '=', 'value')]",
     )
     value_record_id = fields.Many2oneReference(
         string="Record", model_field="relation_model"
@@ -119,26 +134,22 @@ class DrkdsMassUpdateWizard(models.TransientModel):
 
     @api.model
     def action_open_for(self, records):
-        """Return the action that opens this wizard on ``records``.
+        """Create the wizard on ``records`` and return the action opening it.
 
         Called by the bound server action with the user's list selection.
+        The wizard is created here, before the dialog opens, rather than by
+        the dialog's first button: its pickers offer the wizard's own choice
+        lines (domain on the wizard's id), so the record and its field lines
+        must exist when the form loads.
         """
-        return {
-            "type": "ir.actions.act_window",
-            "name": _("Mass Update"),
-            "res_model": self._name,
-            "view_mode": "form",
-            "target": "new",
-            "context": {
-                CTX_MODEL: records._name,
-                "default_model_name": records._name,
-                "default_res_ids": ",".join(str(i) for i in records.ids),
-            },
-        }
+        wizard = self.create({
+            "model_name": records._name,
+            "res_ids": ",".join(str(i) for i in records.ids),
+        })
+        return wizard._action_reopen()
 
     def _action_reopen(self):
-        """Re-open this wizard, carrying the model and field in context so
-        the dynamic selections keep their options."""
+        """The action showing this wizard, at whatever step it is."""
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
@@ -147,10 +158,6 @@ class DrkdsMassUpdateWizard(models.TransientModel):
             "res_id": self.id,
             "view_mode": "form",
             "target": "new",
-            "context": {
-                CTX_MODEL: self.model_name,
-                CTX_FIELD: self.field_name,
-            },
         }
 
     @api.model
@@ -165,6 +172,20 @@ class DrkdsMassUpdateWizard(models.TransientModel):
             res["res_ids"] = ",".join(str(i) for i in ctx["active_ids"])
         return res
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        wizards = super().create(vals_list)
+        wizards._populate_field_choices()
+        return wizards
+
+    def write(self, vals):
+        res = super().write(vals)
+        # The field lines belong to the model; the form never changes it,
+        # but a direct call may, and the offer must follow.
+        if "model_name" in vals:
+            self._populate_field_choices()
+        return res
+
     def action_next(self):
         """Step one done: the field is chosen, ask for its value."""
         self.ensure_one()
@@ -172,18 +193,20 @@ class DrkdsMassUpdateWizard(models.TransientModel):
             raise UserError(_("Choose the field to update."))
         self._check_model_enabled()
         self._check_field_allowed()
-        self.write({"state": "value"})
+        self.write({"state": "value", "value_choice_id": False})
+        self._populate_value_choices()
         return self._action_reopen()
 
     def action_back(self):
         """Return to the field choice, dropping any value typed so far."""
         self.ensure_one()
-        self.write({"state": "field", "set_empty": False, "value_selection": False,
+        self.write({"state": "field", "set_empty": False, "value_choice_id": False,
                     "value_record_id": False})
+        self._get_choices("value").unlink()
         return self._action_reopen()
 
     # ------------------------------------------------------------------
-    # Field list
+    # Field list and choice lines
     # ------------------------------------------------------------------
 
     @api.model
@@ -226,21 +249,56 @@ class DrkdsMassUpdateWizard(models.TransientModel):
     def _get_writable_field_names(self, model_name):
         return [name for name, _label in self._get_writable_fields(model_name)]
 
-    @api.model
-    def _selection_field_name(self):
-        return self._get_writable_fields(self.env.context.get(CTX_MODEL))
+    def _get_choices(self, kind):
+        """This wizard's choice lines of ``kind`` ("field" or "value")."""
+        return self.choice_ids.filtered(lambda choice: choice.kind == kind)
 
-    @api.model
-    def _selection_value_selection(self):
-        model_name = self.env.context.get(CTX_MODEL)
-        field_name = self.env.context.get(CTX_FIELD)
-        if not model_name or model_name not in self.env or not field_name:
-            return []
-        field = self.env[model_name]._fields.get(field_name)
-        if not field or field.type != "selection":
-            return []
-        described = self.env[model_name].fields_get([field_name], attributes=["selection"])
-        return list(described.get(field_name, {}).get("selection") or [])
+    def _populate_field_choices(self):
+        """(Re)build the field lines: one per field the user may update,
+        in the order of ``_get_writable_fields`` (by label)."""
+        self._get_choices("field").unlink()
+        vals_list = []
+        for wizard in self:
+            if wizard.model_name not in self.env:
+                continue
+            model_fields = self.env[wizard.model_name]._fields
+            for sequence, (name, label) in enumerate(
+                wizard._get_writable_fields(wizard.model_name)
+            ):
+                field = model_fields[name]
+                vals_list.append({
+                    "wizard_id": wizard.id,
+                    "kind": "field",
+                    "sequence": sequence,
+                    "name": label,
+                    "technical_name": name,
+                    "field_type": field.type,
+                    "relation_model": field.comodel_name or False,
+                })
+        self.env["drkds.mass.update.field.choice"].create(vals_list)
+
+    def _populate_value_choices(self):
+        """(Re)build the value lines: the choices of the chosen field when it
+        is a selection, none otherwise. Labels come translated from
+        ``fields_get``; keys are kept as text, as a form sends them."""
+        self.ensure_one()
+        self._get_choices("value").unlink()
+        if self.field_type != "selection":
+            return
+        described = self.env[self.model_name].fields_get(
+            [self.field_name], attributes=["selection"]
+        )
+        options = described.get(self.field_name, {}).get("selection") or []
+        self.env["drkds.mass.update.field.choice"].create([
+            {
+                "wizard_id": self.id,
+                "kind": "value",
+                "sequence": sequence,
+                "name": label,
+                "technical_name": str(key),
+            }
+            for sequence, (key, label) in enumerate(options)
+        ])
 
     def _check_model_enabled(self):
         """Refuse a model the administrator has not enabled.
@@ -290,6 +348,18 @@ class DrkdsMassUpdateWizard(models.TransientModel):
                 wizard.model_description = self.env[wizard.model_name]._description
             else:
                 wizard.model_description = wizard.model_name
+
+    @api.depends("field_choice_id.kind", "field_choice_id.technical_name",
+                 "field_choice_id.wizard_id")
+    def _compute_field_name(self):
+        """The technical name of the picked field line. A line of any other
+        wizard, or a value line, gives no field: the picker's domain is only
+        a guide, a direct call can send any id. (``_origin``: the form's
+        onchange computes on a copy of the wizard.)"""
+        for wizard in self:
+            choice = wizard.field_choice_id
+            own = choice.kind == "field" and choice.wizard_id._origin == wizard._origin
+            wizard.field_name = choice.technical_name if own else False
 
     @api.depends("model_name", "field_name")
     @api.depends_context("uid", "lang")
@@ -359,19 +429,28 @@ class DrkdsMassUpdateWizard(models.TransientModel):
                 raise UserError(_("Pick a date and time, or tick Set Empty to clear the field."))
             return self.value_datetime
         if ftype == "selection":
-            if not self.value_selection:
+            choice = self.value_choice_id
+            if not choice:
                 raise UserError(_("Pick a choice, or tick Set Empty to clear the field."))
-            # The ORM does not validate a selection whose choices come from a
-            # method (res.partner.lang, tz, ...), and the choice field of this
-            # wizard is such a selection too: check the value here. Keys are
-            # matched as text, as the client sends them.
+            # The picker offers this wizard's own choice lines only, but a
+            # direct call can send any line id: take only a value line of
+            # this wizard (read as the user, so another user's line is not
+            # even read).
+            if choice not in self._get_choices("value"):
+                raise UserError(
+                    _("This choice is not offered for %s.") % self.field_label
+                )
+            # A line can also be crafted, and the ORM does not validate a
+            # selection whose choices come from a method (res.partner.lang,
+            # tz, ...): check the key against the field itself. Keys are
+            # matched as text, as the lines store them.
             choices = {str(key): key for key in field.get_values(self.env)}
-            if self.value_selection not in choices:
+            if choice.technical_name not in choices:
                 raise UserError(
                     _("%(value)s is not a valid choice for %(field)s.",
-                      value=self.value_selection, field=self.field_label)
+                      value=choice.name, field=self.field_label)
                 )
-            return choices[self.value_selection]
+            return choices[choice.technical_name]
         if ftype in ("many2one", "many2many"):
             if not self.value_record_id:
                 raise UserError(_("Pick a record, or tick Set Empty to clear the field."))

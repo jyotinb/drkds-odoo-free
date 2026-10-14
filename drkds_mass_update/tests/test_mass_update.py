@@ -11,7 +11,7 @@ from odoo.tools import mute_logger
 
 from odoo.addons.drkds_mass_update import uninstall_hook
 
-from .common import CTX_FIELD, CTX_MODEL, MassUpdateCommon
+from .common import MassUpdateCommon
 
 
 @tagged("post_install", "-at_install")
@@ -42,36 +42,58 @@ class TestFieldList(MassUpdateCommon):
         self.assertNotIn("user_ids", names, "one2many")
         self.assertNotIn("tz_offset", names, "not stored")
 
-    def test_field_selection_follows_the_model_in_context(self):
-        options = self.Wizard.with_user(self.clerk).with_context(
-            **{CTX_MODEL: "res.partner"}
-        )._selection_field_name()
-        names = [name for name, _label in options]
+    def test_field_lines_are_created_with_the_wizard(self):
+        partner = self.Partner.create({"name": "Lines"})
+        wizard = self._wizard(self.clerk, partner)
+        lines = wizard._get_choices("field")
+        # One line per offered field, in the offered order (by label).
         self.assertEqual(
-            names, self.Wizard.with_user(self.clerk)._get_writable_field_names("res.partner")
+            lines.mapped("technical_name"),
+            self.Wizard.with_user(self.clerk)._get_writable_field_names("res.partner"),
         )
-        labels = [label for _name, label in options]
+        self.assertEqual(wizard.choice_ids, lines, "no value line before Next")
+        labels = lines.mapped("name")
         self.assertEqual(labels, sorted(labels, key=str.lower), "sorted by label")
-        self.assertIn(("ref", "Reference"), options)
-        self.assertIn(("category_id", "Tags"), options)
-        # No model in context, no options; an unknown model, no options.
-        self.assertEqual(self.Wizard.with_user(self.clerk)._selection_field_name(), [])
-        self.assertEqual(
-            self.Wizard.with_context(**{CTX_MODEL: "no.such.model"})._selection_field_name(), []
-        )
+        offered = [(line.technical_name, line.name) for line in lines]
+        self.assertIn(("ref", "Reference"), offered)
+        self.assertIn(("category_id", "Tags"), offered)
+        salesperson = self._choice(wizard, "field", "user_id")
+        self.assertEqual(salesperson.name, "Salesperson")
+        self.assertEqual(salesperson.field_type, "many2one")
+        self.assertEqual(salesperson.relation_model, "res.users")
+        self.assertEqual(salesperson.display_name, "Salesperson")
+        self.assertEqual(lines.create_uid, self.clerk, "created as the user, never sudo")
+        # The picker finds a field by label or by technical name.
+        domain = [("wizard_id", "=", wizard.id), ("kind", "=", "field")]
+        Choice = self.Choice.with_user(self.clerk)
+        self.assertEqual(Choice.name_search("salesp", domain), [(salesperson.id, "Salesperson")])
+        self.assertIn((salesperson.id, "Salesperson"), Choice.name_search("user_id", domain))
+        # An unknown model offers nothing.
+        unknown = self.Wizard.with_user(self.clerk).create({"model_name": "no.such.model"})
+        self.assertFalse(unknown.choice_ids)
 
-    def test_choice_selection_follows_the_field_in_context(self):
-        options = self.Wizard.with_user(self.clerk).with_context(
-            **{CTX_MODEL: "res.partner", CTX_FIELD: "type"}
-        )._selection_value_selection()
-        self.assertIn(("delivery", "Delivery"), options)
+    def test_choice_lines_follow_the_confirmed_field(self):
+        partners = self.Partner.create([{"name": "Choice A"}, {"name": "Choice B"}])
+        wizard = self._step_to_value(self._wizard(self.clerk, partners, "type"))
+        values = wizard._get_choices("value")
+        self.assertIn(("delivery", "Delivery"), [(v.technical_name, v.name) for v in values])
         self.assertEqual(
-            self.Wizard.with_context(**{CTX_MODEL: "res.partner", CTX_FIELD: "ref"})
-            ._selection_value_selection(),
-            [],
-            "a non-selection field has no choices",
+            sorted(values.mapped("technical_name")),
+            sorted(str(key) for key in self.Partner._fields["type"].get_values(self.env)),
         )
-        self.assertEqual(self.Wizard._selection_value_selection(), [])
+        self.assertEqual(values.create_uid, self.clerk)
+        # Back drops the choices and the one picked.
+        wizard.value_choice_id = self._choice(wizard, "value", "delivery")
+        wizard.action_back()
+        self.assertEqual(wizard.state, "field")
+        self.assertFalse(wizard.value_choice_id)
+        self.assertFalse(wizard._get_choices("value"))
+        self.assertFalse(values.exists())
+        self.assertTrue(wizard._get_choices("field"), "the field lines stay")
+        # A field that is not a selection has no choices.
+        self._pick_field(wizard, "ref")
+        self._step_to_value(wizard)
+        self.assertFalse(wizard._get_choices("value"))
 
     def test_wizard_opens_for_a_plain_user_without_ir_model_access(self):
         # The clerk cannot read ir.model.fields, and must not need to.
@@ -97,16 +119,43 @@ class TestFieldList(MassUpdateCommon):
     def test_a_field_outside_the_list_is_refused(self):
         partner = self.Partner.create({"name": "Refused Field"})
         wizard = self._wizard(self.clerk, partner)
-        # Bypass the selection's own validation, as a crafted RPC call would.
-        self.env.cr.execute(
-            "UPDATE drkds_mass_update_wizard SET field_name = 'display_name' WHERE id = %s",
-            [wizard.id],
-        )
-        wizard.invalidate_recordset()
+        # A crafted call can add a line of its own to its own wizard: the
+        # line is only an offer, the field is checked against the registry.
+        crafted = self.Choice.with_user(self.clerk).create({
+            "wizard_id": wizard.id, "kind": "field",
+            "name": "Display Name", "technical_name": "display_name",
+        })
+        wizard.field_choice_id = crafted
+        self.assertEqual(wizard.field_name, "display_name")
         with self.assertRaises(UserError):
             wizard.action_next()
         with self.assertRaises(UserError):
             wizard.action_apply()
+        self.assertEqual(wizard.state, "field")
+
+    def test_a_line_of_another_wizard_or_kind_gives_no_field(self):
+        partner = self.Partner.create({"name": "Foreign Line", "ref": "FL"})
+        wizard = self._wizard(self.clerk, partner)
+        # A field line of another wizard, even the same user's own...
+        other = self._wizard(self.clerk, partner)
+        wizard.field_choice_id = self._choice(other, "field", "ref")
+        self.assertFalse(wizard.field_name)
+        with self.assertRaises(UserError):
+            wizard.action_next()
+        # ...another user's, which the clerk cannot even read...
+        admins = self._wizard(self.admin, partner)
+        wizard.write({"field_choice_id": self._choice(admins, "field", "ref").id})
+        self.assertFalse(wizard.field_name)
+        with self.assertRaises(UserError):
+            wizard.action_apply()
+        # ...or a choice line of this wizard put in the field picker.
+        typed = self._step_to_value(self._wizard(self.clerk, partner, "type"))
+        typed.field_choice_id = self._choice(typed, "value", "delivery")
+        self.assertFalse(typed.field_name)
+        with self.assertRaises(UserError):
+            typed.action_apply()
+        self.assertEqual(partner.ref, "FL")
+        self.assertEqual(partner.type, "contact")
 
     def test_no_field_chosen_is_refused(self):
         partner = self.Partner.create({"name": "No Field"})
@@ -196,7 +245,7 @@ class TestValueTypes(MassUpdateCommon):
         self.assertEqual(crons.mapped("nextcall"), [when, when])
 
     def test_selection(self):
-        self._apply(self.clerk, self.partners, "type", value_selection="delivery")
+        self._apply(self.clerk, self.partners, "type", value_choice="delivery")
         self.assertEqual(self.partners.mapped("type"), ["delivery"] * 3)
 
     def test_selection_needs_a_choice(self):
@@ -252,18 +301,41 @@ class TestValueTypes(MassUpdateCommon):
 
     def test_a_choice_outside_the_field_selection_is_refused(self):
         # res.partner.lang takes its choices from a method, and the ORM does
-        # not validate such a selection: any string would be stored. The
-        # wizard's own choice field is method-based too, so a crafted call
-        # can send anything; the wizard must check it against the field.
+        # not validate such a selection: any string would be stored. A
+        # crafted call can add a choice line of its own to its own wizard,
+        # so the wizard must check the key against the field.
         self.partners.write({"lang": False})
         wizard = self._step_to_value(self._wizard(self.clerk, self.partners, "lang"))
-        wizard.value_selection = "xx_XX"
+        wizard.value_choice_id = self.Choice.with_user(self.clerk).create({
+            "wizard_id": wizard.id, "kind": "value",
+            "name": "Crafted", "technical_name": "xx_XX",
+        })
         with self.assertRaises(UserError):
             wizard.action_apply()
         self.assertEqual(self.partners.mapped("lang"), [False] * 3)
-        wizard.value_selection = "en_US"
+        wizard.value_choice_id = self._choice(wizard, "value", "en_US")
         wizard.action_apply()
         self.assertEqual(self.partners.mapped("lang"), ["en_US"] * 3)
+
+    def test_only_a_choice_line_of_this_wizard_is_taken(self):
+        wizard = self._step_to_value(self._wizard(self.clerk, self.partners, "type"))
+        # A field line in the choice picker...
+        wizard.value_choice_id = self._choice(wizard, "field", "ref")
+        with self.assertRaises(UserError):
+            wizard.action_apply()
+        # ...the same choice in another wizard of the same user...
+        other = self._step_to_value(self._wizard(self.clerk, self.partners, "type"))
+        wizard.value_choice_id = self._choice(other, "value", "delivery")
+        with self.assertRaises(UserError):
+            wizard.action_apply()
+        # ...or in another user's wizard: refused, and that line is not read.
+        admins = self._step_to_value(self._wizard(self.admin, self.partners, "type"))
+        wizard.write({"value_choice_id": self._choice(admins, "value", "delivery").id})
+        with self.assertRaises(UserError) as caught:
+            wizard.action_apply()
+        self.assertNotIsInstance(caught.exception, AccessError)
+        self.assertEqual(self.partners.mapped("type"), ["contact"] * 3)
+        self.assertEqual(wizard.state, "value")
 
     def test_set_empty_is_refused_on_a_required_field(self):
         # Emptying a required field used to reach the database and fail
@@ -370,10 +442,9 @@ class TestAccess(MassUpdateCommon):
         with self.assertRaises(AccessError):
             spy.browse(wizard.id).read(["model_name", "res_ids"])
         with self.assertRaises(AccessError):
-            spy.with_context(**{CTX_MODEL: "res.users"}).browse(wizard.id).write({
+            spy.browse(wizard.id).write({
                 "model_name": "res.users",
                 "res_ids": str(self.reader.id),
-                "field_name": "group_ids",
                 "value_record_id": system.id,
             })
         with self.assertRaises(AccessError):
@@ -384,6 +455,35 @@ class TestAccess(MassUpdateCommon):
         self.assertEqual(partner.ref, "ADM")
         self.env.invalidate_all()
         self.assertNotIn(system, self.reader.group_ids)
+
+    def test_another_user_cannot_see_or_touch_my_choices(self):
+        # The lines my pickers offer are mine as well: another user can
+        # neither list them through the picker's domain nor delete them, and
+        # a line they attach to my wizard is never offered to me.
+        partner = self.Partner.create({"name": "My Choices"})
+        wizard = self._step_to_value(self._wizard(self.clerk, partner, "type"))
+        mine = wizard.choice_ids
+        self.assertTrue(mine.filtered(lambda c: c.kind == "field"))
+        self.assertTrue(mine.filtered(lambda c: c.kind == "value"))
+        self.env.invalidate_all()
+        Spy = self.Choice.with_user(self.reader)
+        self.assertFalse(Spy.search([("wizard_id", "=", wizard.id)]))
+        self.assertFalse(Spy.name_search("", [("wizard_id", "=", wizard.id)]))
+        with self.assertRaises(AccessError):
+            Spy.browse(mine[0].id).read(["name"])
+        with self.assertRaises(AccessError):
+            Spy.browse(mine.ids).unlink()
+        with self.assertRaises(AccessError):
+            Spy.browse(mine[0].id).write({"technical_name": "group_ids"})
+        planted = Spy.create({
+            "wizard_id": wizard.id, "kind": "field",
+            "name": "Planted", "technical_name": "comment",
+        })
+        self.env.invalidate_all()
+        self.assertEqual(wizard.choice_ids, mine)
+        self.assertNotIn(planted, wizard.choice_ids)
+        Choice = self.Choice.with_user(self.clerk)
+        self.assertFalse(Choice.name_search("Planted", [("wizard_id", "=", wizard.id)]))
 
     def test_a_model_that_is_not_enabled_is_refused(self):
         partner = self.Partner.create({"name": "Not Enabled", "ref": "NE"})
@@ -396,15 +496,15 @@ class TestAccess(MassUpdateCommon):
         # A wizard crafted directly on a model nobody enabled, by a user who
         # may write that model, is refused as well.
         group = self.env["res.groups"].create({"name": "drkds Not Enabled"})
-        crafted = self.Wizard.with_user(self.admin).with_context(**{CTX_MODEL: "res.groups"}).create({
+        crafted = self.Wizard.with_user(self.admin).create({
             "model_name": "res.groups",
             "res_ids": str(group.id),
-            "field_name": "comment",
             "state": "value",
             "value_text": "crafted",
         })
+        self._pick_field(crafted, "comment")
         with self.assertRaises(UserError) as caught:
-            crafted.with_context(**{CTX_FIELD: "comment"}).action_apply()
+            crafted.action_apply()
         self.assertIn("not enabled", caught.exception.args[0])
         self.assertFalse(group.comment)
         self.assertEqual(partner.ref, "NE")
@@ -452,11 +552,11 @@ class TestAccess(MassUpdateCommon):
 
     def test_a_repeated_id_counts_once(self):
         partners = self.Partner.create([{"name": "Twice"}, {"name": "Once"}])
-        wizard = self.Wizard.with_user(self.clerk).with_context(**{
-            CTX_MODEL: "res.partner",
-            "active_model": "res.partner",
-            "active_ids": [partners[0].id, partners[0].id, partners[1].id],
-        }).create({"field_name": "color"})
+        wizard = self.Wizard.with_user(self.clerk).with_context(
+            active_model="res.partner",
+            active_ids=[partners[0].id, partners[0].id, partners[1].id],
+        ).create({})
+        self._pick_field(wizard, "color")
         self.assertEqual(wizard.record_count, 2)
         wizard = self._step_to_value(wizard)
         wizard.value_integer = 6
@@ -546,16 +646,15 @@ class TestEnableDisable(MassUpdateCommon):
         ).run()
         self.assertEqual(result["res_model"], "drkds.mass.update.wizard")
         self.assertEqual(result["target"], "new")
-        self.assertEqual(result["context"]["default_model_name"], "res.partner")
-        self.assertEqual(result["context"][CTX_MODEL], "res.partner")
-        self.assertEqual(
-            result["context"]["default_res_ids"], ",".join(str(i) for i in partners.ids)
-        )
-        wizard = self.Wizard.with_user(self.clerk).with_context(**result["context"]).create({})
+        # The wizard exists before the dialog opens, owned by the user, with
+        # its field lines, so the field picker has something to offer.
+        wizard = self.Wizard.with_user(self.clerk).browse(result["res_id"])
+        self.assertEqual(wizard.create_uid, self.clerk)
+        self.assertEqual(wizard.state, "field")
         self.assertEqual(wizard.record_count, 2)
         self.assertEqual(wizard._get_res_ids(), partners.ids)
         self.assertEqual(wizard.model_name, "res.partner")
-        self.assertIn("ref", [n for n, _l in wizard._selection_field_name()])
+        self.assertIn("ref", wizard._get_choices("field").mapped("technical_name"))
 
     def test_uninstall_hook_removes_every_bound_action(self):
         users_model = self.env["ir.model"]._get("res.users")

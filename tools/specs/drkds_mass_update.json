@@ -3,7 +3,33 @@
   "title": "Mass Update",
   "summary": "Update one field on many selected records from the list view, as the current user, with a clear report of what could not be changed",
   "intro": "Two hundred contacts need the same tag. Forty products move to a new category. A whole page of orders gets a different salesperson. Select them in the list, open Mass update from the Actions menu, pick the field, press Next, give it a value, apply.\n\nThe write runs as you, with your own access rights, in batches of 500. A record you are not allowed to change is reported by name, not silently skipped, and never turns into an error that undoes the rest.",
-  "shots": [],
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Models enabled for mass update",
+      "The administrator's list: contacts, products, sales and purchase orders and employees are enabled; each gets a Mass update action on its list view."
+    ],
+    [
+      "screenshot_02.png",
+      "Step 1: the field",
+      "Twelve dealers selected from a saved search; the sales manager picks Salesperson from the fields he is allowed to write."
+    ],
+    [
+      "screenshot_03.png",
+      "Step 2: the value",
+      "The new value, Aakash Vora, with the warning that the change runs with the user's own rights and is not undone in one step."
+    ],
+    [
+      "screenshot_04.png",
+      "The result",
+      "12 records updated, 0 not updated; refused records would be listed here instead of failing the whole run."
+    ],
+    [
+      "screenshot_05.png",
+      "The dealers afterwards",
+      "The saved search again: all twelve dealers now have Aakash Vora as salesperson."
+    ]
+  ],
   "features": [
     [
       "The administrator chooses where it appears",
@@ -11,7 +37,7 @@
     ],
     [
       "Only fields that can be written",
-      "The field picker offers the stored, writable fields of the model and nothing else: no identifier, no creation or modification stamps, no binary, no readonly field, no computed field the ORM would refuse or overwrite, no field reserved to a group you are not in."
+      "The field picker offers the stored, writable fields of the model and nothing else: no identifier, no creation or modification stamps, no binary, no readonly field, no computed field the ORM would refuse or overwrite, no field reserved to a group you are not in. Type part of a field's name to find it."
     ],
     [
       "A value input that fits the field",
@@ -23,7 +49,7 @@
     ],
     [
       "As you, in batches, never as superuser",
-      "Records are written 500 at a time under your own rights. When an access rule refuses a batch, each record of that batch is retried alone, so one locked record never blocks the other 499. Your wizard is visible to you alone, so nobody else can change what it is about to write."
+      "Records are written 500 at a time under your own rights. When an access rule refuses a batch, each record of that batch is retried alone, so one locked record never blocks the other 499. Your wizard, and the fields and choices it offers you, are visible to you alone, so nobody else can change what it is about to write."
     ],
     [
       "A result you can act on",

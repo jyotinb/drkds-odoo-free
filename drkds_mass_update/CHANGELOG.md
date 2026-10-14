@@ -20,6 +20,20 @@ First release.
 
 ### Fixed during review, before release
 
+- **The wizard could not be used from the web client:** the Field to Update
+  dropdown was empty ("No results") in a real browser. The field list, and
+  the choices of a selection field, were Selections computed from a context
+  key, and the web client loads a form's fields with a context holding only
+  the language, so the list was computed without the model. Every test
+  passed the key and saw a full list. The wizard now keeps what it offers
+  as lines of its own (`drkds.mass.update.field.choice`): the fields when
+  the Actions menu entry opens it (the wizard is now created at that moment,
+  before the dialog shows), the choices of a selection field at Next. Field
+  to Update and Choice are record pickers on those lines, searchable by
+  label or technical name. The lines are private to their user like the
+  wizard, and the field and the choice are still checked against the model
+  before anything is written. New tests drive the wizard with exactly the
+  calls and context the web client sends.
 - **Security:** an internal user could read and rewrite another user's open
   wizard (Odoo 19 puts no owner restriction on transient records), so an
   administrator's Apply could be turned into a write of the other user's

@@ -1,13 +1,10 @@
 # Part of the drkds free suite for Odoo 19 Community. See LICENSE (LGPL-3).
 """Shared fixtures: an administrator who enables models, a clerk who may edit
-contacts but is locked out of one of them by a record rule, and a helper
-that drives the wizard the way the form does."""
+contacts but is locked out of one of them by a record rule, and helpers
+that drive the wizard the way the form does: pick a line in the field
+picker, press Next, fill the value (a line of the choice picker for a
+selection field), press Apply."""
 from odoo.tests import TransactionCase, new_test_user
-
-from odoo.addons.drkds_mass_update.wizard.drkds_mass_update_wizard import (
-    CTX_FIELD,
-    CTX_MODEL,
-)
 
 
 class MassUpdateCommon(TransactionCase):
@@ -15,6 +12,7 @@ class MassUpdateCommon(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.Wizard = cls.env["drkds.mass.update.wizard"]
+        cls.Choice = cls.env["drkds.mass.update.field.choice"]
         cls.Enabled = cls.env["drkds.mass.update.model"]
         cls.Partner = cls.env["res.partner"]
         cls.partner_model = cls.env["ir.model"]._get("res.partner")
@@ -55,27 +53,41 @@ class MassUpdateCommon(TransactionCase):
         )
 
     def _wizard(self, user, records, field_name=None):
-        """Create the wizard as ``user`` on ``records``, as the bound action
-        does: the model travels in the context, the ids in the defaults."""
-        ctx = {
-            "active_model": records._name,
-            "active_ids": records.ids,
-            CTX_MODEL: records._name,
-        }
-        vals = {}
+        """Create the wizard as ``user`` on ``records`` (the active_model /
+        active_ids fallback) and, when given, pick ``field_name`` in the
+        field picker."""
+        wizard = self.Wizard.with_user(user).with_context(
+            active_model=records._name, active_ids=records.ids,
+        ).create({})
         if field_name:
-            vals["field_name"] = field_name
-        return self.Wizard.with_user(user).with_context(**ctx).create(vals)
+            self._pick_field(wizard, field_name)
+        return wizard
+
+    def _choice(self, wizard, kind, technical_name):
+        """The ``kind`` line of ``wizard`` for ``technical_name``, as the
+        picker offers it (read as the wizard's user)."""
+        choice = wizard._get_choices(kind).filtered(
+            lambda line: line.technical_name == technical_name
+        )
+        self.assertEqual(len(choice), 1, "%s %s is offered" % (kind, technical_name))
+        return choice
+
+    def _pick_field(self, wizard, field_name):
+        wizard.field_choice_id = self._choice(wizard, "field", field_name)
+        self.assertEqual(wizard.field_name, field_name)
 
     def _step_to_value(self, wizard):
-        """Press Next and come back with the context the re-opened dialog
-        carries, exactly as the client would."""
+        """Press Next; the dialog re-opens on the same wizard."""
         result = wizard.action_next()
         self.assertEqual(result["res_id"], wizard.id)
-        return wizard.with_context(**result["context"])
+        return wizard
 
-    def _apply(self, user, records, field_name, **values):
+    def _apply(self, user, records, field_name, value_choice=None, **values):
+        """Run the whole wizard. ``value_choice`` is the key to pick in the
+        choice picker of a selection field."""
         wizard = self._step_to_value(self._wizard(user, records, field_name))
+        if value_choice is not None:
+            values["value_choice_id"] = self._choice(wizard, "value", value_choice).id
         if values:
             wizard.write(values)
         wizard.action_apply()

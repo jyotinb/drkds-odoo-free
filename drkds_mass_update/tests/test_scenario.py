@@ -40,14 +40,16 @@ class TestMassUpdateScenario(MassUpdateCommon):
         ).run()
         self.assertEqual(result["res_model"], "drkds.mass.update.wizard")
 
-        # 4. First pass: add the tag.
-        wizard = self.Wizard.with_user(self.clerk).with_context(**result["context"]).create({})
+        # 4. First pass: add the tag. The action opened the clerk's own
+        #    wizard, already listing the fields the clerk may update.
+        wizard = self.Wizard.with_user(self.clerk).browse(result["res_id"])
+        self.assertEqual(wizard.create_uid, self.clerk)
         self.assertEqual(wizard.record_count, 200)
         self.assertEqual(wizard.model_description, "Contact")
-        offered = [name for name, _label in wizard._selection_field_name()]
-        self.assertIn("category_id", offered)
-        self.assertIn("user_id", offered)
-        wizard.field_name = "category_id"
+        offered = wizard._get_choices("field").mapped("name")
+        self.assertIn("Tags", offered)
+        self.assertIn("Salesperson", offered)
+        self._pick_field(wizard, "category_id")
         wizard = self._step_to_value(wizard)
         self.assertEqual(wizard.field_label, "Tags")
         self.assertEqual(wizard.relation_model, "res.partner.category")
@@ -74,8 +76,12 @@ class TestMassUpdateScenario(MassUpdateCommon):
         self.assertEqual(locked.write_uid, self.env.user)
 
         # 5. Second pass, same selection: set the salesperson.
-        wizard2 = self.Wizard.with_user(self.clerk).with_context(**result["context"]).create({})
-        wizard2.field_name = "user_id"
+        result2 = line.server_action_id.with_user(self.clerk).with_context(
+            active_model="res.partner", active_ids=contacts.ids
+        ).run()
+        wizard2 = self.Wizard.with_user(self.clerk).browse(result2["res_id"])
+        self.assertNotEqual(wizard2, wizard, "a fresh wizard per run")
+        self._pick_field(wizard2, "user_id")
         wizard2 = self._step_to_value(wizard2)
         self.assertEqual(wizard2.field_label, "Salesperson")
         wizard2.value_record_id = salesperson.id

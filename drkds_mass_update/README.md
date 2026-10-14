@@ -17,8 +17,9 @@ depends on `base` only, LGPL-3.
   enabled, also when it is called directly over RPC rather than from the
   Actions menu.
 - **The wizard, in two steps.** Shows how many records are selected and
-  offers only the fields that can be written; **Next** then asks for a value
-  of the matching kind, or a **Set Empty** tick; **Apply** writes.
+  offers only the fields that can be written, in a picker you search by
+  typing part of the field's name; **Next** then asks for a value of the
+  matching kind, or a **Set Empty** tick; **Apply** writes.
 - **Field list.** Stored, writable fields of a supported type: text, long
   text, formatted text, whole number, number, monetary, yes/no, date, date
   and time, selection, link to a record (many2one), tags (many2many).
@@ -59,7 +60,8 @@ Copy the folder into your addons path, update the apps list and install
 
 1. Open the list view of an enabled model and select the records.
 2. Actions > **Mass update**.
-3. Pick the field and press **Next**.
+3. In **Field to Update**, type part of the field's name (for example
+   *Sales*), pick it and press **Next**.
 4. Enter the value or tick **Set Empty**, press **Apply** and confirm.
 5. Read the result: how many were updated and which records could not be
    changed. Close.
@@ -81,7 +83,9 @@ reserved to groups the user is not in.
 
 Each wizard is visible only to the user who opened it (a record rule on the
 wizard): the model, records, field and value it stores are what the write
-uses, so no other user can read or change them before Apply.
+uses, so no other user can read or change them before Apply. The same
+applies to the lines its pickers offer (a record rule on
+`drkds.mass.update.field.choice`).
 
 **Choose the enabled models with care.** The wizard offers every field the
 model lets the user write. Restrictions that exist only in a form view are
@@ -109,8 +113,13 @@ for every user with write access on it.
   field because a bound action is global to the model.
 - The wizard reads field names, labels and choices from the registry, not
   from `ir.model.fields`, because a plain internal user has no read access
-  on the technical models in Odoo 19. That is also why the field is chosen
-  before the value.
+  on the technical models in Odoo 19. It keeps them as lines of its own
+  (`drkds.mass.update.field.choice`, a transient model): the fields when the
+  Actions menu entry opens it, the choices of a selection field when you
+  press Next, which is why the field is chosen before the value. Both
+  pickers are record pickers on those lines. A line is only an offer: the
+  field is checked again against the model, and the choice against the
+  field's own choices, before anything is written.
 - Uninstall is clean: the uninstall hook deletes the bound server actions
   (and any copy of one), the models and views go with the module.
 

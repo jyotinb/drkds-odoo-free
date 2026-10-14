@@ -48,9 +48,11 @@ that is acceptable.
    the current filter.
 2. Actions > **Mass update**.
 3. The wizard shows the model and the number of selected records.
-4. **Field to Update**: pick the field. Only fields that can actually be
-   written are offered (see section 5). Press **Next**. (**Back** returns to
-   this step.)
+4. **Field to Update**: type part of the field's name (for example
+   *Sales* for Salesperson) and pick it from the list. The technical name
+   works too (*user_id*). **Search more...** at the bottom of the list shows
+   every field on offer. Only fields that can actually be written are
+   offered (see section 5). Press **Next**. (**Back** returns to this step.)
 5. Enter the value. The input matches the field:
 
    | Field type | Input |
@@ -61,7 +63,7 @@ that is acceptable.
    | Whole number, number, monetary | a number |
    | Yes / No | a checkbox |
    | Date, date and time | a date picker |
-   | Selection | the list of choices of that field |
+   | Selection | a picker listing the choices of that field |
    | Link to a record | a record picker on the target model |
    | Tags | a record picker; the chosen tag is **added** to each record |
 
@@ -127,8 +129,9 @@ Salesperson, which is only proposed from the parent company) is offered.
 - A translatable field (a tag name, for instance) is written in your current
   language, as in the form. Other languages keep their translation.
 - The wizard never uses superuser rights.
-- Your wizard is visible to you only. No other user can read it or change
-  what it is about to write.
+- Your wizard is visible to you only, and so are the fields and choices it
+  offers you. No other user can read it or change what it is about to
+  write.
 
 ## 7. Uninstalling
 
@@ -149,7 +152,9 @@ and tick it again to recreate the action.
 model while your wizard was open. Ask for it to be enabled again.
 
 **The field I need is not offered.** See section 5. Most often the field is
-computed without an inverse, or reserved to a group you are not in.
+computed without an inverse, or reserved to a group you are not in. The
+list under **Field to Update** shows the first matches only: type part of
+the name, or use **Search more...** to see them all.
 
 **All records are reported as not updated.** A record rule refuses every
 selected record for your user; ask your administrator.

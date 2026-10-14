@@ -21,6 +21,31 @@
 
 <section class="oe_container">
   <div class="oe_row oe_spaced">
+    <div class="oe_span12" style="text-align:center;">
+      <img src="screenshot_01.png" alt="Models enabled for mass update" style="max-width:100%; height:auto; border:1px solid #d5dbdb; border-radius:4px;"/>
+      <p style="font-size:14px; color:#5d6d7e; line-height:1.6; margin-top:10px;">The administrator&#x27;s list: contacts, products, sales and purchase orders and employees are enabled; each gets a Mass update action on its list view.</p>
+    </div>
+    <div class="oe_span12" style="text-align:center;">
+      <img src="screenshot_02.png" alt="Step 1: the field" style="max-width:100%; height:auto; border:1px solid #d5dbdb; border-radius:4px;"/>
+      <p style="font-size:14px; color:#5d6d7e; line-height:1.6; margin-top:10px;">Twelve dealers selected from a saved search; the sales manager picks Salesperson from the fields he is allowed to write.</p>
+    </div>
+    <div class="oe_span12" style="text-align:center;">
+      <img src="screenshot_03.png" alt="Step 2: the value" style="max-width:100%; height:auto; border:1px solid #d5dbdb; border-radius:4px;"/>
+      <p style="font-size:14px; color:#5d6d7e; line-height:1.6; margin-top:10px;">The new value, Aakash Vora, with the warning that the change runs with the user&#x27;s own rights and is not undone in one step.</p>
+    </div>
+    <div class="oe_span12" style="text-align:center;">
+      <img src="screenshot_04.png" alt="The result" style="max-width:100%; height:auto; border:1px solid #d5dbdb; border-radius:4px;"/>
+      <p style="font-size:14px; color:#5d6d7e; line-height:1.6; margin-top:10px;">12 records updated, 0 not updated; refused records would be listed here instead of failing the whole run.</p>
+    </div>
+    <div class="oe_span12" style="text-align:center;">
+      <img src="screenshot_05.png" alt="The dealers afterwards" style="max-width:100%; height:auto; border:1px solid #d5dbdb; border-radius:4px;"/>
+      <p style="font-size:14px; color:#5d6d7e; line-height:1.6; margin-top:10px;">The saved search again: all twelve dealers now have Aakash Vora as salesperson.</p>
+    </div>
+  </div>
+</section>
+
+<section class="oe_container">
+  <div class="oe_row oe_spaced">
     <div class="oe_span12">
       <h3 class="oe_slogan" style="color:#183a5c;">What it does</h3>
     </div>
@@ -35,7 +60,7 @@
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">Only fields that can be written</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The field picker offers the stored, writable fields of the model and nothing else: no identifier, no creation or modification stamps, no binary, no readonly field, no computed field the ORM would refuse or overwrite, no field reserved to a group you are not in.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">The field picker offers the stored, writable fields of the model and nothing else: no identifier, no creation or modification stamps, no binary, no readonly field, no computed field the ORM would refuse or overwrite, no field reserved to a group you are not in. Type part of a field&#x27;s name to find it.</p>
       </div>
     </div>
     <div class="oe_span6">
@@ -53,7 +78,7 @@
     <div class="oe_span6">
       <div style="padding:14px 18px; border-left:3px solid #e8922a; margin-bottom:14px;">
         <h4 style="color:#183a5c; margin:0 0 6px 0;">As you, in batches, never as superuser</h4>
-        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Records are written 500 at a time under your own rights. When an access rule refuses a batch, each record of that batch is retried alone, so one locked record never blocks the other 499. Your wizard is visible to you alone, so nobody else can change what it is about to write.</p>
+        <p style="color:#5d6d7e; margin:0; line-height:1.6;">Records are written 500 at a time under your own rights. When an access rule refuses a batch, each record of that batch is retried alone, so one locked record never blocks the other 499. Your wizard, and the fields and choices it offers you, are visible to you alone, so nobody else can change what it is about to write.</p>
       </div>
     </div>
     <div class="oe_span6">
