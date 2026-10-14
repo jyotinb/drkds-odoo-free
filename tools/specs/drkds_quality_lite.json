@@ -3,7 +3,28 @@
   "title": "Quality Checks on Transfers (Lite)",
   "summary": "Pass/fail and measured quality checks on receipts and deliveries, on Odoo 19 Community",
   "intro": "Odoo 19 Community receives and ships goods, but it has no place to record whether the goods were actually inspected before they went on the shelf or out of the door. This module adds that one record, and the rule that goes with it: a transfer with an open or failed blocking check cannot be validated.",
-  "shots": [],
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Quality checks list",
+      "The Quality Checks list with the To Do filter removed: seven checks on two receipts and a delivery, passed, failed and to do, with a measure shown only on the two measured checks (1.39 and 2.31)."
+    ],
+    [
+      "screenshot_02.png",
+      "A failed measured check",
+      "Check QC/00002: the MS sheet read 2.31 mm against a tolerance of 1.80 to 2.20 mm, so Record Measure failed it on its own, with the inspector, date and instructions on the record."
+    ],
+    [
+      "screenshot_03.png",
+      "Control points",
+      "Control Points: a pass/fail visual inspection for the Raw Materials category, three measured points on single products (sheet thickness, conductor diameter, round bar hardness) and a non-blocking pass/fail packing check for Finished Goods."
+    ],
+    [
+      "screenshot_04.png",
+      "Receipt with its quality button",
+      "Receipt WH/IN/00001 from Bharat Metals Pvt Ltd: the Quality Open button reads 2/4, two of its four checks not passed (one failed, one still to do), so the receipt cannot be validated yet."
+    ]
+  ],
   "features": [
     [
       "Control points",

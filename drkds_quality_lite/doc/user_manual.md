@@ -39,7 +39,9 @@ numbered `QC/00001`, `QC/00002`... and carries:
 - the control point, its type and whether it blocks;
 - the transfer, the move, the product, and an optional lot or serial;
 - the status: **To Do**, **Passed** or **Failed**;
-- the measure (for a measured check);
+- the measure and its unit, for a measured check only: a pass/fail check
+  has none, so its Measure and Unit cells in the list stay blank and its form
+  has no Measure section;
 - who decided, when, a note, and the chatter.
 
 Nothing is created twice: confirming again, or adding a move to a confirmed

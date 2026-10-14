@@ -1,9 +1,11 @@
+from lxml import etree
 from psycopg2 import IntegrityError
 
 from odoo import Command
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import tagged
 from odoo.tools import mute_logger
+from odoo.tools.safe_eval import safe_eval
 
 from .common import QualityCase
 
@@ -232,6 +234,52 @@ class TestQualityCheck(QualityCase):
         picking.action_confirm()
         with self.assertRaises(UserError):
             picking.drkds_quality_check_ids.action_measure()
+
+    def test_measure_shown_only_on_measured_checks(self):
+        """A pass/fail check has no measure. The list used to show its 0.00
+        in the Measure column, which reads as a value someone recorded. The
+        measure and its unit must be hidden for a pass/fail check, and shown
+        for a measured one, in the list and on the form."""
+        visual = self.Point.create({"name": "Visual", "product_id": self.steel.id})
+        self.Point.create({
+            "name": "Thickness", "product_id": self.steel.id,
+            "check_type": "measure", "norm_min": 1.8, "norm_max": 2.2,
+            "measure_unit": "mm",
+        })
+        picking = self._picking(self.receipt_type, [(self.steel, 1)])
+        picking.action_confirm()
+        checks = picking.drkds_quality_check_ids
+        pass_fail = checks.filtered(lambda c: c.point_id == visual)
+        measured = checks - pass_fail
+        pass_fail.action_pass()
+        measured.measure = 2.31
+        measured.action_measure()
+
+        views = self.Check.get_views([(False, "list"), (False, "form")])["views"]
+        for view_type in ("list", "form"):
+            arch = etree.fromstring(views[view_type]["arch"])
+            for name in ("measure", "measure_unit"):
+                nodes = arch.xpath("//field[@name='%s']" % name)
+                self.assertTrue(nodes, "%s missing from the %s view" % (name, view_type))
+                for node in nodes:
+                    self.assertTrue(
+                        self._hidden_for(node, pass_fail),
+                        "%s shown for a pass/fail check in the %s view" % (name, view_type),
+                    )
+                    self.assertFalse(
+                        self._hidden_for(node, measured),
+                        "%s hidden for a measured check in the %s view" % (name, view_type),
+                    )
+
+    def _hidden_for(self, node, check):
+        """Whether ``node`` is invisible on ``check``: its own invisible
+        modifier or that of an enclosing element evaluates true."""
+        names = {name: check[name] for name in ("check_type", "state")}
+        return any(
+            safe_eval(element.get("invisible"), names)
+            for element in (node, *node.iterancestors())
+            if element.get("invisible")
+        )
 
     # -- the gate ------------------------------------------------------
     def test_blocking_todo_check_refuses_validation(self):

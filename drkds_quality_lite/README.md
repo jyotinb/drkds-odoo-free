@@ -92,6 +92,9 @@ for the Inventory team, and those users are not made followers of them.
   and `Checked On` are set then. A second Pass, Fail or Record Measure on a
   decided check is refused. To change a result, press **Reset to To Do**
   (recorded in the chatter, clears who and when), then decide again.
+- A pass/fail check has no measure: its Measure and Unit cells in the checks
+  list stay blank and its form has no Measure section. Only measured checks
+  show a value.
 - The measure field starts at 0. Pressing **Record Measure** without typing a
   value records 0, which passes if 0 lies within the range.
 - A check shows its point's current minimum, maximum and unit. Changing them

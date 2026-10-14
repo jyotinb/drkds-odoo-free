@@ -54,3 +54,7 @@ Fixed during review, before release:
   labels, so with both installed the export, filter and group-by pickers
   showed two identical entries for each and Odoo logged a duplicate-label
   warning at install.
+- The checks list showed a measure of 0.00 on every pass/fail check, which
+  read as a value someone had recorded. The Measure and Unit cells are now
+  blank for pass/fail checks and filled for measured checks only, as on the
+  form and the kanban card.

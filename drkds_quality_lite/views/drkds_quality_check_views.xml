@@ -13,8 +13,8 @@
                 <field name="product_id"/>
                 <field name="lot_id" optional="show" groups="stock.group_production_lot"/>
                 <field name="check_type" optional="hide"/>
-                <field name="measure" optional="show"/>
-                <field name="measure_unit" optional="hide"/>
+                <field name="measure" optional="show" invisible="check_type != 'measure'"/>
+                <field name="measure_unit" optional="hide" invisible="check_type != 'measure'"/>
                 <field name="blocking" optional="hide"/>
                 <field name="user_id" optional="show"/>
                 <field name="date" optional="show"/>
