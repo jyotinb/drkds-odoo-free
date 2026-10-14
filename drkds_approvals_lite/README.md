@@ -16,7 +16,7 @@ the requester is told by email. Chatter and tracking keep it on the record.
 | States | Draft, Submitted, Approved, Refused, Cancelled |
 | Activities | A to-do on submit for every approver who can decide, cleared on decision or cancel, moved when the category's approvers change |
 | Mail | Two editable templates, sent to the requester alone on approve and on refuse |
-| Views | Kanban by state, list with amount totals, form with status bar and buttons, search with filters and group-bys, a To Approve menu |
+| Views | Kanban by state (one column per state, in workflow order), list with amount totals, form with status bar and buttons, search with filters and group-bys, a To Approve menu |
 | Security | Approval user and approval administrator groups, with record rules and multi-company rules |
 
 Three categories are installed: **Expense claim** (description and amount),
@@ -77,7 +77,8 @@ installs it is made an approval administrator.
   removing an approver moves the to-dos of the requests already waiting.
 - The decision mail goes to the requester alone. The request's contact is
   never mailed, and the other approvers, who follow the request through
-  their to-do, read the decision in the chatter.
+  their to-do, read the decision in the chatter. The refusal mail carries
+  the reason in full, in the chatter copy too.
 - A user sees the requests they asked for or raised, the submitted (and
   decided) requests of the categories they approve, and the requests they
   decided. A draft stays with whoever is writing it. An administrator sees

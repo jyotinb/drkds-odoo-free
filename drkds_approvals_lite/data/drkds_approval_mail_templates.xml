@@ -40,6 +40,9 @@
         <field name="use_default_to" eval="False"/>
         <field name="partner_to">{{ object.requester_id.partner_id.id }}</field>
         <field name="description">Sent to the requester when a request is refused.</field>
+        <!-- The reason is a plain paragraph, not a <blockquote>: Odoo stores a
+             blockquote as quoted text, and the copy of this mail in the
+             request's chatter then hides the reason behind a "..." toggle. -->
         <field name="body_html" type="html">
 <div style="margin: 0px; padding: 0px; font-size: 13px;">
     <p>Hello <t t-out="object.requester_id.name or ''"/>,</p>
@@ -51,9 +54,7 @@
         on <t t-out="format_datetime(object.decision_date, tz=user.tz, dt_format='medium') if object.decision_date else ''"/>.
     </p>
     <p>Reason given:</p>
-    <blockquote style="border-left: 3px solid #ccc; padding-left: 10px;">
-        <t t-out="object.refusal_reason or ''"/>
-    </blockquote>
+    <p style="padding-left: 10px;"><t t-out="object.refusal_reason or ''"/></p>
     <p>Regards,<br/><t t-out="object.company_id.name or ''"/></p>
 </div>
         </field>

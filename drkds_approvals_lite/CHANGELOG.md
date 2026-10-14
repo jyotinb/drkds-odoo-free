@@ -57,3 +57,11 @@ First release.
   Requests access.
 - The reference could be rewritten through a direct write; it is now
   allocated once and never changes, as documented.
+- The Kanban board listed its state columns in alphabetical order (Approved,
+  Cancelled, Draft, Refused, Submitted), which reads the workflow backwards,
+  and left out states without requests. It now shows every state, in
+  workflow order.
+- The refusal mail put its reason in a quotation block, which Odoo treats as
+  quoted text: in the request's chatter the reason was folded away behind a
+  "..." toggle, leaving "Reason given:" with nothing after it. The reason is
+  now a plain paragraph, shown in full in the chatter and in the mail.

@@ -3,7 +3,23 @@
   "title": "Approval Requests (Lite)",
   "summary": "One-level approval requests with categories, approvers and a decision trail, on Odoo 19 Community",
   "intro": "Someone needs a yes or a no: an expense to be paid back, a day away, something to buy. They raise a numbered request in a category, every approver of that category who can act on it gets a to-do, one of them approves or refuses, and the requester gets the decision by email. Chatter and field tracking keep the whole exchange on the record, and nobody can decide on a request they asked for or raised.",
-  "shots": [],
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Approval requests board by state",
+      "The Approval Requests board, one column per state in workflow order: a draft, two submitted requests waiting for an approver, three approved and one refused, the cancelled one in the last column; each card shows reference, date, category, amount and requester."
+    ],
+    [
+      "screenshot_02.png",
+      "A submitted request waiting for its approver",
+      "Request APR/00002 (Purchase need, ₹42,500.00) as its approver Sanjay Kapoor sees it: Approve and Refuse in the header and his to-do, raised on submit, in the chatter."
+    ],
+    [
+      "screenshot_03.png",
+      "A refused request with its reason",
+      "Refused request APR/00004 as the requester sees it: the reason given by Meenakshi Raghavan in the red banner and in the decision email on the request, with Reset to Draft to rework it."
+    ]
+  ],
   "features": [
     [
       "Categories with their own approvers",

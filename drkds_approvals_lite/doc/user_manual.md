@@ -110,7 +110,9 @@ history.
 | This Month | request date in the current month |
 
 Group by state, category, requester, decided by, or request month. The list
-view totals the amount column.
+view totals the amount column. The Kanban board shows one column per state,
+in workflow order (Draft, Submitted, Approved, Refused, Cancelled), empty
+columns included.
 
 ## 7. Mail templates
 
@@ -118,7 +120,9 @@ Two templates, **Approval Request: Approved** and **Approval Request:
 Refused**, live under **Settings > Technical > Email Templates** (developer
 mode). Edit the wording as you like; both are posted in the request's chatter
 and sent to the requester alone, by email or in Odoo as the requester
-prefers.
+prefers. The refused mail states the reason in full, in the mail and in the
+chatter. If you edit it, keep the reason out of a quotation block: Odoo
+treats a quotation as quoted text and folds it away in the chatter.
 
 Nobody else is notified: not the request's contact (a supplier, say), and
 not the other approvers, who follow the request through their to-do and

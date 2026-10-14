@@ -104,8 +104,11 @@ class DrkdsApprovalRequest(models.Model):
         "res.partner", string="Contact", tracking=True, index=True, check_company=True
     )
     description = fields.Html(string="Description", sanitize_style=True)
+    # group_expand: the board grouped by state shows every state, in the
+    # order of the workflow, not sorted by name (Approved before Draft).
     state = fields.Selection(
-        STATES, default="draft", required=True, tracking=True, index=True, copy=False
+        STATES, default="draft", required=True, tracking=True, index=True, copy=False,
+        group_expand=True,
     )
     approver_id = fields.Many2one(
         "res.users", string="Decided By", readonly=True, copy=False, tracking=True

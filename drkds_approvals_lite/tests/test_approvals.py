@@ -1,3 +1,4 @@
+from lxml import html
 from psycopg2 import IntegrityError
 
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -186,6 +187,28 @@ class TestApprovalRequest(ApprovalsCommon):
         refused.with_user(self.approver).action_refuse("Book through the travel desk.")
         self.assertEqual(self._notified_partners(approved, before), self.clerk.partner_id)
         self.assertEqual(self._notified_partners(refused, before), self.clerk.partner_id)
+
+    def test_refusal_mail_shows_the_reason_in_the_chatter(self):
+        """The refusal mail is also posted on the request. Its reason used to
+        sit in a <blockquote>, which Odoo stores marked as quoted text, so the
+        chatter hid it behind a "..." toggle. It must be plain text there."""
+        request = self._request(self.clerk)
+        request.with_user(self.clerk).action_submit()
+        before = request.message_ids.ids
+        reason = "Hotel bills above the city limit need the travel desk's quote."
+        request.with_user(self.approver).action_refuse(reason)
+        mails = request.message_ids.filtered(
+            lambda m: m.id not in before and reason in (m.body or "")
+        )
+        self.assertEqual(len(mails), 1)
+        body = html.fromstring(str(mails.body))
+        holders = [el for el in body.iter() if reason in (el.text or "")]
+        self.assertEqual(len(holders), 1)
+        quoted = [
+            el for el in (holders[0], *holders[0].iterancestors())
+            if el.get("data-o-mail-quote") or el.get("data-o-mail-quote-container")
+        ]
+        self.assertFalse(quoted, "the reason is marked as quoted text")
 
     def test_request_raised_on_behalf_of_someone(self):
         """outsider raises a claim for clerk: outsider keeps sight of it, and
@@ -453,6 +476,23 @@ class TestApprovalRequest(ApprovalsCommon):
             self.cat_leave.with_user(self.clerk).write({"name": "X"})
         with self.assertRaises(AccessError):
             self._request(self.clerk).with_user(self.clerk).unlink()
+
+    def test_board_columns_follow_the_workflow(self):
+        """The kanban groups requests by state. Its columns used to come in
+        alphabetical order (Approved, Cancelled, Draft, Refused, Submitted),
+        which reads the workflow backwards, and a state without requests had
+        no column. Every state now has its column, in workflow order."""
+        approved = self._request(self.clerk)
+        approved.with_user(self.clerk).action_submit()
+        approved.with_user(self.approver).action_approve()
+        self._request(self.clerk, title="Hotel, Pune")
+        result = self.Request.with_user(self.clerk).with_context(
+            read_group_expand=True
+        ).web_read_group([], ["state"], ["__count"])
+        columns = [(group["state"], group["__count"]) for group in result["groups"]]
+        self.assertEqual(columns, [
+            ("draft", 1), ("submitted", 0), ("approved", 1), ("refused", 0), ("cancelled", 0),
+        ])
 
     def test_category_request_count(self):
         self._request(self.clerk)

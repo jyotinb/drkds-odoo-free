@@ -64,7 +64,11 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/drkds_approval_request_views.xml",
         "views/drkds_approvals_menus.xml",
     ],
-    "images": [],
+    "images": [
+        "static/description/screenshot_01.png",
+        "static/description/screenshot_02.png",
+        "static/description/screenshot_03.png",
+    ],
     "installable": True,
     "application": True,
     "auto_install": False,
