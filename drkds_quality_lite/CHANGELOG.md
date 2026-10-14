@@ -48,3 +48,9 @@ Fixed during review, before release:
   to overwrite the first inspector's decision silently.
 - A control point that has raised checks cannot be deleted (archive it).
   Deleting it used to delete its checks with it.
+- The three quality fields added to transfers are labelled Quality Checks
+  (Lite), Quality Check Count (Lite) and Open Quality Checks (Lite).
+  drkds_quality_control adds its own fields to transfers under the plain
+  labels, so with both installed the export, filter and group-by pickers
+  showed two identical entries for each and Odoo logged a duplicate-label
+  warning at install.

@@ -9,16 +9,20 @@ class StockPicking(models.Model):
     # purchase_stock and sale_stock without any right on quality checks; a
     # field they cannot read in the transfer form makes the whole form fail
     # to load for them.
+    # Labels carry "(Lite)": drkds_quality_control adds its own checks to
+    # stock.picking under the plain labels, and a customer may hold both, so
+    # identical labels would make the two indistinguishable in export,
+    # filter and group-by pickers (base logs "Two fields ... same label").
     drkds_quality_check_ids = fields.One2many(
-        "drkds.quality.check", "picking_id", string="Quality Checks",
+        "drkds.quality.check", "picking_id", string="Quality Checks (Lite)",
         groups="stock.group_stock_user",
     )
     drkds_quality_check_count = fields.Integer(
-        string="Quality Check Count", compute="_compute_drkds_quality_counts",
+        string="Quality Check Count (Lite)", compute="_compute_drkds_quality_counts",
         groups="stock.group_stock_user",
     )
     drkds_quality_open_count = fields.Integer(
-        string="Open Quality Checks", compute="_compute_drkds_quality_counts",
+        string="Open Quality Checks (Lite)", compute="_compute_drkds_quality_counts",
         groups="stock.group_stock_user",
         help="Checks still to do or failed.",
     )
