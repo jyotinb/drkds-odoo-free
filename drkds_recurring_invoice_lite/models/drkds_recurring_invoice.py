@@ -104,9 +104,12 @@ class DrkdsRecurringInvoice(models.Model):
         help="Post each generated invoice at once. Otherwise it is left in "
         "draft for review.",
     )
+    # group_expand: the board grouped by status shows every status, in the
+    # order of the workflow, not sorted by name (Done before Draft).
     state = fields.Selection(
         [("draft", "Draft"), ("running", "Running"), ("paused", "Paused"), ("done", "Done")],
         string="Status", default="draft", required=True, copy=False, tracking=True,
+        group_expand=True,
     )
     narration = fields.Html(
         string="Terms and Conditions",

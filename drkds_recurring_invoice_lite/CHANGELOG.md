@@ -22,6 +22,9 @@ First release.
 
 ### Fixed during review, before release
 
+- The template board sorted its status columns by name (Done, Draft,
+  Paused, Running). It now shows every status in workflow order: Draft,
+  Running, Paused, Done.
 - The sentence about the paid app named the wrong app (or an app that does
   not exist). It now names the paid app that extends this module and lists
   only what that app does.

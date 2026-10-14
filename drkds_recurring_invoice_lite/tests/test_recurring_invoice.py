@@ -225,6 +225,19 @@ class TestRecurringInvoice(AccountTestInvoicingCommon):
         self.assertFalse(good.last_error)
 
     # -- workflow and guards ---------------------------------------------
+    def test_board_columns_follow_the_workflow(self):
+        """The kanban groups templates by status. Its columns came in
+        alphabetical order (Done, Draft, Paused, Running), which reads the
+        workflow backwards. Every status now has its column, in workflow order."""
+        running = self._template()
+        running.action_start()
+        self._template()
+        result = self.Template.with_context(read_group_expand=True).web_read_group(
+            [("id", "in", (running | self.Template.search([], order="id desc", limit=1)).ids)],
+            ["state"], ["__count"])
+        columns = [(group["state"], group["__count"]) for group in result["groups"]]
+        self.assertEqual(columns, [("draft", 1), ("running", 1), ("paused", 0), ("done", 0)])
+
     def test_workflow(self):
         tpl = self._template()
         self.assertTrue(tpl.reference.startswith("REC/"))

@@ -3,7 +3,33 @@
   "title": "Recurring Invoices (Lite)",
   "summary": "Issue the same customer invoice on a schedule: daily, weekly, monthly or yearly, on Odoo 19 Community",
   "intro": "Rent, retainers, maintenance contracts, subscriptions: the same invoice goes to the same customer at the same interval. Describe it once as a template, say how often it repeats and start it. A daily scheduler issues a real customer invoice on every due date, dated on that date, and links it back to the template. Pause it, resume it, close it on an end date, or press Generate Now when the customer wants it early.",
-  "shots": [],
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Recurring invoice templates with their schedules",
+      "Seven templates: monthly, weekly, quarterly and yearly, with next and last invoice dates, invoice counts, totals and status."
+    ],
+    [
+      "screenshot_02.png",
+      "A monthly retainer template and its history",
+      "A monthly maintenance retainer: customer, schedule, lines with GST, and the chatter recording each invoice issued."
+    ],
+    [
+      "screenshot_03.png",
+      "Invoices issued by one template",
+      "The invoices one template issued, May to October: May to August paid, September overdue, October due in two days."
+    ],
+    [
+      "screenshot_04.png",
+      "Templates by status",
+      "The board by status, in workflow order: a draft starting in November, four running, one paused and one done."
+    ],
+    [
+      "screenshot_05.png",
+      "An invoice issued for an out-of-state customer",
+      "A quarterly AMC invoice for a Maharashtra customer: the fiscal position applies IGST, not CGST and SGST."
+    ]
+  ],
   "features": [
     [
       "One template per contract",
