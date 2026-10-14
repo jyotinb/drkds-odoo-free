@@ -26,6 +26,12 @@ First release.
 
 ### Fixed during review, before release
 
+- The app menu was named *Documents*, the name of an Odoo Enterprise app.
+  It is now *Document Folders*, the module's own title; the menu paths in
+  the README and manual follow it.
+- The closing sentence about the paid app said it offers OCR-based
+  indexing. It does not; the sentence now lists only what the paid
+  Document Management app does.
 - A document whose file belongs to a record the reader cannot open (a
   mirrored chatter file, a filed attachment) made the whole Kanban, and the
   form, fail with an access error for that reader. The document now shows

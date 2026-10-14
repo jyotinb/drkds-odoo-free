@@ -6,6 +6,12 @@ from .common import DocumentsCommon
 
 @tagged("post_install", "-at_install")
 class TestFolder(DocumentsCommon):
+    def test_app_menu_uses_the_module_title(self):
+        """The app menu carries the module's own title, never the name of an
+        Odoo Enterprise app (project rule on naming)."""
+        root = self.env.ref("drkds_documents_lite.menu_drkds_documents_root")
+        self.assertEqual(root.with_context(lang="en_US").name, "Document Folders")
+
     def test_complete_name_follows_the_tree(self):
         contracts = self.Folder.create({"name": "Contracts", "parent_id": self.folder_legal.id})
         year = self.Folder.create({"name": "2026", "parent_id": contracts.id})

@@ -3,7 +3,33 @@
   "title": "Document Folders (Lite)",
   "summary": "A folder tree for company files, with tags, owners, linked records, expiry reminders and chatter mirroring, on Odoo 19 Community",
   "intro": "Every company has files that belong to nobody's inbox: the shop licence, the office lease, the signed NDA, the ISO certificate, the scanned vendor bill. This module gives them a home. A file goes into a folder, carries tags, an owner, a contact and a link to the record it concerns, and can be given an expiry date that raises a to-do a week ahead.\n\nFiles already sitting in a chatter are filed with one action, or mirrored automatically for the models you choose. Nothing is copied: a document points at the ordinary Odoo attachment, so there is one file, in one place, with the usual access checks.",
-  "shots": [],
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Documents Kanban with thumbnails and file icons",
+      "The Documents Kanban: image thumbnails for the drawings and the logo, PDF icons for contracts and records, each card with its folder path, tags, owner and expiry badge."
+    ],
+    [
+      "screenshot_02.png",
+      "A drawing with its image preview",
+      "A plant layout drawing filed in Plant & Machinery / Drawings: file name, type and size read from the upload, owner, tag, a note and the inline image preview."
+    ],
+    [
+      "screenshot_03.png",
+      "A contract with its PDF preview and reminder",
+      "The compressor AMC in Legal / Contracts: contact, expiry on 19 Oct shown as Expires soon, the inline PDF preview and the to-do the daily reminder job gave its owner."
+    ],
+    [
+      "screenshot_04.png",
+      "The folder tree with read and write groups",
+      "Folders with their full paths: Legal is visible to document managers only, Policies can be changed by managers only, and each folder shows how many documents it holds."
+    ],
+    [
+      "screenshot_05.png",
+      "Documents about to expire",
+      "The Expiring menu: the fire extinguisher record and the compressor AMC fall due within seven days, and the caliper calibration expired on 5 Oct."
+    ]
+  ],
   "features": [
     [
       "A folder tree with its own access",
@@ -41,5 +67,5 @@
     "The lite edition has no file versions, no share links, no request-a-file and no workflow actions on folders."
   ],
   "disclaimer": false,
-  "paid_sentence": "The drkds Documents app adds workflow actions on folders, request-a-file, sharing links, versioning and OCR-based indexing."
+  "paid_sentence": "The paid drkds Document Management app adds workflow buttons on folders, document requests with portal upload, share links, versions with restore, check-out locking and full-text search that also reads PDF text."
 }

@@ -36,21 +36,21 @@ installs it is made a document manager.
 1. **Settings > Users**: give each person the *Document Folders* level:
    *User* to file and read documents, *Manager* to see everything and
    maintain folders, tags and settings.
-2. **Documents > Configuration > Folders**: build the tree. On each folder,
+2. **Document Folders > Configuration > Folders**: build the tree. On each folder,
    **Read Groups** says who may see it (empty: every document user) and
    **Write Groups** says who may file in it (empty: anyone who can see it).
    A new sub-folder starts with its parent's groups and follows later
    changes to them, until it is given groups of its own.
-3. **Documents > Configuration > Tags**: a few labels that cut across
+3. **Document Folders > Configuration > Tags**: a few labels that cut across
    folders, such as *Signed*, *Draft*, *Renewal due*. A new tag gets a
    colour of its own; change it in the list.
-4. **Documents > Configuration > Settings**, or **Settings > Document
+4. **Document Folders > Configuration > Settings**, or **Settings > Document
    Folders**: pick the models whose chatter files should be mirrored. A
    folder named after each model is created under *Linked Records*.
 
 ## Use
 
-1. **Documents > Documents > New**: name, file, folder, tags, owner, contact,
+1. **Document Folders > Documents > New**: name, file, folder, tags, owner, contact,
    expiry date. The size and type are read from the file. PDFs and images
    show a preview on the form.
 2. **Add to Documents**: on any attachment list (for example *Settings >
@@ -102,5 +102,4 @@ installs it is made a document manager.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
 
-The drkds Documents app adds workflow actions on folders, request-a-file,
-sharing links, versioning and OCR-based indexing.
+The paid drkds Document Management app adds workflow buttons on folders, document requests with portal upload, share links, versions with restore, check-out locking and full-text search that also reads PDF text.

@@ -13,7 +13,7 @@ The user who installed the module is a manager already.
 
 ## 2. Build the folder tree
 
-**Documents > Configuration > Folders**. Two folders come installed:
+**Document Folders > Configuration > Folders**. Two folders come installed:
 **Company Documents** and **Linked Records**.
 
 For each folder:
@@ -38,13 +38,13 @@ and its sub-folders.
 
 ## 3. Tags
 
-**Documents > Configuration > Tags**: name and colour. A new tag gets a
+**Document Folders > Configuration > Tags**: name and colour. A new tag gets a
 colour of its own (a tag without colour would not show on the Kanban cards).
 A document can carry any number of tags, and the search filters by them.
 
 ## 4. File a document
 
-**Documents > Documents > New**.
+**Document Folders > Documents > New**.
 
 - **Name** — what the file is.
 - **File** — upload it. The **Type** and **Size** are read from the file.
@@ -78,7 +78,7 @@ skipped; if every selected file is already filed, the wizard says so.
 
 ## 6. Mirror chatter files automatically
 
-**Documents > Configuration > Settings** (also under **Settings > Document
+**Document Folders > Configuration > Settings** (also under **Settings > Document
 Folders**). In **Mirror chatter files of**, pick the models — Contact,
 Sales Order, Vendor Bill, whatever your database has — and save.
 
@@ -95,7 +95,7 @@ its documents stay.
 
 ## 7. Expiry reminders
 
-**Documents > Expiring** lists documents expiring within the next seven
+**Document Folders > Expiring** lists documents expiring within the next seven
 days or already past their date; the Kanban and list mark them in orange
 and red.
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <menuitem id="menu_drkds_documents_root" name="Documents"
+    <menuitem id="menu_drkds_documents_root" name="Document Folders"
               web_icon="drkds_documents_lite,static/description/icon.png"
               groups="drkds_documents_lite.group_document_user"
               sequence="56"/>

@@ -38,8 +38,7 @@ Record rules enforce it, so it holds in exports and the API too. A file
 keeps the access of the record it belongs to, and a document's owner
 follows it and is reminded about it only when they can open it.
 
-The drkds Documents app adds workflow actions on folders, request-a-file,
-sharing links, versioning and OCR-based indexing.
+The paid drkds Document Management app adds workflow buttons on folders, document requests with portal upload, share links, versions with restore, check-out locking and full-text search that also reads PDF text.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
 """,
@@ -64,7 +63,13 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/res_config_settings_views.xml",
         "views/drkds_documents_menus.xml",
     ],
-    "images": [],
+    "images": [
+        "static/description/screenshot_01.png",
+        "static/description/screenshot_02.png",
+        "static/description/screenshot_03.png",
+        "static/description/screenshot_04.png",
+        "static/description/screenshot_05.png",
+    ],
     "installable": True,
     "application": True,
     "auto_install": False,
