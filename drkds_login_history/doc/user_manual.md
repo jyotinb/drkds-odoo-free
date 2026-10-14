@@ -73,15 +73,14 @@ so those columns stay empty for such rows.
 
 ## 4. The user form
 
-Settings > Users & Companies > Users, open any user. Administrators see a
-**Login History** button at the top with two figures:
+Settings > Users & Companies > Users, open any user. Administrators see two
+buttons at the top:
 
-- **Failed Today**: failed attempts on this login name since midnight in your
-  timezone.
 - **Last Login**: date and time of the last successful login recorded by this
-  module.
-
-Click it to open that user's rows.
+  module. Click it to open all of that user's rows.
+- **Failed Today**: failed attempts on this login name since midnight in your
+  timezone. Click it to open those attempts (the Failed and Today filters are
+  applied; remove them to see the rest).
 
 ## 5. Keeping the table small
 

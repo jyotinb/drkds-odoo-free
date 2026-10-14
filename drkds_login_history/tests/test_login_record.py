@@ -342,6 +342,41 @@ class TestLoginRecord(TransactionCase):
         self.assertEqual(action["res_model"], "drkds.login.record")
         self.assertEqual(action["domain"], [("user_id", "=", self.user.id)])
 
+    def test_user_form_shows_each_figure_in_its_own_button(self):
+        """Regression: both figures sat in one stat button.
+
+        The button box lays the o_stat_info blocks of a button side by side
+        without a gap, so the form read "Failed TodayLast Login" with the two
+        values squeezed underneath. Each figure now has a button of its own.
+        """
+        view = self.env.ref("base.view_users_form")
+        arch = self.Users.with_user(self.admin).get_views([(view.id, "form")])["views"]["form"]["arch"]
+        doc = etree.fromstring(arch)
+        for method, figure in (
+            ("action_drkds_open_login_history", "drkds_last_login_date"),
+            ("action_drkds_open_failed_today", "drkds_failed_today"),
+        ):
+            buttons = doc.xpath("//div[@name='button_box']/button[@name='%s']" % method)
+            self.assertEqual(len(buttons), 1, method)
+            self.assertEqual(len(buttons[0].xpath(".//*[hasclass('o_stat_info')]")), 1, method)
+            self.assertEqual([f.get("name") for f in buttons[0].iter("field")], [figure])
+
+    def test_failed_today_button_opens_what_it_counts(self):
+        self._make(0, "failed")
+        self._make(0, "failed")
+        self._make(2, "failed")
+        self._make(0)
+        self.user.invalidate_recordset(["drkds_failed_today"])
+        action = self.user.action_drkds_open_failed_today()
+        self.assertEqual(action["res_model"], "drkds.login.record")
+        domain = list(action["domain"])
+        for name in ("failed", "today"):
+            self.assertTrue(action["context"].get("search_default_%s" % name))
+            domain += self._filter_domain(name)
+        rows = self.Record.search(domain)
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(len(rows), self.user.drkds_failed_today)
+
     # -------------------------------------------------------------- parser
 
     def test_user_agent_parser(self):

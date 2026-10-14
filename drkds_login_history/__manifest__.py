@@ -54,8 +54,9 @@ Where to look
 Settings, Users & Companies, Login History: a list with Today, Failed,
 Success and 2FA Pending filters (days in your timezone), grouping by user and
 by day, and a graph of events per day.
-Every user form carries a Login History button showing the last successful
-login and the failed attempts of today.
+Every user form carries two buttons: Last Login (the last successful login,
+opening that user's rows) and Failed Today (the failed attempts of today,
+opening those attempts).
 
 Housekeeping
 ------------
@@ -83,6 +84,13 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/drkds_login_record_views.xml",
         "views/res_users_views.xml",
         "views/res_config_settings_views.xml",
+    ],
+    "images": [
+        "static/description/screenshot_01.png",
+        "static/description/screenshot_02.png",
+        "static/description/screenshot_03.png",
+        "static/description/screenshot_04.png",
+        "static/description/screenshot_05.png",
     ],
     "installable": True,
     "application": False,

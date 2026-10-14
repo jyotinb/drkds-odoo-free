@@ -60,9 +60,9 @@ or **Logout**:
   day, stacked by result) and a read-only form. Filters: Today, Last 7 Days
   (both by day in your timezone), Failed, Success, 2FA Pending, Logout,
   Unknown Login Name. Group by user, result, day or IP address.
-- **User form** (Settings > Users & Companies > Users): a Login History
-  button showing the failed attempts of today and the last successful login,
-  opening that user's rows.
+- **User form** (Settings > Users & Companies > Users): two buttons.
+  *Last Login* shows the last successful login and opens that user's rows;
+  *Failed Today* shows the failed attempts of today and opens them.
 
 ## Configure
 

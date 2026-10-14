@@ -180,3 +180,14 @@ class ResUsers(models.Model):
         action["context"] = {"search_default_group_by_day": 0}
         action["display_name"] = _("Login History: %s", self.display_name)
         return action
+
+    def action_drkds_open_failed_today(self):
+        """Smart button: the failed attempts the "Failed Today" figure counts.
+
+        The search view's Failed and Today filters select exactly those rows:
+        "today" is resolved by the server in the user's timezone, as the
+        figure is.
+        """
+        action = self.action_drkds_open_login_history()
+        action["context"] = {"search_default_failed": 1, "search_default_today": 1}
+        return action

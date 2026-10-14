@@ -6,18 +6,26 @@
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
+            <!-- One figure per stat button: the button box lays its
+                 o_stat_info blocks side by side without a gap, so two
+                 figures in one button run together ("Failed TodayLast Login"). -->
             <div name="button_box" position="inside">
                 <button name="action_drkds_open_login_history" type="object"
                         class="oe_stat_button" icon="fa-sign-in"
                         groups="base.group_system"
                         help="Open this user's login history">
                     <div class="o_stat_info">
-                        <span class="o_stat_value"><field name="drkds_failed_today"/></span>
-                        <span class="o_stat_text">Failed Today</span>
-                    </div>
-                    <div class="o_stat_info">
                         <span class="o_stat_value"><field name="drkds_last_login_date"/></span>
                         <span class="o_stat_text">Last Login</span>
+                    </div>
+                </button>
+                <button name="action_drkds_open_failed_today" type="object"
+                        class="oe_stat_button" icon="fa-user-times"
+                        groups="base.group_system"
+                        help="Open this user's failed login attempts of today">
+                    <div class="o_stat_info">
+                        <span class="o_stat_value"><field name="drkds_failed_today"/></span>
+                        <span class="o_stat_text">Failed Today</span>
                     </div>
                 </button>
             </div>

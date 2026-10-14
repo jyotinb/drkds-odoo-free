@@ -3,12 +3,39 @@
   "title": "Login History",
   "summary": "Who signed in, from where, and which attempts failed",
   "intro": "Odoo Community keeps the devices behind sessions that succeeded. It does not keep the attempts that failed, the login name somebody typed, or the moment a session ended. Login History records all of it in one table a Settings administrator can read, filter and chart.\n\nEvery row is written through its own database connection, so a failed attempt is kept even though Odoo rolls the failed request back. Recording never blocks a login, and no data ever leaves your server.",
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Login History list grouped by result",
+      "Login History grouped by result: twelve failed attempts, among them wrong passwords from an office PC and a phone, a wrong 2FA code, and unknown login names and the admin login tried from an outside address; then the one 2FA Pending sign-in, with the Logout and Success groups folded."
+    ],
+    [
+      "screenshot_02.png",
+      "Graph of login events per day by result",
+      "The graph view of events per day by result, with stacking switched off: the failed, logout, 2FA Pending and success counts of 14 October 2026."
+    ],
+    [
+      "screenshot_03.png",
+      "User form with the Last Login and Failed Today buttons",
+      "A user form: the Last Login button shows the last successful sign-in and the Failed Today button counts today's failed attempts, three for this user."
+    ],
+    [
+      "screenshot_04.png",
+      "One user's login history",
+      "The Last Login button opens that user's rows: two wrong passwords and a sign-in from an Android phone, the logout, then one more wrong password and a sign-in from a Windows PC."
+    ],
+    [
+      "screenshot_05.png",
+      "Keep Login History setting",
+      "General Settings: the number of days login records are kept before the daily purge (default 180, 0 keeps everything)."
+    ]
+  ],
   "features": [
     ["Every attempt, not only the good ones", "One row per success, failure or logout, with the login name exactly as typed, the matched user (archived accounts included), the time, the IP address and the browser string. Browser form, JSON-RPC, XML-RPC and passkey logins are all covered."],
     ["Honest about two-factor logins", "A right password that still waits for its 2FA code is recorded as 2FA Pending, not as a success. The code step then adds its own Success or Failed row, so a stolen password stopped by 2FA stands out."],
     ["Browser and operating system", "Read from the browser string by a small parser of our own. No external library, no signature database to update."],
     ["Filters and a chart", "Today, Last 7 Days (both in your timezone), Failed, Success, 2FA Pending, Logout and Unknown Login Name, grouped by user, result, day or IP address, plus a bar chart of events per day stacked by result."],
-    ["On the user form", "A Login History button shows the failed attempts of today and the last successful login, and opens that user's rows."],
+    ["On the user form", "Two buttons: Last Login shows the last successful login and opens that user's rows, Failed Today counts today's failed attempts and opens them."],
     ["Automatic housekeeping", "A daily scheduled action deletes rows older than the number of days you set in General Settings (default 180, 0 keeps everything)."],
     ["Administrators only", "The menu, the action, the model and the figures on the user form are limited to Settings administrators. Rows cannot be created or edited from the interface."]
   ],

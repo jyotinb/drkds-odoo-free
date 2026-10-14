@@ -11,8 +11,8 @@ First release.
   `/web/session/logout` and `/web/session/destroy`; rows are written through
   a separate cursor so a failed login is still recorded.
 - Login History menu under Settings > Users & Companies with list, graph and
-  form views; smart button on the user form (failed attempts today, last
-  successful login).
+  form views; smart buttons on the user form (last successful login, failed
+  attempts today).
 - Daily purge of rows older than the *Keep Login History (days)* setting
   (default 180, 0 keeps everything).
 - Administrator-only access (`base.group_system`).
@@ -44,3 +44,7 @@ First release.
   the user form.
 - Documented which logins are recorded and which are not: API-key calls after
   `authenticate`, XML-RPC rows without address, Odoo's login cooldown.
+- The user form showed both figures in one button, where they ran together
+  ("Failed TodayLast Login") with the values squeezed underneath. Each figure
+  now has its own button: *Last Login* opens the user's rows, *Failed Today*
+  opens that user's failed attempts of today.
