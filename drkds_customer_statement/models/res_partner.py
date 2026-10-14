@@ -21,6 +21,13 @@ PAYABLE = ("liability_payable",)
 ACCOUNTING_GROUPS = "account.group_account_invoice,account.group_account_readonly"
 
 
+def _empty_ageing():
+    """Every ageing bucket and the total at zero."""
+    result = {key: 0.0 for key, _lo, _hi in BUCKETS}
+    result["total"] = 0.0
+    return result
+
+
 class ResPartner(models.Model):
     """Statement of account engine, plus ageing figures on the partner form.
 
@@ -63,7 +70,13 @@ class ResPartner(models.Model):
         today = fields.Date.context_today(self)
         company = self.env.company
         for partner in self:
-            buckets = partner._drkds_statement_ageing(today, company=company)
+            # The contact form computes these on an unsaved copy of the
+            # partner, whose id is a NewId that no journal item can point to.
+            # Its figures are those of the saved partner it copies; a new
+            # contact has none yet.
+            saved = partner._origin
+            buckets = (saved._drkds_statement_ageing(today, company=company)
+                       if saved else _empty_ageing())
             partner.drkds_stmt_currency_id = company.currency_id
             partner.drkds_stmt_0_30 = buckets["b0_30"]
             partner.drkds_stmt_31_60 = buckets["b31_60"]
@@ -135,8 +148,7 @@ class ResPartner(models.Model):
             + [("date", "<=", date_to)]
         )
         residual = self._drkds_residual_at(lines, date_to)
-        result = {key: 0.0 for key, _lo, _hi in BUCKETS}
-        result["total"] = 0.0
+        result = _empty_ageing()
         for line in lines:
             amount = residual[line.id][0]
             if currency.is_zero(amount):

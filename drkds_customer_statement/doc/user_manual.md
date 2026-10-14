@@ -103,6 +103,8 @@ total due for today, in the current company's currency, for the partner and
 its contacts, in the current company and its branches. Only Billing and
 Accounting read-only users see these fields. The figures are computed when the form is read and are not
 stored, so they cannot be filtered or grouped on, but they are never stale.
+A new contact shows zero in every bucket until it is saved and invoiced; while
+you edit a contact, the fields keep showing its saved figures.
 
 ## What it does not do
 

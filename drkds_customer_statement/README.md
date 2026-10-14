@@ -78,7 +78,9 @@ Creation is not needed.
 - Ageing days are counted from the due date, or the document date when there
   is none.
 - The partner ageing fields reflect today's receivable position in the
-  current company and its branches, and are recomputed on every read.
+  current company and its branches, and are recomputed on every read. A new
+  contact shows zero until it is saved; while a contact is being edited the
+  fields show its saved figures.
 - Dates on the statement follow the language's date format.
 - A bank account removed from the company (Odoo archives it) is no longer
   printed, even while the setting still points at it.
@@ -93,8 +95,9 @@ Creation is not needed.
 `tests/test_statement.py` checks the running balance, as-at ageing, the
 multi-currency rows (including the open foreign amount after a part payment
 and an exchange difference), the vendor side, contact roll-up, other
-companies and branches, field access and the rendered HTML, with
-hand-computed figures for five invoices and two payments at fixed dates.
+companies and branches, field access, the ageing fields on an unsaved
+contact form and the rendered HTML, with hand-computed figures for five
+invoices and two payments at fixed dates.
 `tests/test_send.py` covers who may send, who receives the email and the
 single rendering run. `tests/test_print_http.py` prints through
 `/report/download` exactly as the web client does. `tests/test_pdf_batches.py`
@@ -110,6 +113,6 @@ and send.
 
 LGPL-3.
 
-The drkds Accounting Pro app adds payment follow-up levels, automated reminders and collection dashboards.
+The paid drkds Payment Follow-ups and Dunning app adds follow-up levels by days overdue, reminder emails, printable letters with an overdue-highlighted statement, call activities, customer blocking and a late-fee line.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

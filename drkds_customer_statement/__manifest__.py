@@ -63,7 +63,11 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
         "views/res_partner_views.xml",
         "views/res_config_settings_views.xml",
     ],
-    "images": [],
+    "images": [
+        "static/description/screenshot_01.png",
+        "static/description/screenshot_02.png",
+        "static/description/screenshot_03.png",
+    ],
     "installable": True,
     "application": False,
     "auto_install": False,

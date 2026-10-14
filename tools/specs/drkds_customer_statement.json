@@ -3,7 +3,23 @@
   "title": "Customer and Vendor Statements",
   "summary": "Statement of account PDF per partner: opening balance, running balance, ageing buckets, sent from the contact",
   "intro": "A statement of account is what a customer asks for when they want to agree what they owe you, and what you send at month end to prompt payment. Odoo 19 Community shows a partner ledger on screen but has no printable, mailable statement. This module adds one: pick contacts and a period, print one PDF per partner with opening balance, every movement with a running balance, closing balance and ageing buckets, or send it straight from the contact with the PDF attached to the chatter.",
-  "shots": [],
+  "shots": [
+    [
+      "screenshot_01.png",
+      "A statement of account",
+      "A customer's statement for April to October: opening balance, invoices, payments and a credit note with running balance, closing balance and ageing as at the statement date."
+    ],
+    [
+      "screenshot_02.png",
+      "Receivable ageing on the contact",
+      "The contact's Invoicing tab shows today's receivable ageing in four buckets, and the Statement button the total due."
+    ],
+    [
+      "screenshot_03.png",
+      "Printing or emailing statements",
+      "The statement wizard: period, activity or outstanding-only, optional vendor side, then Print or Send by Email."
+    ]
+  ],
   "features": [
     [
       "Wizard from Contacts, one or many",
@@ -41,5 +57,5 @@
     "No follow-up levels, reminders or scheduled jobs; it prints and sends what you ask for."
   ],
   "disclaimer": false,
-  "paid_sentence": "The drkds Accounting Pro app adds payment follow-up levels, automated reminders and collection dashboards."
+  "paid_sentence": "The paid drkds Payment Follow-ups and Dunning app adds follow-up levels by days overdue, reminder emails, printable letters with an overdue-highlighted statement, call activities, customer blocking and a late-fee line."
 }

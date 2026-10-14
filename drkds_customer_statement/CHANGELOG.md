@@ -18,6 +18,9 @@ First release.
 
 ### Fixed during review, before release
 
+- The sentence about the paid app named Accounting Pro. It now names the
+  paid app that extends this module, Payment Follow-ups and Dunning, and
+  lists only what that app does.
 - Print from the wizard produced a blank PDF in the browser: the web client
   requests a report that carries data without record ids, so the report now
   takes its partners from the data.
@@ -52,3 +55,6 @@ First release.
   printed under "Please remit to".
 - The bank line printed a stray space before the comma.
 - The test named for another company never posted in one; it now does.
+- Opening a new contact form logged "Domains don't support NewId" from the
+  ageing fields, which searched journal items for the unsaved record. The
+  ageing is now read from the saved partner, and a new contact shows zero.

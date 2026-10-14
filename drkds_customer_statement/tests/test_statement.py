@@ -2,7 +2,7 @@ from datetime import date
 
 from odoo import fields
 from odoo.exceptions import UserError
-from odoo.tests import new_test_user, tagged
+from odoo.tests import Form, new_test_user, tagged
 from odoo.tools.misc import format_date
 
 from .common import StatementCase
@@ -139,6 +139,25 @@ class TestStatement(StatementCase):
         self.assertEqual(self.customer.drkds_stmt_currency_id, self.company_data["currency"])
         stranger = self.env["res.partner"].create({"name": "Nobody Yet"})
         self.assertAlmostEqual(stranger.drkds_stmt_total_due, 0.0, 2)
+
+    def test_ageing_fields_on_unsaved_partner(self):
+        """The contact form computes the ageing on an unsaved record.
+
+        A new contact has no journal items: its figures are zero, worked out
+        without searching journal items for its NewId (which Odoo logs as a
+        warning). The form's copy of a saved partner shows that partner's
+        figures.
+        """
+        with self.assertNoLogs("odoo.domains", "WARNING"):
+            form = Form(self.env["res.partner"])
+            form.name = "Walk-in Customer"
+            self.assertAlmostEqual(form.drkds_stmt_total_due, 0.0, 2)
+            self.assertAlmostEqual(form.drkds_stmt_90_plus, 0.0, 2)
+        edited = self.env["res.partner"].new({"name": "Meridian Traders Pvt"}, origin=self.customer)
+        with self.assertNoLogs("odoo.domains", "WARNING"):
+            self.assertAlmostEqual(edited.drkds_stmt_90_plus, 1720.0, 2)
+            self.assertAlmostEqual(edited.drkds_stmt_total_due, 1720.0, 2)
+            self.assertEqual(edited.drkds_stmt_currency_id, self.company_data["currency"])
 
     def test_draft_excluded(self):
         """Draft invoices never reach the statement."""
