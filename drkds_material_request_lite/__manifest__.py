@@ -51,7 +51,7 @@ multi-step approvals and budget checks.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
 """,
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Inventory/Inventory",
     "author": "drkds",
     "website": "https://drkdsinfo.com",

@@ -42,6 +42,7 @@ requester, department, warehouse and date.
 
 Two groups. A **Requester** raises requests and sees only their own. An
 **Approver** sees every request and is the only one who can approve or refuse.
+The Refuse wizard is visible only to the approver who opened it.
 
 ## Not included
 

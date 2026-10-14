@@ -63,4 +63,12 @@
         <field name="groups" eval="[(4, ref('group_material_request_approver'))]"/>
     </record>
 
+    <!-- Odoo 19 gives wizard records no protection of their own: each one
+         is kept to the user who opened it. -->
+    <record id="drkds_lite_material_request_refuse_creator_only" model="ir.rule">
+        <field name="name">Refuse Material Request: only its creator</field>
+        <field name="model_id" ref="model_drkds_lite_material_request_refuse"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="global" eval="True"/>
+    </record>
 </odoo>
