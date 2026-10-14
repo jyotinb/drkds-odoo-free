@@ -43,7 +43,7 @@ statutory compliance rests with the user and their tax professional.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
 """,
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Accounting/Localizations",
     "author": "drkds",
     "website": "https://drkdsinfo.com",
@@ -52,6 +52,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
     "depends": ["base"],
     "data": [
         "security/ir.model.access.csv",
+        "security/in_fy_sequence_wizard_rules.xml",
         "views/res_company_views.xml",
         "views/ir_sequence_views.xml",
         "wizard/drkds_fy_range_builder_views.xml",
