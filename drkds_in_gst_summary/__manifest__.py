@@ -64,7 +64,7 @@ reconciliation.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
 """,
-    "version": "19.0.1.0.1",
+    "version": "19.0.1.0.2",
     "category": "Accounting/Localizations/Reporting",
     "author": "drkds",
     "website": "https://drkdsinfo.com",
@@ -73,6 +73,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
     "depends": ["l10n_in"],
     "data": [
         "security/ir.model.access.csv",
+        "security/in_gst_summary_wizard_rules.xml",
         "views/drkds_gst_summary_views.xml",
     ],
     "images": [

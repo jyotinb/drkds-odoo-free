@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Odoo 19 gives wizard records no protection of their own: each one
+         is kept to the user who opened it. -->
+    <record id="drkds_gst_hsn_line_creator_only" model="ir.rule">
+        <field name="name">GST HSN/SAC Summary Line: only its creator</field>
+        <field name="model_id" ref="model_drkds_gst_hsn_line"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="drkds_gst_summary_creator_only" model="ir.rule">
+        <field name="name">GST Outward and Inward Summary: only its creator</field>
+        <field name="model_id" ref="model_drkds_gst_summary"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="drkds_gst_summary_line_creator_only" model="ir.rule">
+        <field name="name">GST Summary Line by Rate and Place of Supply: only its creator</field>
+        <field name="model_id" ref="model_drkds_gst_summary_line"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="global" eval="True"/>
+    </record>
+</odoo>
