@@ -25,7 +25,7 @@ is submitted.
 
 ## 2. Set up the categories
 
-**Approvals > Configuration > Categories** lists the three categories that
+**Approval Requests > Configuration > Categories** lists the three categories that
 come installed:
 
 | Category | Must carry |
@@ -47,7 +47,7 @@ shows how many requests the category has had.
 
 ## 3. Raise a request
 
-**Approvals > Requests > New**.
+**Approval Requests > Requests > New**.
 
 - **Title** — one line saying what is asked for.
 - **Category** — picks the approvers and the rules.
@@ -76,7 +76,7 @@ Until it is decided, you or an administrator may **Cancel** it.
 
 ## 4. Decide
 
-Approvers open **Approvals > To Approve**, which lists the submitted
+Approvers open **Approval Requests > To Approve**, which lists the submitted
 requests in their categories, excluding their own. From the request form:
 
 - **Approve** — records you and the time, removes the other approvers'

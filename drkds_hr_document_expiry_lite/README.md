@@ -112,8 +112,6 @@ three employees, passports and contracts, through a year with one renewal.
 odoo-bin -d <db> -i drkds_hr_document_expiry_lite --test-enable --test-tags=/drkds_hr_document_expiry_lite --stop-after-init
 ```
 
-The drkds HR Documents app adds employee self-service upload, approval of
-submitted documents, reminder emails to the employee and a compliance
-dashboard.
+The paid drkds Employee Documents and Compliance app adds checklists per job and department, portal self-service upload with HR approval, renewals and escalating reminders to HR, the employee and the manager.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

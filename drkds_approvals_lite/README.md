@@ -35,7 +35,7 @@ installs it is made an approval administrator.
    level: *User* to raise and decide, *Administrator* to see everything and
    maintain categories. Only users with this access can be picked as a
    requester or an approver.
-2. **Approvals > Configuration > Categories**: open each category and add
+2. **Approval Requests > Configuration > Categories**: open each category and add
    its approvers. A request cannot be submitted in a category with no
    approver. Tick the requirements a request must meet.
 3. Optionally edit the two mail templates under **Settings > Technical >
@@ -45,12 +45,12 @@ installs it is made an approval administrator.
 
 ## Use
 
-1. **Approvals > Requests > New**: title, category, amount, contact,
+1. **Approval Requests > Requests > New**: title, category, amount, contact,
    description. The reference is allocated on save. To ask on someone
    else's behalf, change the **Requester**.
 2. **Submit**. The category's requirements are checked and every approver
    who can decide gets a to-do activity.
-3. An approver opens **Approvals > To Approve** and clicks **Approve**, or
+3. An approver opens **Approval Requests > To Approve** and clicks **Approve**, or
    **Refuse** and types the reason. The request records who decided and when,
    the other approvers' to-dos disappear, and the requester gets the mail.
 4. A refused or cancelled request can be **Reset to Draft**, corrected and
@@ -89,7 +89,6 @@ installs it is made an approval administrator.
 One approval level only. There is no chain of approvers, no routing by
 amount, no delegation and no reporting beyond the list and Kanban.
 
-The drkds Approvals app adds multi-level and sequential approval chains,
-amount-based routing, delegation and approval reporting.
+The paid drkds Approval Workflows app adds multi-step approval chains with amount routing, N-of-M sign-off, delegation, reminders and approval of purchase and sales orders before confirmation.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

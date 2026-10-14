@@ -102,7 +102,6 @@ manager overrides. Invoices posted before the module was installed are not
 back-filled: reset and re-post them if you need their commission. Until then,
 a credit note made from such an invoice takes nothing back either.
 
-The drkds Sales Pro app adds tiered schemes, team commissions and payout
-documents.
+The paid drkds Sales Commission Plans app adds plans tiered on monthly achievement, margin and category rates, team-manager overrides, commission on payment and settlements posted as vendor bills.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

@@ -22,6 +22,9 @@ First release.
 
 ### Fixed during review, before release
 
+- The sentence about the paid app named the wrong app (or an app that does
+  not exist). It now names the paid app that extends this module and lists
+  only what that app does.
 - Generated invoices ignored the customer's fiscal position: the template's
   taxes were copied as they were, so an inter-state customer got CGST+SGST
   instead of IGST and an export customer was charged 18%. Each invoice now

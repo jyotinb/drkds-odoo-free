@@ -55,5 +55,5 @@
     "The lite edition decides in one step. There is no approval chain, no amount-based routing and no delegation."
   ],
   "disclaimer": false,
-  "paid_sentence": "The drkds Approvals app adds multi-level and sequential approval chains, amount-based routing, delegation and approval reporting."
+  "paid_sentence": "The paid drkds Approval Workflows app adds multi-step approval chains with amount routing, N-of-M sign-off, delegation, reminders and approval of purchase and sales orders before confirmation."
 }

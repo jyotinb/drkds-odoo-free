@@ -14,6 +14,13 @@ from .common import QualityCase
 class TestQualityCheck(QualityCase):
 
     # -- control points ------------------------------------------------
+
+    def test_app_menu_uses_the_module_title(self):
+        """The app menu never carries the name of an Odoo Enterprise app
+        (project rule on naming)."""
+        root = self.env.ref("drkds_quality_lite.menu_drkds_quality_root")
+        self.assertEqual(root.with_context(lang="en_US").name, "Quality Checks")
+
     def test_point_needs_a_product_or_a_category(self):
         with self.assertRaises(ValidationError):
             self.Point.create({"name": "Nothing to match"})

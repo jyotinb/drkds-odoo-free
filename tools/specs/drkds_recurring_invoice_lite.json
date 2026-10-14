@@ -39,5 +39,5 @@
     "Odoo's own Auto-post recurrence duplicates a posted entry monthly, quarterly or yearly. This module works from an editable template instead, adds daily and weekly intervals, pause and resume, an end date and a Generate Now button."
   ],
   "disclaimer": false,
-  "paid_sentence": "The drkds Accounting Pro app adds payment approvals, ageing analysis and cash-flow reporting."
+  "paid_sentence": "The paid drkds Subscriptions and Recurring Billing app adds subscription plans, proration, upsell and closing credits, renewals, MRR reporting and a customer portal."
 }

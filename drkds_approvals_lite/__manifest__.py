@@ -40,8 +40,7 @@ draft stays with whoever is writing it. An approval manager sees everything
 and maintains the categories. The state and the decision change only
 through the buttons, in the API as well.
 
-The drkds Approvals app adds multi-level and sequential approval chains,
-amount-based routing, delegation and approval reporting.
+The paid drkds Approval Workflows app adds multi-step approval chains with amount routing, N-of-M sign-off, delegation, reminders and approval of purchase and sales orders before confirmation.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
 """,

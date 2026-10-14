@@ -43,7 +43,7 @@ Depends on `stock` only. Install from Apps; no configuration step is needed.
 
 ## Configure
 
-Quality > Points (Inventory manager rights):
+Quality Checks > Points (Inventory manager rights):
 
 1. Give the point a title and the product or product category it applies to.
 2. Pick the operation types, or leave the field empty for all of them.
@@ -60,7 +60,7 @@ inspection record of past transfers. Archive it instead.
 
 1. Confirm a receipt or delivery as usual (**Mark as To Do**, or by
    confirming the purchase or sale order). Matching checks appear under
-   Quality > Checks and on the transfer's **Quality Open** button.
+   Quality Checks > Checks and on the transfer's **Quality Open** button.
 2. Open a check. For pass/fail, press **Pass** or **Fail**. For a measure,
    enter the value and press **Record Measure**; the result follows the
    range. Add a note or attach a photo in the chatter.
@@ -107,5 +107,7 @@ for the Inventory team, and those users are not made followers of them.
   quality alerts. The module records inspections on transfers and keeps bad
   goods from being validated, nothing more.
 - No outbound calls of any kind.
+
+The paid drkds Quality Control app adds sampling plans, checklists and worksheets, quarantine of failed goods, quality alerts, checks on manufacturing orders and pass-rate reporting.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

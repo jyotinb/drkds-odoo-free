@@ -64,5 +64,5 @@
     "No commission on sales orders, payments or margins, no tiered or target-based schemes, and no payout document: this module writes the lines and the report, settlement happens outside it."
   ],
   "disclaimer": false,
-  "paid_sentence": "The drkds Sales Pro app adds tiered schemes, team commissions and payout documents."
+  "paid_sentence": "The paid drkds Sales Commission Plans app adds plans tiered on monthly achievement, margin and category rates, team-manager overrides, commission on payment and settlements posted as vendor bills."
 }

@@ -25,6 +25,9 @@ First release.
 
 ### Fixed during review, before release
 
+- The sentence about the paid app named the wrong app (or an app that does
+  not exist). It now names the paid app that extends this module and lists
+  only what that app does.
 - The status was dated on the UTC day whenever the daily job computed it
   (it runs as OdooBot, which has no timezone): an Indian site's job, run in
   the early IST hours, kept a document that lapsed at midnight IST reading

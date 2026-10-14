@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <menuitem id="menu_drkds_approvals_root" name="Approvals"
+    <menuitem id="menu_drkds_approvals_root" name="Approval Requests"
               web_icon="drkds_approvals_lite,static/description/icon.png"
               groups="drkds_approvals_lite.group_approval_user" sequence="96"/>
 

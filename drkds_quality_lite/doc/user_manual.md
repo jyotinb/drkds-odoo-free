@@ -4,7 +4,7 @@
 
 A control point is a standing instruction: "every time goods of this kind
 move through this operation, inspect them like this". It is set up once by
-an Inventory administrator under **Quality > Points**.
+an Inventory administrator under **Quality Checks > Points**.
 
 | Field | Meaning |
 |---|---|
@@ -54,7 +54,7 @@ checks go with them.
 
 ## 3. Deciding a check
 
-Open the check from **Quality > Checks** (default filter: To Do) or from the
+Open the check from **Quality Checks > Checks** (default filter: To Do) or from the
 **Quality Open** button on the transfer, which shows open / total.
 
 - **Pass / Fail check**: press **Pass** or **Fail**.
@@ -102,7 +102,7 @@ record.
 
 ## 5. Finding things later
 
-**Quality > Checks** offers filters for To Do, Passed, Failed, Blocking and
+**Quality Checks > Checks** offers filters for To Do, Passed, Failed, Blocking and
 Checked by Me, a date filter on Checked On, and group-by on status, control
 point, transfer, operation type, product and inspector. The Kanban view is
 grouped by status. On transfers, the **Quality Checks Open** filter lists

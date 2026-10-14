@@ -28,6 +28,9 @@ First release.
 
 ### Fixed during review, before release
 
+- The sentence about the paid app named the wrong app (or an app that does
+  not exist). It now names the paid app that extends this module and lists
+  only what that app does.
 - A credit note made from an invoice took back at the rates in force when the
   credit note was posted. After a rate rise it took back more than was
   earned, and for an invoice that earned nothing (no rate at the time) it

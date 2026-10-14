@@ -112,7 +112,6 @@ No emailing of the generated invoices (use Odoo's own *Send* on the invoice or
 its sending cron), no proration for partial periods, no price changes
 scheduled ahead, no customer portal for the contract.
 
-The drkds Accounting Pro app adds payment approvals, ageing analysis and
-cash-flow reporting.
+The paid drkds Subscriptions and Recurring Billing app adds subscription plans, proration, upsell and closing credits, renewals, MRR reporting and a customer portal.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.

@@ -2,6 +2,10 @@
 
 ## 19.0.1.0.0 - 2026-10-13
 
+- The app menu was named *Quality*, the name of an Odoo Enterprise app. It is
+  now *Quality Checks*; the menu paths in the README and manual follow it.
+- The README and listing now name the paid Quality Control app once, with
+  only the features it has.
 First release.
 
 - Control points (`drkds.quality.point`): title, product or product category,

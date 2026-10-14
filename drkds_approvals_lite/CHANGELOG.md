@@ -21,6 +21,11 @@ First release.
 
 ### Fixed during review, before release
 
+- The app menu was named *Approvals*, the name of an Odoo Enterprise app. It
+  is now *Approval Requests*, the module's own title; the menu paths in the
+  README and manual follow it.
+- The sentence about the paid app now uses its real name, Approval
+  Workflows, and lists only what it does.
 - The decision mail went to the request's contact (`partner_id`, often a
   supplier) instead of the requester: Odoo 19 templates default to *Default
   Recipients*, which ignores `partner_to`. Both templates now switch it off,

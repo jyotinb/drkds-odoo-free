@@ -11,6 +11,13 @@ from .common import ApprovalsCommon
 @tagged("post_install", "-at_install")
 class TestApprovalRequest(ApprovalsCommon):
     # -- numbering -----------------------------------------------------
+
+    def test_app_menu_uses_the_module_title(self):
+        """The app menu never carries the name of an Odoo Enterprise app
+        (project rule on naming)."""
+        root = self.env.ref("drkds_approvals_lite.menu_drkds_approvals_root")
+        self.assertEqual(root.with_context(lang="en_US").name, "Approval Requests")
+
     def test_reference_is_sequential_and_unique(self):
         """Three requests take three consecutive APR/ numbers."""
         requests = self.Request.with_user(self.clerk).create([
