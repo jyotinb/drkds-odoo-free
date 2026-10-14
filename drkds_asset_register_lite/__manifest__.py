@@ -68,7 +68,7 @@ entries, reducing balance and other methods, revaluation and asset components.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
 """,
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Accounting/Accounting",
     "author": "drkds",
     "website": "https://drkdsinfo.com",

@@ -43,4 +43,24 @@
         <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
     </record>
 
+    <!-- Odoo 19 gives wizard records no protection of their own: each one
+         is kept to the user who opened it. -->
+    <record id="drkds_asset_disposal_wizard_creator_only" model="ir.rule">
+        <field name="name">Asset Disposal: only its creator</field>
+        <field name="model_id" ref="model_drkds_asset_disposal_wizard"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="drkds_asset_register_line_creator_only" model="ir.rule">
+        <field name="name">Asset Register Line: only its creator</field>
+        <field name="model_id" ref="model_drkds_asset_register_line"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="drkds_asset_register_wizard_creator_only" model="ir.rule">
+        <field name="name">Asset Register: only its creator</field>
+        <field name="model_id" ref="model_drkds_asset_register_wizard"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="global" eval="True"/>
+    </record>
 </odoo>
