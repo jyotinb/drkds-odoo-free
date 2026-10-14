@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Odoo 19 gives wizard records no protection of their own: each one
+         is kept to the user who opened it. -->
+    <record id="drkds_lite_label_print_creator_only" model="ir.rule">
+        <field name="name">Print drkds Labels: only its creator</field>
+        <field name="model_id" ref="model_drkds_lite_label_print"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="global" eval="True"/>
+    </record>
+</odoo>

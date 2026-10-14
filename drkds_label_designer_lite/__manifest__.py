@@ -50,7 +50,7 @@ specific label variants and printing from any document.
 
 Part of the drkds Indian SME suite for Odoo 19 Community.
 """,
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "category": "Inventory/Inventory",
     "author": "drkds",
     "website": "https://drkdsinfo.com",
@@ -59,6 +59,7 @@ Part of the drkds Indian SME suite for Odoo 19 Community.
     "depends": ["stock"],
     "data": [
         "security/ir.model.access.csv",
+        "security/label_designer_lite_wizard_rules.xml",
         "report/drkds_label_templates.xml",
         "report/drkds_label_reports.xml",
         "views/drkds_label_template_views.xml",
