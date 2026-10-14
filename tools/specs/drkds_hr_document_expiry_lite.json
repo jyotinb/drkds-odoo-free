@@ -3,7 +3,33 @@
   "title": "Employee Document Expiry (Lite)",
   "summary": "Employee documents with expiry dates, reminders to HR and a missing-documents check, on Odoo 19 Community",
   "intro": "Passports, employment contracts, work permits, licences: every employee holds a handful of papers that run out, and the day one lapses is usually the day someone notices. This module keeps each document on the employee record with its scan, works out whether it is valid, expiring or expired from the dates, and sends the HR responsible an activity before it is too late. A filter on the employee list shows who still has not handed in a mandatory document.",
-  "shots": [],
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Employee documents by expiry",
+      "All employee documents with expiry date, days left and status: two expired, three expiring with their reminders, the rest valid."
+    ],
+    [
+      "screenshot_02.png",
+      "The Documents tab on an employee",
+      "An employee's documents: an expired contract, the Documents button showing 2 (1 expired), and the missing mandatory medical certificate flagged."
+    ],
+    [
+      "screenshot_03.png",
+      "Employees missing a mandatory document",
+      "The Missing Mandatory Documents filter on the employee list."
+    ],
+    [
+      "screenshot_04.png",
+      "An expiring certificate and its reminder",
+      "A medical fitness certificate expiring in 19 days, with the reminder activity scheduled for the HR officer."
+    ],
+    [
+      "screenshot_05.png",
+      "Document types",
+      "Document types with their expiry flag, reminder window in days and mandatory flag."
+    ]
+  ],
   "features": [
     [
       "Document types with their own rules",

@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 from freezegun import freeze_time
+from lxml import etree
 from psycopg2.errors import CheckViolation, ForeignKeyViolation
 
 from odoo import SUPERUSER_ID
@@ -55,6 +56,13 @@ class TestDocumentState(DocumentExpiryCommon):
         self.assertEqual(doc.state, "valid")
         self.type_contract.remind_days = 60
         self.assertEqual(doc.state, "expiring")
+
+    def test_list_leaves_days_left_blank_without_expiry(self):
+        # A document without an expiry date has no days left; the list showed 0,
+        # which reads as "expires today", next to a Valid badge.
+        arch = etree.fromstring(self.env["drkds.hr.document"].get_view(view_type="list")["arch"])
+        days_left = arch.find(".//field[@name='days_to_expiry']")
+        self.assertEqual(days_left.get("invisible"), "not expiry_date")
 
     def test_name_is_type_and_employee(self):
         doc = self._document(self.emp_ravi, self.type_passport, date(2030, 1, 1))
@@ -335,6 +343,17 @@ class TestEmployee(DocumentExpiryCommon):
         action = self.emp_asha.action_view_drkds_hr_documents()
         self.assertEqual(action["domain"], [("employee_id", "=", self.emp_asha.id)])
         self.assertEqual(action["context"]["default_employee_id"], self.emp_asha.id)
+
+    def test_smart_button_fits_two_lines(self):
+        # A stat button holds a label line and a value line; a third line ran
+        # over the button's edges. The expired count belongs to the value line.
+        arch = etree.fromstring(self.Employee.get_view(view_type="form")["arch"])
+        button = arch.find(".//button[@name='action_view_drkds_hr_documents']")
+        lines = button.findall("./div/span")
+        self.assertEqual([line.get("class") for line in lines], ["o_stat_value", "o_stat_text"])
+        value = lines[0]
+        self.assertIsNotNone(value.find(".//field[@name='drkds_hr_document_count']"))
+        self.assertIsNotNone(value.find(".//field[@name='drkds_hr_expired_document_count']"))
 
     def test_deleting_employee_deletes_documents(self):
         """The scans, the reminder, the chatter and the followers go with the

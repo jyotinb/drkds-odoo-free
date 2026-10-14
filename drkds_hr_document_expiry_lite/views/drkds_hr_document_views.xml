@@ -13,7 +13,7 @@
                 <field name="number" optional="show"/>
                 <field name="issue_date" optional="hide"/>
                 <field name="expiry_date"/>
-                <field name="days_to_expiry" optional="show"/>
+                <field name="days_to_expiry" optional="show" invisible="not expiry_date"/>
                 <field name="state" widget="badge"
                        decoration-success="state == 'valid'"
                        decoration-warning="state == 'expiring'"

@@ -13,12 +13,11 @@
                     <div class="o_stat_info">
                         <span class="o_stat_value">
                             <field name="drkds_hr_document_count"/>
+                            <span class="text-danger ms-1" invisible="not drkds_hr_expired_document_count">
+                                (<field name="drkds_hr_expired_document_count"/> expired)
+                            </span>
                         </span>
                         <span class="o_stat_text">Documents</span>
-                        <span class="o_stat_text text-danger"
-                              invisible="not drkds_hr_expired_document_count">
-                            <field name="drkds_hr_expired_document_count" class="me-1"/>expired
-                        </span>
                     </div>
                 </button>
             </div>

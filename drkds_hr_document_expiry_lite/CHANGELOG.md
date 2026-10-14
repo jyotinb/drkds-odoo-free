@@ -25,6 +25,11 @@ First release.
 
 ### Fixed during review, before release
 
+- The documents list showed 0 days left for a document without an expiry
+  date, which reads as "expires today" next to a Valid badge; the cell is
+  now blank.
+- The employee's Documents button put the expired count on a third line
+  that ran over the button's edges; it now sits next to the count.
 - The sentence about the paid app named the wrong app (or an app that does
   not exist). It now names the paid app that extends this module and lists
   only what that app does.
