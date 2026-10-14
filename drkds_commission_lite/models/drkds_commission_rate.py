@@ -22,7 +22,7 @@ class DrkdsCommissionRate(models.Model):
         ondelete="cascade",
     )
     rate = fields.Float(
-        string="Commission (%)", digits=(5, 2), required=True,
+        string="Commission (%)", digits=(5, 2), required=True, aggregator=None,
         help="Percentage of the untaxed invoiced amount. Zero switches commission "
              "off for this category.",
     )

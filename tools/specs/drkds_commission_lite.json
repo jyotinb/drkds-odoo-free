@@ -3,7 +3,33 @@
   "title": "Sales Commission (Lite)",
   "summary": "A flat commission per salesperson, with per-category overrides, computed when customer invoices are posted, on Odoo 19 Community",
   "intro": "Give each salesperson a percentage, override it where a product category deserves a different one, and let the invoice do the rest. The moment a customer invoice is posted, a commission line is written for every product line: who earned it, on what, the untaxed base, the rate and the amount. Credit notes write negative lines that take back exactly what the invoice earned. A report shows the lines by salesperson and month, and a manager marks them paid when the money goes out.",
-  "shots": [],
+  "shots": [
+    [
+      "screenshot_01.png",
+      "Commission pivot by salesperson and month",
+      "The pivot: base and commission for Amit Desai, Neha Joshi and Priya Shah, September against October, with totals."
+    ],
+    [
+      "screenshot_02.png",
+      "Commission lines grouped by salesperson and month",
+      "Commission lines grouped by salesperson and month: Priya's September lines paid, October unpaid, and a returned pump taken back in red."
+    ],
+    [
+      "screenshot_03.png",
+      "Commission rates per salesperson and product category",
+      "Category rates per salesperson; a rate on Pumping Equipment also covers its Pumps and Motors sub-categories."
+    ],
+    [
+      "screenshot_04.png",
+      "Commission tab on the user form",
+      "The Commission tab on the user: a 2% default rate and the category rates that override it."
+    ],
+    [
+      "screenshot_05.png",
+      "Commission smart button on a posted invoice",
+      "A posted invoice with its Commission smart button, which opens the two lines the invoice wrote."
+    ]
+  ],
   "features": [
     [
       "A rate per salesperson, a rate per category",

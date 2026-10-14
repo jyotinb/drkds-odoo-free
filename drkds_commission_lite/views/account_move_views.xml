@@ -9,9 +9,9 @@
             <div name="button_box" position="inside">
                 <button name="action_view_drkds_commission_lines" type="object"
                         class="oe_stat_button" icon="fa-percent"
-                        invisible="drkds_commission_count == 0"
+                        invisible="drkds_commission_line_count == 0"
                         groups="sales_team.group_sale_salesman,account.group_account_invoice">
-                    <field name="drkds_commission_count" widget="statinfo" string="Commission"/>
+                    <field name="drkds_commission_line_count" widget="statinfo" string="Commission"/>
                 </button>
             </div>
         </field>

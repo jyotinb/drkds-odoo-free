@@ -52,7 +52,8 @@ class DrkdsCommissionLine(models.Model):
         string="Base", currency_field="currency_id", readonly=True,
         help="Untaxed amount of the invoice line in company currency, as booked; negative on a credit note.",
     )
-    rate = fields.Float(string="Rate (%)", digits=(5, 2), readonly=True)
+    # A sum or average of percentages means nothing: no total in grouped views.
+    rate = fields.Float(string="Rate (%)", digits=(5, 2), readonly=True, aggregator=None)
     amount = fields.Monetary(
         string="Commission", currency_field="currency_id", readonly=True,
     )

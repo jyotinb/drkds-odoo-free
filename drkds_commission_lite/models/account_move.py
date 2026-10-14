@@ -13,15 +13,17 @@ class AccountMove(models.Model):
         "drkds.commission.line", "move_id", string="Commission Lines", readonly=True,
         groups=_COMMISSION_READERS,
     )
-    drkds_commission_count = fields.Integer(
-        string="Commission Line Count", compute="_compute_drkds_commission_count",
+    # Named after this module's own model: drkds_sales_commission, which can be
+    # installed alongside, adds a drkds_commission_count of its own to invoices.
+    drkds_commission_line_count = fields.Integer(
+        string="Commission Line Count", compute="_compute_drkds_commission_line_count",
         groups=_COMMISSION_READERS,
     )
 
     @api.depends("drkds_commission_line_ids")
-    def _compute_drkds_commission_count(self):
+    def _compute_drkds_commission_line_count(self):
         for move in self:
-            move.drkds_commission_count = len(move.drkds_commission_line_ids.sudo())
+            move.drkds_commission_line_count = len(move.drkds_commission_line_ids.sudo())
 
     def _post(self, soft=True):
         posted = super()._post(soft=soft)

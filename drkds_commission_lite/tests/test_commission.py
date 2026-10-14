@@ -1,5 +1,6 @@
 from datetime import date
 
+from lxml import etree
 from psycopg2.errors import UniqueViolation
 
 from odoo import Command
@@ -139,7 +140,32 @@ class TestCommission(AccountTestInvoicingCommon):
         self.assertEqual(set(lines.mapped("date")), {date(2026, 3, 10)})
         self.assertEqual(set(lines.mapped("state")), {"unpaid"})
         self.assertEqual(set(lines.mapped("partner_id")), {self.partner_a})
-        self.assertEqual(inv.drkds_commission_count, 2)
+        self.assertEqual(inv.drkds_commission_line_count, 2)
+
+    def test_smart_button_counts_this_modules_lines(self):
+        # The invoice's Commission button reads its figure from a field of this
+        # module alone. A field name shared with another commission app on
+        # account.move is redefined by whichever loads last, and the button then
+        # shows the other app's count (0 here) and hides itself.
+        inv = self._invoice(self.sales_a, [(self.product_a, 2, 1000.0), (self.product_hw, 1, 3000.0)])
+        arch = self.env["account.move"].get_views([(False, "form")])["views"]["form"]["arch"]
+        fields = etree.fromstring(arch).xpath("//button[@name='action_view_drkds_commission_lines']//field")
+        self.assertEqual(len(fields), 1)
+        fname = fields[0].get("name")
+        self.assertEqual(self.env["ir.model.fields"]._get("account.move", fname).modules, "drkds_commission_lite")
+        self.assertEqual(inv[fname], len(inv.drkds_commission_line_ids))
+        self.assertEqual(inv[fname], 2)
+
+    def test_rates_are_not_totalled_in_groups(self):
+        # Grouped lists and the pivot used to add percentages up (three lines at
+        # 3% showed 9.00 on the salesperson's row). Amounts still add up.
+        self._invoice(self.sales_a, [(self.product_a, 1, 1000.0), (self.product_hw, 1, 3000.0)])
+        for model in ("drkds.commission.line", "drkds.commission.rate"):
+            self.assertIsNone(self.env[model].fields_get(["rate"])["rate"].get("aggregator"), model)
+        groups = self.Line.formatted_read_group(
+            [("user_id", "=", self.sales_a.id)], ["user_id"], ["amount:sum", "base_amount:sum"])
+        self.assertEqual(groups[0]["amount:sum"], 350.0)
+        self.assertEqual(groups[0]["base_amount:sum"], 4000.0)
 
     def test_draft_invoice_has_no_lines(self):
         inv = self._invoice(self.sales_a, [(self.product_a, 1, 1000.0)], post=False)
@@ -464,12 +490,12 @@ class TestCommission(AccountTestInvoicingCommon):
         inv = self._invoice(self.sales_a, [(self.product_a, 1, 1000.0)])
         # A read-only accountant has no access to commission lines: the fields are not
         # offered to them (export, custom views), so nothing can trip an AccessError.
-        self.assertNotIn("drkds_commission_count", self.env["account.move"].with_user(auditor).fields_get())
+        self.assertNotIn("drkds_commission_line_count", self.env["account.move"].with_user(auditor).fields_get())
         self.assertNotIn("drkds_commission_line_ids", self.env["account.move"].with_user(auditor).fields_get())
         self.assertTrue(inv.with_user(auditor).read(["name", "amount_untaxed"]))
         # The billing clerk keeps the smart button.
         self.env.invalidate_all()
-        self.assertEqual(inv.with_user(self.billing).read(["drkds_commission_count"])[0]["drkds_commission_count"], 1)
+        self.assertEqual(inv.with_user(self.billing).read(["drkds_commission_line_count"])[0]["drkds_commission_line_count"], 1)
 
     def test_salesperson_posting_own_invoice(self):
         # Posting as the salesperson (billing rights, not manager) still writes the lines.

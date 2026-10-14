@@ -88,7 +88,9 @@ commission is needed.
 ## 4. The report
 
 **Sales > Commissions** opens the lines grouped by salesperson and month, with
-totals for base and commission.
+totals for base and commission. Rates are not totalled: a group shows no
+figure in the *Rate (%)* column, since a sum of percentages means nothing.
+The same holds for the salesperson groups of *Commission Rates*.
 
 - **Pivot** gives the salesperson-by-month matrix. Add *Product Category* or
   *Customer* as a row for a finer breakdown.

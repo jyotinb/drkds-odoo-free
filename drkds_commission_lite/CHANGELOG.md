@@ -62,3 +62,12 @@ First release.
   read commission lines (a read-only accountant, a purchase user) were offered
   the fields and got an access error whenever they were read, for instance in
   an export. They are now restricted to users who can read commission lines.
+- With another commission module installed in the same database, the
+  invoice's *Commission* smart button showed that module's count (0) and hid
+  itself: both added a field named `drkds_commission_count` to invoices, and
+  the one loaded last replaced the other. The button now reads
+  `drkds_commission_line_count`, which belongs to this module alone.
+- Grouped lists added rates up: a salesperson's row showed 31.00 in
+  *Rate (%)* for nine lines at 3 and 5%, the *Commission Rates* groups showed
+  the sum of each salesperson's category rates, and the pivot offered that sum
+  as a measure. Rates are no longer aggregated; base and commission still are.
